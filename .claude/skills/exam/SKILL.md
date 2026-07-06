@@ -23,6 +23,16 @@ phrasing matched to real exams, novel setups (variants of past patterns, never c
 Solve every part yourself FIRST (scratch, not shown) to verify solvability and
 calibrate points; sanity-check any computation numerically.
 
+Persist every generated exam so it also appears on the Study Hub website:
+- `dl-exam-agent/generated_exams/mock_exam_NN.md` — first line
+  `# FODL Mock Exam NN (generated YYYY-MM-DD)`; each question starts exactly
+  `## Question N (P pts) — Title` (the site build parses this; Q1/Q2/Q3 are colored
+  Expressiveness/Optimization/Generalization by slot).
+- `dl-exam-agent/generated_exams/mock_exam_NN_solutions.md` — rubric blocks starting
+  `## QN`; the site shows them as the sealed solution fold.
+- Commit both (original content — not gitignored), then offer to rebuild + redeploy
+  the Study Hub (see dl-exam-agent/README.md "The Study Hub website").
+
 **Exam conditions:** record start time (`date`). Real exam = 3 hours, no aids, no hints.
 The user answers at their own pace — all at once or question by question; if they want
 hints it stops being exam-simulation (say so, then use the hint ladder with point costs).
