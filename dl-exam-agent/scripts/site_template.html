@@ -553,6 +553,7 @@ function renderTopicDetail(t) {
     });
     det.appendChild(wrap);
   }
+  mathify(det); // exam-question titles in the tested-in list contain math
   window.scrollTo(0, 0);
 }
 
@@ -608,6 +609,7 @@ function renderExamDetail(e) {
     setMd($(".mdslot", c), q.statement);
     setMd($(".sketchslot", c), q.sketch);
   });
+  mathify(det); // titles and headers contain math too
   det.scrollIntoView({ behavior: "auto", block: "start" });
 }
 
@@ -777,6 +779,7 @@ function renderQuiz() {
     });
   }
   area.appendChild(act);
+  mathify(area); // question titles contain math
 }
 function renderWeak() {
   const misses = {};
