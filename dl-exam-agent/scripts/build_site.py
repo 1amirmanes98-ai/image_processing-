@@ -312,11 +312,17 @@ def main():
         html = html.replace(k, v)
     out_p.write_text(html, encoding="utf-8")
     # Standalone copy for direct sharing: a complete standards-mode document.
+    wrapped = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
+               '<meta name="viewport" content="width=device-width, initial-scale=1">'
+               "</head><body>" + html + "</body></html>")
     standalone = out_p.with_name(out_p.stem + "-standalone.html")
-    standalone.write_text(
-        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
-        '<meta name="viewport" content="width=device-width, initial-scale=1">'
-        "</head><body>" + html + "</body></html>", encoding="utf-8")
+    standalone.write_text(wrapped, encoding="utf-8")
+    # Optional 5th arg: also refresh the GitHub Pages copy (docs/index.html) —
+    # pushing it triggers .github/workflows/pages.yml to redeploy the site.
+    if len(sys.argv) > 5:
+        docs_p = Path(sys.argv[5])
+        docs_p.parent.mkdir(parents=True, exist_ok=True)
+        docs_p.write_text(wrapped, encoding="utf-8")
     n_q = sum(len(e["questions"]) for e in exams)
     n_refs = sum(len(t["taught_refs"]) for t in topics)
     n_erefs = sum(len(t["exam_refs"]) for t in topics)

@@ -71,9 +71,17 @@ for f in katex.min.js katex.min.css contrib/auto-render.min.js; do
 curl -sL "https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" -o "$L/marked.min.js"
 # fonts: KaTeX_{Main-{Regular,Bold,Italic,BoldItalic},Math-{Italic,BoldItalic},Size{1..4}-Regular,AMS-Regular,Caligraphic-Regular,Typewriter-Regular}.woff2
 python3 dl-exam-agent/scripts/build_site.py dl-exam-agent/index $L \
-  dl-exam-agent/scripts/site_template.html /tmp/fodl-study-hub.html
+  dl-exam-agent/scripts/site_template.html /tmp/fodl-study-hub.html docs/index.html
 ```
 
-Then ask Claude to redeploy `/tmp/fodl-study-hub.html` to the same artifact URL.
-Site progress (flashcard/quiz stats, exam date) lives in the browser's localStorage —
+Distribution channels (keep all three in sync after a rebuild):
+1. **GitHub Pages (primary, what classmates use):** commit + push `docs/index.html`
+   — `.github/workflows/pages.yml` redeploys https://1amirmanes98-ai.github.io/image_processing-/
+   automatically. Note: the `github-pages` environment may restrict deploys to `main`;
+   pushes on a side branch then need a merge to `main` before the deploy runs.
+2. **Claude artifact (Amir's private copy):** redeploy `/tmp/fodl-study-hub.html`
+   to the existing artifact URL.
+3. **Offline file:** send `/tmp/fodl-study-hub-standalone.html` to Amir on request.
+
+Site progress (flashcard/quiz stats, exam date) lives in each browser's localStorage —
 separate from the tutor's `progress.md`.
