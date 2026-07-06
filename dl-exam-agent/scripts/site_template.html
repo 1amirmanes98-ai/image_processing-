@@ -173,6 +173,20 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 .hit .src .srcbtn{border:0;background:none;padding:0;color:inherit;font:inherit;text-transform:inherit;letter-spacing:inherit;font-weight:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .suggest{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 
+/* memorize tab */
+.memoitem{padding:14px 16px 14px 14px;margin-top:10px;display:grid;grid-template-columns:auto 1fr;gap:4px 12px;border-left:4px solid var(--pc,var(--line))}
+.memoitem.known{opacity:.62}
+.memoitem input[type=checkbox]{width:19px;height:19px;accent-color:var(--good);margin-top:2px;cursor:pointer}
+.memoitem .iname{font-weight:650;font-family:var(--serif);font-size:1.02rem}
+.memoitem .ibody{grid-column:2;overflow-x:auto}
+.memoitem .use{font-size:.85rem;color:var(--muted);margin-top:6px}
+.memoitem .use b{color:var(--pc,var(--ink))}
+.memoitem .watch{font-size:.85rem;color:var(--gen);margin-top:4px}
+.memoitem .seen{margin-top:6px}
+.memosec{display:flex;align-items:baseline;gap:12px;margin:26px 0 4px}
+.memosec h2{margin:0}
+.memosec .pts{margin-left:auto}
+
 /* markdown inside cards */
 .md p{margin:.5em 0}
 .md ul,.md ol{margin:.4em 0;padding-left:1.4em}
@@ -265,6 +279,16 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
       <div id="flashArea"></div>
     </section>
 
+    <section id="view-memo">
+      <h1>Know these cold</h1>
+      <p class="sub">The exam allows no aid material. This is the curated list of theorems, formulas, and canonical examples worth hard memorization — with the exact statement, when to reach for it, and where past exams used it. Tick what you already know; it saves in this browser.</p>
+      <div class="card" style="padding:14px 18px;margin-bottom:6px">
+        <div class="deckmeta" id="memoStats" style="margin:0"></div>
+        <div class="progressbar" style="margin:10px 0 2px"><div id="memoProg" style="width:0%;background:var(--good)"></div></div>
+      </div>
+      <div id="memoList"></div>
+    </section>
+
     <section id="view-quiz">
       <h1>Quiz — real exam questions</h1>
       <p class="sub">A random past-exam question. Solve it on paper like the real thing, then reveal the sketch and grade yourself honestly.</p>
@@ -291,7 +315,8 @@ const ICONS = {
   exams: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="1.5" width="11" height="13" rx="1.5"/><path d="M5 5h6M5 8h6M5 11h3.5"/></svg>',
   flash: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="4" width="10" height="8" rx="1.5"/><path d="M4.5 2h10v8"/></svg>',
   quiz: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M6 6.2c.2-1 1-1.7 2-1.7 1.1 0 2 .8 2 1.8 0 1.4-2 1.5-2 2.9"/><circle cx="8" cy="11.6" r=".4" fill="currentColor"/></svg>',
-  ask: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>'
+  ask: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>',
+  memo: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 4.5 4 6l2.5-2.5M2.5 9.5 4 11l2.5-2.5"/><path d="M9 5h5M9 10h5"/></svg>'
 };
 const ILLOS = {
   Expressiveness: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polyline points="2,30 12,4 22,30 32,4 42,30 52,4 62,30 70,12"/></svg>',
@@ -337,7 +362,7 @@ function mathify(el) {
 function setMd(el, src) { el.innerHTML = md(src); el.classList.add("md"); mathify(el); }
 
 /* ---------- nav ---------- */
-const VIEWS = [["dash", "Overview"], ["topics", "Topics"], ["ask", "Ask"], ["exams", "Exams"], ["flash", "Flashcards"], ["quiz", "Quiz"]];
+const VIEWS = [["dash", "Overview"], ["topics", "Topics"], ["ask", "Ask"], ["exams", "Exams"], ["memo", "Memorize"], ["flash", "Flashcards"], ["quiz", "Quiz"]];
 const nav = $("#nav");
 VIEWS.forEach(([id, label]) => {
   const b = document.createElement("button");
@@ -795,6 +820,77 @@ function renderWeak() {
     "<div class='weakrow'><span class='chip'>" + t + "</span><span class='pts'>miss score " + n + "</span></div>").join("");
 }
 
+/* ---------- memorize (cheat sheet with know-it tracking) ---------- */
+function memoSecPillar(name) {
+  const n = name.toLowerCase();
+  if (n.includes("expressiveness") || n.includes("example")) return "Expressiveness";
+  if (n.includes("optimization")) return "Optimization";
+  if (n.includes("generalization") || n.includes("probability") || n.includes("concentration")) return "Generalization";
+  return "Practices";
+}
+function memoId(sec, item) { return (sec.name + "::" + item.name).slice(0, 80); }
+store.data.memo = store.data.memo || {};
+function renderMemoStats() {
+  const cs = DATA.cheatsheet; if (!cs) return;
+  const total = cs.sections.reduce((a, s) => a + s.items.length, 0);
+  const known = cs.sections.reduce((a, s) => a + s.items.filter(i => store.data.memo[memoId(s, i)]).length, 0);
+  $("#memoStats").textContent = known + " of " + total + " marked as known" + (known === total && total ? " — כל הכבוד, now go take a mock exam" : "");
+  $("#memoProg").style.width = total ? (100 * known / total) + "%" : "0%";
+}
+function renderMemo() {
+  const cs = DATA.cheatsheet;
+  const list = $("#memoList");
+  if (!cs) { list.innerHTML = "<div class='card empty'>No cheat sheet in this build.</div>"; return; }
+  list.innerHTML = "";
+  cs.sections.forEach(sec => {
+    const pillar = memoSecPillar(sec.name);
+    const head = document.createElement("div");
+    head.className = "memosec p-" + pillar;
+    head.innerHTML = "<h2>" + sec.name + "</h2><span class='pts'>" + sec.items.length + " items</span>";
+    list.appendChild(head);
+    sec.items.forEach(item => {
+      const id = memoId(sec, item);
+      const el = document.createElement("div");
+      el.className = "card memoitem p-" + pillar + (store.data.memo[id] ? " known" : "");
+      el.innerHTML = "<input type='checkbox' aria-label='I know this'" + (store.data.memo[id] ? " checked" : "") + ">" +
+        "<div class='iname'>" + item.name + "</div>" +
+        "<div class='ibody'><div class='stmt mdslot'></div>" +
+        (item.use ? "<div class='use'><b>Use it when:</b> <span class='useslot'></span></div>" : "") +
+        (item.watch ? "<div class='watch'>⚠ <span class='watchslot'></span></div>" : "") +
+        "<div class='seen seenslot'></div></div>";
+      list.appendChild(el);
+      setMd($(".stmt", el), item.statement);
+      if (item.use) setMd($(".useslot", el), item.use);
+      if (item.watch) setMd($(".watchslot", el), item.watch);
+      // seen-in: linkify exam refs
+      const seenEl = $(".seenslot", el);
+      if (item.seen && !/core theory/i.test(item.seen)) {
+        let any = false;
+        item.seen.split(",").map(s => s.trim()).forEach(ref => {
+          const rm = ref.match(/^(?:([abc])(\d{4})|example)[_ ]?Q?(\d)?/i);
+          if (!rm) return;
+          const eid = rm[1] ? rm[1].toLowerCase() + "_" + rm[2] : "example";
+          if (!examById[eid]) return;
+          any = true;
+          const b = document.createElement("button");
+          b.type = "button"; b.className = "chipbtn"; b.style.padding = "1px 9px"; b.style.fontSize = ".75rem";
+          b.textContent = examLabel(examById[eid]) + (rm[3] ? " Q" + rm[3] : "");
+          b.onclick = () => openExam(eid);
+          seenEl.appendChild(b);
+        });
+        if (any) seenEl.insertAdjacentHTML("afterbegin", "<span class='pts'>seen in: </span>");
+        else seenEl.innerHTML = "<span class='pts'>" + item.seen + "</span>";
+      } else if (item.seen) seenEl.innerHTML = "<span class='pts'>" + item.seen + "</span>";
+      const cb = $("input", el);
+      cb.onchange = () => {
+        if (cb.checked) store.data.memo[id] = true; else delete store.data.memo[id];
+        store.save(); el.classList.toggle("known", cb.checked); renderMemoStats();
+      };
+    });
+  });
+  renderMemoStats();
+}
+
 /* ---------- ask (client-side retrieval, verbatim quotes) ---------- */
 let CHUNKS = null, DF = null;
 const STOP = new Set(["the","a","an","of","in","on","for","to","and","or","is","are","that","with","we","it","as","by","be","at","this","from","does","do","did","appear","appears","appearing","any","there","where","which","when","how","why","what","can","could","would","give","me","show","have","has","was","were","will","if","not","also","about","them","they","you","i","straight","answer","example","examples"]);
@@ -948,6 +1044,7 @@ renderTopicFilters(); renderTopics();
 renderExamGrid();
 buildDeck(); renderFlashFilters(); renderFlash();
 renderQuizFilters(); renderQuiz(); renderWeak();
+renderMemo();
 $("#askBtn").onclick = renderAsk;
 $("#askInput").addEventListener("keydown", ev => { if (ev.key === "Enter") renderAsk(); });
 ["does Hoeffding appear in exam solutions?", "balancedness conservation law", "why does uniform convergence fail for deep learning", "NTK convergence", "Telgarsky sawtooth depth separation", "PAC-Bayes bound"].forEach(sug => {
