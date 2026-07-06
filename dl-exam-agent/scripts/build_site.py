@@ -293,17 +293,30 @@ def main():
     html = template_p.read_text(encoding="utf-8")
     kcss = inline_katex_css((libs_dir / "katex.min.css").read_text(encoding="utf-8"),
                             libs_dir / "fonts")
+    kjs = (libs_dir / "katex.min.js").read_text(encoding="utf-8")
+    # KaTeX hard-refuses to render in quirks mode (page served without a doctype,
+    # e.g. the artifact viewer or the raw standalone file). Rendering there is fine
+    # in practice — neutralize the guard so math never falls back to raw TeX.
+    guard = '"CSS1Compat"!==document.compatMode'
+    assert guard in kjs, "KaTeX quirks-mode guard not found — check katex version"
+    kjs = kjs.replace(guard, "!1")
     payload = json.dumps(data, ensure_ascii=False)
     # JSON goes inside a <script type="application/json"> tag — escape closers.
     payload = payload.replace("</", "<\\/")
     for k, v in (("__KATEX_CSS__", kcss),
-                 ("__KATEX_JS__", (libs_dir / "katex.min.js").read_text(encoding="utf-8")),
+                 ("__KATEX_JS__", kjs),
                  ("__AUTORENDER_JS__", (libs_dir / "auto-render.min.js").read_text(encoding="utf-8")),
                  ("__MARKED_JS__", (libs_dir / "marked.min.js").read_text(encoding="utf-8")),
                  ("__DATA__", payload)):
         assert k in html, f"placeholder {k} missing from template"
         html = html.replace(k, v)
     out_p.write_text(html, encoding="utf-8")
+    # Standalone copy for direct sharing: a complete standards-mode document.
+    standalone = out_p.with_name(out_p.stem + "-standalone.html")
+    standalone.write_text(
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        "</head><body>" + html + "</body></html>", encoding="utf-8")
     n_q = sum(len(e["questions"]) for e in exams)
     n_refs = sum(len(t["taught_refs"]) for t in topics)
     n_erefs = sum(len(t["exam_refs"]) for t in topics)
