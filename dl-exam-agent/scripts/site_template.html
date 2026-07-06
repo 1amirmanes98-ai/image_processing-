@@ -170,6 +170,7 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 .hit{padding:16px 18px;border-left:4px solid var(--pc,var(--ink));margin-top:12px;overflow-x:auto}
 .hit .src{font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--pc,var(--muted));font-weight:700;margin-bottom:8px}
 .hit .src .sec{color:var(--muted);text-transform:none;letter-spacing:0;font-weight:500}
+.hit .src .srcbtn{border:0;background:none;padding:0;color:inherit;font:inherit;text-transform:inherit;letter-spacing:inherit;font-weight:inherit;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .suggest{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 
 /* markdown inside cards */
@@ -234,8 +235,8 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
     </section>
 
     <section id="view-ask">
-      <h1>Ask the lecture notes</h1>
-      <p class="sub">Type a question or a term — get the most relevant passages quoted verbatim from the course notes, with their source. (For worked answers and grading, ask your tutor in a Claude session; this searches, it doesn't think.)</p>
+      <h1>Ask the course</h1>
+      <p class="sub">Type a question or a term — searches the lecture notes, recitations, homework, <b>and all exams (questions + solution sketches)</b>. You get a direct where-does-it-appear answer plus verbatim quoted passages. (For worked answers and grading, ask your tutor in a Claude session; this searches, it doesn't think.)</p>
       <div class="askbox">
         <input id="askInput" type="search" placeholder="e.g. why does balancedness hold under gradient flow?" aria-label="Ask the lecture notes">
         <button class="btn primary" id="askBtn" type="button">Ask</button>
@@ -796,24 +797,29 @@ function renderWeak() {
 
 /* ---------- ask (client-side retrieval, verbatim quotes) ---------- */
 let CHUNKS = null, DF = null;
-const tokenize = s => (s.toLowerCase().match(/[a-z][a-z0-9'-]+|\d+/g) || [])
-  .filter(w => !["the","a","an","of","in","on","for","to","and","or","is","are","that","with","we","it","as","by","be","at","this","from"].includes(w));
+const STOP = new Set(["the","a","an","of","in","on","for","to","and","or","is","are","that","with","we","it","as","by","be","at","this","from","does","do","did","appear","appears","appearing","any","there","where","which","when","how","why","what","can","could","would","give","me","show","have","has","was","were","will","if","not","also","about","them","they","you","i","straight","answer","example","examples"]);
+const tokenize = s => (s.toLowerCase().match(/[a-z][a-z0-9'-]+|\d+/g) || []).filter(w => !STOP.has(w));
+function pushSplit(text, meta) {
+  const parts = [];
+  let cur = "";
+  text.split(/\n(?=(?:[-*] )?\*\*(?:Def|Thm|Lem|Prop|Cor|P\d|Q\d|Sub)|\n)/).forEach(seg => {
+    if ((cur + seg).length > 1100 && cur) { parts.push(cur); cur = seg; }
+    else cur += (cur ? "\n" : "") + seg;
+  });
+  if (cur.trim()) parts.push(cur);
+  parts.forEach(p => {
+    const t = p.trim();
+    if (t.length >= 40) CHUNKS.push({ ...meta, text: t, toks: null });
+  });
+}
 function buildChunks() {
   CHUNKS = [];
-  (DATA.notes || []).forEach(n => n.sections.forEach(sec => {
-    // split long sections on item boundaries so quotes stay focused
-    const parts = [];
-    let cur = "";
-    sec.b.split(/\n(?=(?:[-*] )?\*\*(?:Def|Thm|Lem|Prop|Cor|P\d)|\n)/).forEach(seg => {
-      if ((cur + seg).length > 1100 && cur) { parts.push(cur); cur = seg; }
-      else cur += (cur ? "\n" : "") + seg;
-    });
-    if (cur.trim()) parts.push(cur);
-    parts.forEach(p => {
-      const text = p.trim();
-      if (text.length < 40) return;
-      CHUNKS.push({ note: n, sec: sec.h, text, toks: null });
-    });
+  (DATA.notes || []).forEach(n => n.sections.forEach(sec =>
+    pushSplit(sec.b, { srcLabel: noteLabel(n), sec: "§" + sec.h, pillar: n.pillar })));
+  [...DATA.exams, ...(DATA.mocks || [])].forEach(e => e.questions.forEach(q => {
+    const label = examLabel(e) + " · Q" + q.n + " (" + q.pts + " pts)";
+    pushSplit(q.statement || "", { srcLabel: label, sec: "question statement", pillar: q.pillar, exam: e.id, qn: q.n });
+    pushSplit(q.sketch || "", { srcLabel: label, sec: "solution sketch", pillar: q.pillar, exam: e.id, qn: q.n });
   }));
   DF = {};
   CHUNKS.forEach(c => {
@@ -822,12 +828,35 @@ function buildChunks() {
     Object.keys(c.toks).forEach(w => DF[w] = (DF[w] || 0) + 1);
   });
 }
+function editDist(a, b) { // capped at 3
+  if (Math.abs(a.length - b.length) > 2) return 3;
+  const dp = Array.from({ length: a.length + 1 }, (_, i) => { const r = [i]; return r; });
+  for (let j = 1; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++)
+    for (let j = 1; j <= b.length; j++)
+      dp[i][j] = Math.min(dp[i - 1][j] + 1, dp[i][j - 1] + 1, dp[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+  return Math.min(3, dp[a.length][b.length]);
+}
+function resolveTerm(w) {
+  if (DF[w]) return { term: w, fuzzy: false };
+  const sing = w.replace(/s$/, "");
+  if (DF[sing]) return { term: sing, fuzzy: false };
+  if (w.length < 5) return { term: w, missing: true };
+  let best = null, bd = 3;
+  for (const v in DF) {
+    if (v[0] !== w[0] || Math.abs(v.length - w.length) > 2) continue;
+    const d = editDist(w, v);
+    if (d < bd || (d === bd && best && DF[v] > DF[best])) { bd = d; best = v; }
+  }
+  return bd <= 2 && best ? { term: best, fuzzy: true, from: w } : { term: w, missing: true };
+}
 function ask(query) {
   if (!CHUNKS) buildChunks();
-  const qtoks = [...new Set(tokenize(query))];
-  if (!qtoks.length) return [];
+  const resolved = [...new Set(tokenize(query))].map(resolveTerm);
+  const qtoks = [...new Set(resolved.filter(r => !r.missing).map(r => r.term))];
+  if (!qtoks.length) return { resolved, hits: [] };
   const N = CHUNKS.length, qlow = query.toLowerCase().trim();
-  return CHUNKS.map(c => {
+  const hits = CHUNKS.map(c => {
     let s = 0, matched = 0;
     qtoks.forEach(w => {
       const tf = c.toks[w] || 0;
@@ -837,23 +866,79 @@ function ask(query) {
     if (qlow.length > 6 && c.text.toLowerCase().includes(qlow)) s *= 1.8; // phrase bonus
     return { c, s };
   }).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 6);
+  return { resolved, hits };
+}
+function openExam(examId) {
+  const e = examById[examId];
+  if (e) { show("exams"); renderExamDetail(e); }
+}
+function termSummary(term) {
+  // where does this term appear? exams (by question, statement vs sketch) + notes
+  const exams = new Map(), notes = new Set();
+  CHUNKS.forEach(c => {
+    if (!c.toks[term]) return;
+    if (c.exam) {
+      const key = c.exam + "#" + c.qn;
+      const cur = exams.get(key) || { exam: c.exam, qn: c.qn, label: c.srcLabel, sk: false, st: false };
+      if (c.sec === "solution sketch") cur.sk = true; else cur.st = true;
+      exams.set(key, cur);
+    } else notes.add(c.srcLabel);
+  });
+  return { exams: [...exams.values()], notes: [...notes] };
 }
 function renderAsk() {
   const q = $("#askInput").value.trim();
   const out = $("#askResults"); out.innerHTML = "";
   if (!q) return;
-  const hits = ask(q);
-  if (!hits.length) { out.innerHTML = "<div class='card empty'>Nothing matched — try different terms (the notes are in English).</div>"; return; }
+  const { resolved, hits } = ask(q);
+  // ---- direct answer header: where each meaningful term appears
+  const META = new Set(["solution", "solutions", "exam", "exams", "question", "questions", "sketch", "sketches", "lecture", "lectures", "course", "notes", "answer", "answers"]);
+  const interesting = resolved.filter(r => !r.missing && !META.has(r.term) && DF[r.term] && DF[r.term] < CHUNKS.length * 0.25).slice(0, 4);
+  if (interesting.length) {
+    const card = document.createElement("div");
+    card.className = "card"; card.style.padding = "14px 18px";
+    interesting.forEach(r => {
+      const s = termSummary(r.term);
+      const row = document.createElement("div");
+      row.style.cssText = "padding:6px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:baseline";
+      let head = "<b>" + r.term + "</b>";
+      if (r.fuzzy) head += " <span class='pts'>(matched from “" + r.from + "”)</span>";
+      head += s.exams.length
+        ? " <span class='pts'>— in " + s.exams.length + " exam question" + (s.exams.length > 1 ? "s" : "") + ":</span>"
+        : " <span class='pts'>— not found in any exam; in notes:</span>";
+      row.innerHTML = head;
+      s.exams.slice(0, 12).forEach(x => {
+        const b = document.createElement("button");
+        b.type = "button"; b.className = "chipbtn"; b.style.padding = "2px 10px";
+        b.textContent = x.label + (x.sk && x.st ? " (statement + solution)" : x.sk ? " (solution)" : " (statement)");
+        b.onclick = () => openExam(x.exam);
+        row.appendChild(b);
+      });
+      if (s.exams.length > 12) row.insertAdjacentHTML("beforeend", "<span class='pts'>+" + (s.exams.length - 12) + " more</span>");
+      if (s.notes.length) row.insertAdjacentHTML("beforeend",
+        "<span class='pts' style='flex-basis:100%'>also in notes: " + s.notes.slice(0, 5).join(" · ") + (s.notes.length > 5 ? " +" + (s.notes.length - 5) + " more" : "") + "</span>");
+      card.appendChild(row);
+    });
+    out.appendChild(card);
+  }
+  if (!hits.length) {
+    out.insertAdjacentHTML("beforeend", "<div class='card empty'>Nothing matched — try different terms (the notes are in English).</div>");
+    return;
+  }
   hits.forEach(({ c }) => {
     const d = document.createElement("div");
-    d.className = "card hit p-" + (c.note.pillar || "Practices");
-    d.innerHTML = "<div class='src'>" + noteLabel(c.note) + " <span class='sec'>· §" + c.sec + "</span></div><div class='mdslot'></div>";
+    d.className = "card hit p-" + (c.pillar || "Practices");
+    const srcHtml = c.exam
+      ? "<button type='button' class='srcbtn'>" + c.srcLabel + "</button> <span class='sec'>· " + c.sec + " — click to open the exam</span>"
+      : c.srcLabel + " <span class='sec'>· " + c.sec + "</span>";
+    d.innerHTML = "<div class='src'>" + srcHtml + "</div><div class='mdslot'></div>";
+    if (c.exam) $(".srcbtn", d).onclick = () => openExam(c.exam);
     out.appendChild(d);
     setMd($(".mdslot", d), c.text);
   });
   const note = document.createElement("p");
   note.className = "sub"; note.style.marginTop = "14px";
-  note.textContent = "Quotes are verbatim from the course study notes. For a worked explanation, bring the question to your tutor session.";
+  note.textContent = "Quotes are verbatim from the study notes and translated exams. For a worked explanation, bring the question to your tutor session.";
   out.appendChild(note);
 }
 
@@ -865,7 +950,7 @@ buildDeck(); renderFlashFilters(); renderFlash();
 renderQuizFilters(); renderQuiz(); renderWeak();
 $("#askBtn").onclick = renderAsk;
 $("#askInput").addEventListener("keydown", ev => { if (ev.key === "Enter") renderAsk(); });
-["balancedness conservation law", "why does uniform convergence fail for deep learning", "NTK convergence", "Telgarsky sawtooth depth separation", "PAC-Bayes bound"].forEach(sug => {
+["does Hoeffding appear in exam solutions?", "balancedness conservation law", "why does uniform convergence fail for deep learning", "NTK convergence", "Telgarsky sawtooth depth separation", "PAC-Bayes bound"].forEach(sug => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "chipbtn"; b.textContent = sug;
   b.onclick = () => { $("#askInput").value = sug; renderAsk(); };
