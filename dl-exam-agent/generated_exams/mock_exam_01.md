@@ -34,8 +34,10 @@ $$\mathcal{D}_k := \{\, h_1 - h_2 \;:\; h_1, h_2 \in \mathcal{M}_k \,\}.$$
    pieces belongs to $\mathcal{D}_m$. Conclude that
    $\mathcal{D} := \bigcup_k \mathcal{D}_k$ is universal with respect to
    $C([a,b])$ in the sup norm.
-   *You may use without proof the theorem from class stating that piecewise linear
-   functions are dense in $C([a,b])$ with respect to the sup norm.*
+   *You may use without proof the fact that piecewise linear functions are dense in
+   $C([a,b])$ with respect to the sup norm. (Note: the class proved density in the
+   $L^1$ sense — Lecture 2, Lemma 1; the sup-norm version is granted here as an
+   external fact.)*
    *Hint: write $f$ as an affine function plus a sum of terms $c_i\,[x - t_i]_+$, and
    split by the sign of $c_i$.*
 

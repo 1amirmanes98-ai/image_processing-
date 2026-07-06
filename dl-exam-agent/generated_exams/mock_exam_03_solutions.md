@@ -197,8 +197,9 @@ violation); claiming $z=0$ is a local maximum (it is neither a max nor a min).
 
 *Traps:* "$z$ stays below 1 because $\dot z=0$ there" without invoking uniqueness (a
 barrier needs the constant-solution/uniqueness argument); asserting "the limit of
-gradient flow is a critical point" as a known fact without proof; forgetting to rule
-out $z_\infty=0$.
+gradient flow is a critical point" without justification — a precise citation of the
+recitation result that proves it (Recitation: Optimization Exercises 1, P5) earns
+full credit per the front-matter rules; forgetting to rule out $z_\infty=0$.
 
 ## Q3 — Generalization via a cover of the parameter ball (30)
 
