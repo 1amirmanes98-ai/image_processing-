@@ -150,6 +150,27 @@ details.sketch .inner{padding:0 16px 12px;overflow-x:auto}
 .weakrow:last-child{border-bottom:0}
 .empty{padding:40px;text-align:center;color:var(--muted)}
 
+/* topic detail + ask */
+.topicrow.click{cursor:pointer}
+.topicrow.click:hover{background:var(--surface2)}
+.topicrow .go{grid-column:3;grid-row:1/span 2;align-self:center;color:var(--muted)}
+.topicrow.click{grid-template-columns:auto 1fr auto}
+.scopechip{display:inline-flex;align-items:center;gap:8px;background:color-mix(in srgb,var(--pc,var(--ink)) 10%,transparent);color:var(--pc,var(--ink));border:1px solid color-mix(in srgb,var(--pc,var(--ink)) 40%,transparent);border-radius:999px;padding:5px 8px 5px 14px;font-size:.85rem;font-weight:600}
+.scopechip button{border:0;background:none;color:inherit;font-size:1rem;padding:0 4px;line-height:1}
+details.note{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);margin-top:12px;box-shadow:var(--shadow)}
+details.note>summary{cursor:pointer;padding:14px 18px;font-family:var(--serif);font-weight:700;list-style:none;display:flex;gap:10px;align-items:baseline}
+details.note>summary::before{content:"▸";color:var(--muted);font-size:.8em}
+details.note[open]>summary::before{content:"▾"}
+details.note .notebody{padding:0 18px 14px;border-top:1px solid var(--line)}
+details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
+.notesec{overflow-x:auto}
+.askbox{display:flex;gap:10px;margin:14px 0 6px}
+.askbox input{flex:1;font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px}
+.hit{padding:16px 18px;border-left:4px solid var(--pc,var(--ink));margin-top:12px;overflow-x:auto}
+.hit .src{font-size:.76rem;letter-spacing:.05em;text-transform:uppercase;color:var(--pc,var(--muted));font-weight:700;margin-bottom:8px}
+.hit .src .sec{color:var(--muted);text-transform:none;letter-spacing:0;font-weight:500}
+.suggest{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+
 /* markdown inside cards */
 .md p{margin:.5em 0}
 .md ul,.md ol{margin:.4em 0;padding-left:1.4em}
@@ -204,8 +225,22 @@ details.sketch .inner{padding:0 16px 12px;overflow-x:auto}
     <section id="view-topics">
       <h1>Topic map</h1>
       <p class="sub">Every syllabus topic, where it's taught, and every exam question that tested it. Priorities reflect how often the graders actually ask.</p>
-      <div class="filters" id="topicFilters"></div>
-      <div class="card" id="topicList"></div>
+      <div id="topicHome">
+        <div class="filters" id="topicFilters"></div>
+        <div class="card" id="topicList"></div>
+      </div>
+      <div id="topicDetail" style="display:none"></div>
+    </section>
+
+    <section id="view-ask">
+      <h1>Ask the lecture notes</h1>
+      <p class="sub">Type a question or a term — get the most relevant passages quoted verbatim from the course notes, with their source. (For worked answers and grading, ask your tutor in a Claude session; this searches, it doesn't think.)</p>
+      <div class="askbox">
+        <input id="askInput" type="search" placeholder="e.g. why does balancedness hold under gradient flow?" aria-label="Ask the lecture notes">
+        <button class="btn primary" id="askBtn" type="button">Ask</button>
+      </div>
+      <div class="suggest" id="askSuggest"></div>
+      <div id="askResults"></div>
     </section>
 
     <section id="view-exams">
@@ -253,7 +288,8 @@ const ICONS = {
   topics: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="5" cy="12.5" r="2"/><path d="M5.8 5.2 10.2 7M6.6 11.5l3.6-2.2"/></svg>',
   exams: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="1.5" width="11" height="13" rx="1.5"/><path d="M5 5h6M5 8h6M5 11h3.5"/></svg>',
   flash: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="4" width="10" height="8" rx="1.5"/><path d="M4.5 2h10v8"/></svg>',
-  quiz: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M6 6.2c.2-1 1-1.7 2-1.7 1.1 0 2 .8 2 1.8 0 1.4-2 1.5-2 2.9"/><circle cx="8" cy="11.6" r=".4" fill="currentColor"/></svg>'
+  quiz: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M6 6.2c.2-1 1-1.7 2-1.7 1.1 0 2 .8 2 1.8 0 1.4-2 1.5-2 2.9"/><circle cx="8" cy="11.6" r=".4" fill="currentColor"/></svg>',
+  ask: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5 14 14"/></svg>'
 };
 const ILLOS = {
   Expressiveness: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polyline points="2,30 12,4 22,30 32,4 42,30 52,4 62,30 70,12"/></svg>',
@@ -299,7 +335,7 @@ function mathify(el) {
 function setMd(el, src) { el.innerHTML = md(src); el.classList.add("md"); mathify(el); }
 
 /* ---------- nav ---------- */
-const VIEWS = [["dash", "Overview"], ["topics", "Topics"], ["exams", "Exams"], ["flash", "Flashcards"], ["quiz", "Quiz"]];
+const VIEWS = [["dash", "Overview"], ["topics", "Topics"], ["ask", "Ask"], ["exams", "Exams"], ["flash", "Flashcards"], ["quiz", "Quiz"]];
 const nav = $("#nav");
 VIEWS.forEach(([id, label]) => {
   const b = document.createElement("button");
@@ -418,9 +454,14 @@ function renderTopics() {
   if (!rows.length) { list.innerHTML = "<div class='empty'>No topics parsed for this pillar.</div>"; return; }
   rows.forEach(t => {
     const d = document.createElement("div");
-    d.className = "topicrow p-" + t.pillar;
+    d.className = "topicrow click p-" + t.pillar;
+    d.tabIndex = 0; d.setAttribute("role", "button");
     d.innerHTML = "<div class='stripe'></div><div class='t mdslot'></div>" +
-      "<div class='meta'>Taught: " + t.taught + " · Examined: " + t.examined + "</div>";
+      "<div class='meta'>Taught: " + t.taught + " · Examined: " + t.examined + "</div>" +
+      "<div class='go'>›</div>";
+    const open = () => renderTopicDetail(t);
+    d.onclick = open;
+    d.onkeydown = ev => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); open(); } };
     list.appendChild(d);
     const slot = $(".mdslot", d);
     setMd(slot, t.topic);
@@ -429,6 +470,89 @@ function renderTopics() {
     badge.textContent = t.priority === "core" ? "core — every exam" : t.priority === "frequent" ? "frequent" : "appeared";
     (slot.firstElementChild || slot).appendChild(badge);
   });
+}
+const noteByName = {};
+(DATA.notes || []).forEach(n => noteByName[n.name] = n);
+const examById = {};
+[...DATA.exams, ...(DATA.mocks || [])].forEach(e => examById[e.id] = e);
+function noteLabel(n) {
+  const prefix = n.kind === "recitation" ? "Recitation — " : n.kind === "homework" ? "Homework — " : "";
+  return n.title.toLowerCase().startsWith(n.kind) ? n.title : prefix + n.title;
+}
+function renderTopicDetail(t) {
+  $("#topicHome").style.display = "none";
+  const det = $("#topicDetail"); det.style.display = "block"; det.innerHTML = "";
+  const back = document.createElement("button");
+  back.type = "button"; back.className = "backbtn"; back.textContent = "← All topics";
+  back.onclick = () => { det.style.display = "none"; $("#topicHome").style.display = "block"; };
+  det.appendChild(back);
+  const head = document.createElement("div");
+  head.className = "p-" + t.pillar;
+  head.innerHTML = "<h1 class='mdslot' style='display:inline'></h1>" +
+    "<p class='sub' style='margin-top:8px'><span class='pill'><span class='dot'></span>" + t.pillar + "</span> " +
+    "<span class='prio " + t.priority + "'>" + (t.priority === "core" ? "core — appears essentially every exam" : t.priority === "frequent" ? "frequent variant" : "appeared 1–3 times") + "</span></p>";
+  det.appendChild(head);
+  setMd($(".mdslot", head), t.topic);
+
+  // test-me actions
+  const act = document.createElement("div"); act.className = "actions p-" + t.pillar;
+  const nq = (t.exam_refs || []).length;
+  if (nq) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn primary";
+    b.textContent = "Quiz me on this topic (" + nq + " past questions)";
+    b.onclick = () => { setQuizScope(t); show("quiz"); };
+    act.appendChild(b);
+  }
+  const lecRefs = (t.taught_refs || []).filter(r => noteByName[r] && noteByName[r].kind === "lecture");
+  const nCards = DATA.cards.filter(c => lecRefs.includes(c.lecture)).length;
+  if (nCards) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn";
+    b.textContent = "Flashcards from these lectures (" + nCards + ")";
+    b.onclick = () => { setFlashScope(t, lecRefs); show("flash"); };
+    act.appendChild(b);
+  }
+  det.appendChild(act);
+
+  // material from class
+  const h2m = document.createElement("h2"); h2m.textContent = "Material from class"; det.appendChild(h2m);
+  const refs = (t.taught_refs || []).filter(r => noteByName[r]);
+  if (!refs.length) {
+    const p = document.createElement("p"); p.className = "sub";
+    p.textContent = "Source: " + t.taught; det.appendChild(p);
+  }
+  refs.forEach((r, i) => {
+    const n = noteByName[r];
+    const dt = document.createElement("details");
+    dt.className = "note p-" + t.pillar; if (i === 0) dt.open = true;
+    dt.innerHTML = "<summary>" + noteLabel(n) + "</summary><div class='notebody'></div>";
+    const body = $(".notebody", dt);
+    n.sections.forEach(sec => {
+      const h4 = document.createElement("h4"); h4.textContent = sec.h; body.appendChild(h4);
+      const dv = document.createElement("div"); dv.className = "notesec";
+      body.appendChild(dv); setMd(dv, sec.b);
+    });
+    det.appendChild(dt);
+  });
+
+  // examined in
+  if (nq) {
+    const h2e = document.createElement("h2"); h2e.textContent = "Where the exam tested it"; det.appendChild(h2e);
+    const wrap = document.createElement("div"); wrap.className = "card";
+    (t.exam_refs || []).forEach(([eid, qn]) => {
+      const e = examById[eid]; if (!e) return;
+      const q = e.questions.find(x => x.n === qn); if (!q) return;
+      const row = document.createElement("button");
+      row.type = "button"; row.className = "weakrow p-" + q.pillar;
+      row.style.cssText = "width:100%;border:0;background:none;text-align:left;cursor:pointer;align-items:baseline;gap:10px;display:flex";
+      row.innerHTML = "<span style='font-weight:600'>" + examLabel(e) + " · Q" + qn + "</span>" +
+        "<span class='meta' style='color:var(--muted);font-size:.85rem;flex:1'>" + q.title + "</span>" +
+        "<span class='pts'>" + q.pts + " pts</span>";
+      row.onclick = () => { show("exams"); renderExamDetail(e); };
+      wrap.appendChild(row);
+    });
+    det.appendChild(wrap);
+  }
+  window.scrollTo(0, 0);
 }
 
 /* ---------- exams ---------- */
@@ -488,16 +612,30 @@ function renderExamDetail(e) {
 
 /* ---------- flashcards ---------- */
 let flashPillar = "Expressiveness", flashKind = "all", deck = [], deckPos = 0, revealed = false;
+let flashScope = null; // {label, lectures:[...]}
+function setFlashScope(t, lecRefs) {
+  flashScope = { label: "topic scope", lectures: lecRefs, pillar: t.pillar };
+  buildDeck(); renderFlashFilters(); renderFlash();
+}
 function cardId(c) { return c.lecture + "::" + c.front.slice(0, 60); }
 function buildDeck() {
-  deck = DATA.cards.filter(c => c.pillar === flashPillar && (flashKind === "all" || c.kind === flashKind));
+  deck = flashScope
+    ? DATA.cards.filter(c => flashScope.lectures.includes(c.lecture) && (flashKind === "all" || c.kind === flashKind))
+    : DATA.cards.filter(c => c.pillar === flashPillar && (flashKind === "all" || c.kind === flashKind));
   const rank = c => { const s = store.data.cards[cardId(c)]; return !s ? 1 : s.last === "miss" ? 0 : s.last === "half" ? 2 : 3; };
   deck.sort((a, b) => rank(a) - rank(b) || Math.random() - 0.5);
   deckPos = 0; revealed = false;
 }
 function renderFlashFilters() {
   const f = $("#flashFilters"); f.innerHTML = "";
-  PILLARS.forEach(p => {
+  if (flashScope) {
+    const chip = document.createElement("span");
+    chip.className = "scopechip p-" + flashScope.pillar;
+    chip.innerHTML = "Deck: " + flashScope.lectures.map(l => (noteByName[l] || { title: l }).title.split(" - ")[0]).join(", ") +
+      " <button type='button' aria-label='clear scope'>✕</button>";
+    $("button", chip).onclick = () => { flashScope = null; buildDeck(); renderFlashFilters(); renderFlash(); };
+    f.appendChild(chip);
+  } else PILLARS.forEach(p => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "chipbtn p-" + p + (flashPillar === p ? " on" : "");
     b.textContent = p + " (" + DATA.cards.filter(c => c.pillar === p).length + ")";
@@ -516,7 +654,7 @@ function renderFlash() {
   const area = $("#flashArea");
   $("#deckMeta").textContent = deck.length ? ("Card " + (deckPos + 1) + " of " + deck.length + " — misses come back first") : "";
   $("#flashProg").style.width = deck.length ? (100 * deckPos / deck.length) + "%" : "0%";
-  $("#flashProg").parentElement.className = "progressbar p-" + flashPillar;
+  $("#flashProg").parentElement.className = "progressbar p-" + (flashScope ? flashScope.pillar : flashPillar);
   area.innerHTML = "";
   if (!deck.length) { area.innerHTML = "<div class='card empty'>No cards match this filter.</div>"; return; }
   if (deckPos >= deck.length) {
@@ -558,14 +696,28 @@ function renderFlash() {
 
 /* ---------- quiz ---------- */
 let quizPillar = "any", quizQ = null, quizRevealed = false;
+let quizScope = null; // {label, refs:[[examId,qn],...], pillar}
+function setQuizScope(t) {
+  quizScope = { label: "topic scope", refs: t.exam_refs, pillar: t.pillar };
+  pickQuiz(); renderQuizFilters(); renderQuiz();
+}
 function pillarOfQuiz() { return quizPillar === "any" ? PILLARS[Math.floor(Math.random() * 3)] : quizPillar; }
 function pickQuiz() {
   const done = new Set(store.data.quiz.slice(-8).map(q => q.qid));
-  const p = pillarOfQuiz();
   const pool = [];
-  [...DATA.exams, ...(DATA.mocks || [])].forEach(e => e.questions.forEach(q => {
-    if (q.pillar === p && q.statement) pool.push({ exam: e, q, qid: e.id + "#Q" + q.n });
-  }));
+  if (quizScope) {
+    quizScope.refs.forEach(([eid, qn]) => {
+      const e = examById[eid]; if (!e) return;
+      const q = e.questions.find(x => x.n === qn);
+      if (q && q.statement) pool.push({ exam: e, q, qid: e.id + "#Q" + q.n });
+    });
+  } else {
+    const p = pillarOfQuiz();
+    [...DATA.exams, ...(DATA.mocks || [])].forEach(e => e.questions.forEach(q => {
+      if (q.pillar === p && q.statement) pool.push({ exam: e, q, qid: e.id + "#Q" + q.n });
+    }));
+  }
+  if (!pool.length) { quizQ = null; return; }
   const fresh = pool.filter(x => !done.has(x.qid));
   const src = fresh.length ? fresh : pool;
   quizQ = src[Math.floor(Math.random() * src.length)];
@@ -573,6 +725,14 @@ function pickQuiz() {
 }
 function renderQuizFilters() {
   const f = $("#quizFilters"); f.innerHTML = "";
+  if (quizScope) {
+    const chip = document.createElement("span");
+    chip.className = "scopechip p-" + quizScope.pillar;
+    chip.innerHTML = "Quizzing " + quizScope.refs.length + " questions on this topic <button type='button' aria-label='clear scope'>✕</button>";
+    $("button", chip).onclick = () => { quizScope = null; pickQuiz(); renderQuizFilters(); renderQuiz(); };
+    f.appendChild(chip);
+    return;
+  }
   [["any", "Surprise me"], ...PILLARS.map(p => [p, p])].forEach(([k, label]) => {
     const b = document.createElement("button");
     b.type = "button";
@@ -630,12 +790,83 @@ function renderWeak() {
     "<div class='weakrow'><span class='chip'>" + t + "</span><span class='pts'>miss score " + n + "</span></div>").join("");
 }
 
+/* ---------- ask (client-side retrieval, verbatim quotes) ---------- */
+let CHUNKS = null, DF = null;
+const tokenize = s => (s.toLowerCase().match(/[a-z][a-z0-9'-]+|\d+/g) || [])
+  .filter(w => !["the","a","an","of","in","on","for","to","and","or","is","are","that","with","we","it","as","by","be","at","this","from"].includes(w));
+function buildChunks() {
+  CHUNKS = [];
+  (DATA.notes || []).forEach(n => n.sections.forEach(sec => {
+    // split long sections on item boundaries so quotes stay focused
+    const parts = [];
+    let cur = "";
+    sec.b.split(/\n(?=(?:[-*] )?\*\*(?:Def|Thm|Lem|Prop|Cor|P\d)|\n)/).forEach(seg => {
+      if ((cur + seg).length > 1100 && cur) { parts.push(cur); cur = seg; }
+      else cur += (cur ? "\n" : "") + seg;
+    });
+    if (cur.trim()) parts.push(cur);
+    parts.forEach(p => {
+      const text = p.trim();
+      if (text.length < 40) return;
+      CHUNKS.push({ note: n, sec: sec.h, text, toks: null });
+    });
+  }));
+  DF = {};
+  CHUNKS.forEach(c => {
+    c.toks = {};
+    tokenize(c.text).forEach(w => c.toks[w] = (c.toks[w] || 0) + 1);
+    Object.keys(c.toks).forEach(w => DF[w] = (DF[w] || 0) + 1);
+  });
+}
+function ask(query) {
+  if (!CHUNKS) buildChunks();
+  const qtoks = [...new Set(tokenize(query))];
+  if (!qtoks.length) return [];
+  const N = CHUNKS.length, qlow = query.toLowerCase().trim();
+  return CHUNKS.map(c => {
+    let s = 0, matched = 0;
+    qtoks.forEach(w => {
+      const tf = c.toks[w] || 0;
+      if (tf) { matched++; s += (1 + Math.log(tf)) * Math.log(1 + N / (DF[w] || 1)); }
+    });
+    if (matched > 1) s *= 1 + 0.35 * (matched - 1);            // multi-term bonus
+    if (qlow.length > 6 && c.text.toLowerCase().includes(qlow)) s *= 1.8; // phrase bonus
+    return { c, s };
+  }).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 6);
+}
+function renderAsk() {
+  const q = $("#askInput").value.trim();
+  const out = $("#askResults"); out.innerHTML = "";
+  if (!q) return;
+  const hits = ask(q);
+  if (!hits.length) { out.innerHTML = "<div class='card empty'>Nothing matched — try different terms (the notes are in English).</div>"; return; }
+  hits.forEach(({ c }) => {
+    const d = document.createElement("div");
+    d.className = "card hit p-" + (c.note.pillar || "Practices");
+    d.innerHTML = "<div class='src'>" + noteLabel(c.note) + " <span class='sec'>· §" + c.sec + "</span></div><div class='mdslot'></div>";
+    out.appendChild(d);
+    setMd($(".mdslot", d), c.text);
+  });
+  const note = document.createElement("p");
+  note.className = "sub"; note.style.marginTop = "14px";
+  note.textContent = "Quotes are verbatim from the course study notes. For a worked explanation, bring the question to your tutor session.";
+  out.appendChild(note);
+}
+
 /* ---------- boot ---------- */
 renderDash();
 renderTopicFilters(); renderTopics();
 renderExamGrid();
 buildDeck(); renderFlashFilters(); renderFlash();
 renderQuizFilters(); renderQuiz(); renderWeak();
+$("#askBtn").onclick = renderAsk;
+$("#askInput").addEventListener("keydown", ev => { if (ev.key === "Enter") renderAsk(); });
+["balancedness conservation law", "why does uniform convergence fail for deep learning", "NTK convergence", "Telgarsky sawtooth depth separation", "PAC-Bayes bound"].forEach(sug => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "chipbtn"; b.textContent = sug;
+  b.onclick = () => { $("#askInput").value = sug; renderAsk(); };
+  $("#askSuggest").appendChild(b);
+});
 const start = (location.hash || "#dash").slice(1);
 show(VIEWS.some(v => v[0] === start) ? start : "dash");
 </script>

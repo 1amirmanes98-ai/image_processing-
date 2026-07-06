@@ -135,8 +135,49 @@ def parse_lecture(path: Path) -> dict:
     return {"name": name, "title": title, "pillar": pillar, "cards": cards}
 
 
-def parse_topics(path: Path) -> list:
-    """Parse TOPICS.md pillar tables into topic rows."""
+def read_note(path: Path, kind: str) -> dict:
+    """Read a full index note (lecture/recitation/homework) into titled sections."""
+    text = path.read_text(encoding="utf-8")
+    title = text.splitlines()[0].lstrip("# ").strip()
+    pm = re.search(r"\*\*Pillar:\*\*\s*([A-Za-z/ ]+)", text)
+    head = text.split("\n## ", 1)[0]
+    intro = "\n".join(l for l in head.splitlines()[1:] if l.strip())
+    sections = [{"h": "About", "b": intro}] if intro else []
+    for m in re.finditer(r"\n## +(.+?)\n(.*?)(?=\n## |\Z)", text, re.DOTALL):
+        sections.append({"h": m.group(1).strip(), "b": m.group(2).strip()})
+    return {"name": path.stem, "kind": kind, "title": title,
+            "pillar": canon_pillar(pm.group(1) if pm else ""), "sections": sections}
+
+
+def resolve_refs(taught: str, note_names: list) -> list:
+    """Map the free-text 'taught in' column to actual note file names."""
+    refs, low = [], taught.lower()
+    for name in note_names:
+        short = name.replace("fodl_recitation_", "").replace("hw_", "")
+        if name.startswith("lecture_"):
+            # match "lecture_02" style short refs
+            if re.search(name[:10] + r"\b", low) or name in low:
+                refs.append(name)
+        elif name.startswith("hw_"):
+            if name in low:
+                refs.append(name)
+        elif ("recitation " + short in low or "recitation_" + short in low
+              or name in low or (name in ("recap", "dl_standard_practices") and name in low)):
+            refs.append(name)
+    return refs
+
+
+def parse_exam_refs(examined: str) -> list:
+    """Parse 'a2020_Q1, example_Q3' style refs into [examId, qnum] pairs."""
+    out = []
+    for m in re.finditer(r"\b(?:([abc])(\d{4})|example)[_ ]?Q(\d)", examined):
+        exam_id = f"{m.group(1)}_{m.group(2)}" if m.group(1) else "example"
+        out.append([exam_id, int(m.group(3))])
+    return out
+
+
+def parse_topics(path: Path, note_names: list) -> list:
+    """Parse TOPICS.md pillar tables into topic rows with machine-readable refs."""
     text = path.read_text(encoding="utf-8")
     out = []
     for pm in re.finditer(r"\n## Pillar \d+ — (\w+).*?\n(.*?)(?=\n## |\Z)", text, re.DOTALL):
@@ -148,6 +189,8 @@ def parse_topics(path: Path) -> list:
                 continue
             out.append({"pillar": pillar, "topic": topic, "taught": taught,
                         "examined": examined,
+                        "taught_refs": resolve_refs(taught, note_names),
+                        "exam_refs": parse_exam_refs(examined),
                         "priority": {"🔴": "core", "🟠": "frequent", "🟡": "seen"}[prio]})
     return out
 
@@ -236,11 +279,14 @@ def main():
                    key=lambda e: e["id"]) if gen_dir.exists() else []
     lectures = [parse_lecture(p) for p in sorted((index_dir / "lectures").glob("*.md"))]
     cards = [c for l in lectures for c in l["cards"]]
-    topics = parse_topics(index_dir / "TOPICS.md")
+    notes = ([read_note(p, "lecture") for p in sorted((index_dir / "lectures").glob("*.md"))]
+             + [read_note(p, "recitation") for p in sorted((index_dir / "recitations").glob("*.md"))]
+             + [read_note(p, "homework") for p in sorted((index_dir / "homework").glob("*.md"))])
+    topics = parse_topics(index_dir / "TOPICS.md", [n["name"] for n in notes])
     archetypes = parse_archetypes(index_dir / "EXAM_MAP.md")
 
     data = {"exams": exams, "mocks": mocks, "cards": cards, "topics": topics,
-            "archetypes": archetypes,
+            "archetypes": archetypes, "notes": notes,
             "lectures": [{"name": l["name"], "title": l["title"], "pillar": l["pillar"],
                           "n_cards": len(l["cards"])} for l in lectures]}
 
@@ -259,10 +305,13 @@ def main():
         html = html.replace(k, v)
     out_p.write_text(html, encoding="utf-8")
     n_q = sum(len(e["questions"]) for e in exams)
+    n_refs = sum(len(t["taught_refs"]) for t in topics)
+    n_erefs = sum(len(t["exam_refs"]) for t in topics)
     print(f"exams={len(exams)} mocks={len(mocks)} "
           f"mock_questions={sum(len(m['questions']) for m in mocks)} "
           f"questions={n_q} cards={len(cards)} "
-          f"topics={len(topics)} archetypes={len(archetypes)} "
+          f"topics={len(topics)} taught_refs={n_refs} exam_refs={n_erefs} "
+          f"notes={len(notes)} archetypes={len(archetypes)} "
           f"out={out_p} ({out_p.stat().st_size//1024} KB)")
 
 
