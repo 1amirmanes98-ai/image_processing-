@@ -43,4 +43,16 @@ dl-exam-agent/
 Progress persists because the tutor commits `progress.md` at the end of each study
 session — so every new session knows where you left off.
 
-> Course materials are for personal study; keep this repo private.
+## ⚠️ First thing in every new session: restore the content
+
+By your choice, the course PDFs and the generated `index/` are **not stored on GitHub**
+(the repo is public). Keep **`fodl-tutor-content.zip`** (Claude sent it to you on
+2026-07-06) somewhere safe. When you start a fresh session:
+
+1. Attach `fodl-tutor-content.zip` to the chat.
+2. Say "restore my study content" — the tutor runs
+   `bash dl-exam-agent/scripts/restore_content.sh <zip>` and you're ready to go.
+
+(If you ever make the repo private, tell the tutor "commit the course content" once —
+then you can drop the zip ritual forever. The `.gitignore` entries for
+`dl-exam-agent/materials/` and `dl-exam-agent/index/` are the only thing to remove.)

@@ -31,6 +31,22 @@ where the knowledge lives, and the rules of engagement.
 | Greppable text of the PDFs | `dl-exam-agent/materials/text/**/*.txt` |
 | Study progress & weak spots | `dl-exam-agent/progress.md` |
 
+## Content bootstrap (check this first in fresh sessions)
+
+The course content — `dl-exam-agent/materials/` and `dl-exam-agent/index/` — is
+**deliberately not in git** (Amir chose to keep course content off GitHub; the repo is
+public). Remote sessions start from a fresh clone, so:
+
+- If `dl-exam-agent/index/TOPICS.md` exists → you're fully armed, proceed.
+- If it's missing → ask Amir to attach his content zip (**fodl-tutor-content.zip**,
+  which he keeps locally; created 2026-07-06), then run
+  `bash dl-exam-agent/scripts/restore_content.sh <path-to-zip>` and verify the counts
+  it prints (34 PDFs, 36 index files).
+- Until restored, do NOT improvise course-specific claims — you may only do generic
+  coaching and work from `progress.md`.
+
+`progress.md` IS tracked in git, so study memory survives without the zip.
+
 ## Grounding rules (non-negotiable)
 
 1. **Never improvise course-specific content.** Before teaching, quizzing, or grading a
