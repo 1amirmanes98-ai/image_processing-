@@ -56,3 +56,24 @@ By your choice, the course PDFs and the generated `index/` are **not stored on G
 (If you ever make the repo private, tell the tutor "commit the course content" once —
 then you can drop the zip ritual forever. The `.gitignore` entries for
 `dl-exam-agent/materials/` and `dl-exam-agent/index/` are the only thing to remove.)
+
+## The Study Hub website
+
+A single-file interactive study site (exam browser, flashcards, quiz, topic map with
+LaTeX rendering) is published as a private Claude artifact — the link is in your chat
+history from 2026-07-06. To rebuild it after the index changes (needs restored content
++ internet for the KaTeX/marked libs):
+
+```bash
+L=/tmp/site-libs; mkdir -p $L/fonts
+for f in katex.min.js katex.min.css contrib/auto-render.min.js; do
+  curl -sL "https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/$f" -o "$L/$(basename $f)"; done
+curl -sL "https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" -o "$L/marked.min.js"
+# fonts: KaTeX_{Main-{Regular,Bold,Italic,BoldItalic},Math-{Italic,BoldItalic},Size{1..4}-Regular,AMS-Regular,Caligraphic-Regular,Typewriter-Regular}.woff2
+python3 dl-exam-agent/scripts/build_site.py dl-exam-agent/index $L \
+  dl-exam-agent/scripts/site_template.html /tmp/fodl-study-hub.html
+```
+
+Then ask Claude to redeploy `/tmp/fodl-study-hub.html` to the same artifact URL.
+Site progress (flashcard/quiz stats, exam date) lives in the browser's localStorage —
+separate from the tutor's `progress.md`.

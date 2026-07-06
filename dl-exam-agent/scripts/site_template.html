@@ -1,0 +1,631 @@
+<title>FODL Study Hub</title>
+<style>
+__KATEX_CSS__
+</style>
+<style>
+:root{
+  --bg:#F5F6FA; --surface:#FFFFFF; --surface2:#ECEEF3; --ink:#1C2130; --muted:#5B6377;
+  --line:#DCDFE9; --shadow:0 1px 2px rgba(28,33,48,.06),0 4px 14px rgba(28,33,48,.05);
+  --exp:#6D5AE6; --opt:#0E9888; --gen:#C8720D; --prac:#5B6377;
+  --good:#2E8B57; --bad:#C43D3D;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#12151F; --surface:#1A1E2C; --surface2:#242A3C; --ink:#E8EAF2; --muted:#9AA1B8;
+    --line:#2E3448; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+    --exp:#9B8CFF; --opt:#2FBFAE; --gen:#E89A3C; --prac:#9AA1B8;
+    --good:#4CAF7D; --bad:#E06A6A;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12151F; --surface:#1A1E2C; --surface2:#242A3C; --ink:#E8EAF2; --muted:#9AA1B8;
+  --line:#2E3448; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
+  --exp:#9B8CFF; --opt:#2FBFAE; --gen:#E89A3C; --prac:#9AA1B8;
+  --good:#4CAF7D; --bad:#E06A6A;
+}
+:root[data-theme="light"]{
+  --bg:#F5F6FA; --surface:#FFFFFF; --surface2:#ECEEF3; --ink:#1C2130; --muted:#5B6377;
+  --line:#DCDFE9; --shadow:0 1px 2px rgba(28,33,48,.06),0 4px 14px rgba(28,33,48,.05);
+  --exp:#6D5AE6; --opt:#0E9888; --gen:#C8720D; --prac:#5B6377;
+  --good:#2E8B57; --bad:#C43D3D;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15.5px;line-height:1.55}
+.app{display:grid;grid-template-columns:216px 1fr;min-height:100vh}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+
+/* ---------- nav ---------- */
+.rail{border-right:1px solid var(--line);padding:22px 14px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+.brand{font-family:var(--serif);font-size:1.25rem;font-weight:700;letter-spacing:.01em;padding:0 10px 4px}
+.brand small{display:block;font-family:var(--sans);font-weight:500;font-size:.68rem;color:var(--muted);letter-spacing:.09em;text-transform:uppercase;margin-top:2px}
+.rail nav{display:flex;flex-direction:column;gap:2px;margin-top:14px}
+.navbtn{display:flex;align-items:center;gap:10px;padding:9px 10px;border:0;background:none;border-radius:8px;color:var(--muted);text-align:left;font-weight:550}
+.navbtn svg{flex:0 0 auto}
+.navbtn:hover{background:var(--surface2)}
+.navbtn.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.navbtn:focus-visible,.chipbtn:focus-visible,button:focus-visible{outline:2px solid var(--exp);outline-offset:2px}
+.rail .spacer{flex:1}
+.themebtn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:7px 10px;color:var(--muted);font-size:.85rem}
+
+/* ---------- main ---------- */
+main{padding:30px clamp(16px,4vw,44px) 90px;max-width:980px;width:100%;margin:0 auto}
+section{display:none}
+section.on{display:block}
+h1{font-family:var(--serif);font-size:1.7rem;margin:0 0 4px;text-wrap:balance}
+h2{font-family:var(--serif);font-size:1.22rem;margin:30px 0 12px}
+.sub{color:var(--muted);margin:0 0 22px;max-width:62ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+
+/* pillar coloring */
+.p-Expressiveness{--pc:var(--exp)}
+.p-Optimization{--pc:var(--opt)}
+.p-Generalization{--pc:var(--gen)}
+.p-Practices{--pc:var(--prac)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--pc);background:color-mix(in srgb,var(--pc) 12%,transparent);border-radius:999px;padding:3px 10px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--pc);flex:0 0 auto}
+.chip{display:inline-block;font-family:var(--mono);font-size:.72rem;color:var(--muted);background:var(--surface2);border-radius:6px;padding:2px 7px;margin:2px 3px 2px 0}
+.pts{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--muted)}
+
+/* ---------- dashboard ---------- */
+.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.pillarcard{padding:18px;position:relative;overflow:hidden;border-top:3px solid var(--pc)}
+.pillarcard h3{font-family:var(--serif);margin:10px 0 2px;font-size:1.06rem}
+.pillarcard .role{font-size:.78rem;color:var(--muted)}
+.pillarcard .avg{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.7rem;font-weight:600;color:var(--pc);margin-top:10px}
+.pillarcard .avg small{font-size:.72rem;color:var(--muted);font-weight:400;margin-left:4px}
+.pillarcard svg{color:var(--pc);display:block}
+.tmplbar{display:flex;height:14px;border-radius:7px;overflow:hidden;margin:16px 0 6px}
+.tmplbar div{height:100%}
+.legendrow{display:flex;gap:16px;flex-wrap:wrap;font-size:.8rem;color:var(--muted)}
+.legendrow b{color:var(--ink);font-weight:600}
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px}
+.stat{padding:14px 16px}
+.stat .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:600}
+.stat .k{font-size:.76rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.arch{padding:12px 16px;display:flex;gap:12px;align-items:baseline;border-bottom:1px solid var(--line)}
+.arch:last-child{border-bottom:0}
+.arch .n{font-family:var(--mono);color:var(--muted);font-size:.8rem;flex:0 0 1.4em}
+.arch .freq{margin-left:auto;white-space:nowrap;flex:0 0 auto;letter-spacing:2px;color:var(--pc);font-size:.72rem}
+.datebox{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.datebox input{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
+.count{font-family:var(--serif);font-size:1.05rem}
+.count b{font-size:1.5rem}
+
+/* ---------- topics ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 18px}
+.chipbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;font-size:.85rem;color:var(--muted)}
+.chipbtn.on{border-color:var(--pc,var(--ink));color:var(--pc,var(--ink));background:color-mix(in srgb,var(--pc,var(--ink)) 10%,transparent);font-weight:600}
+.topicrow{padding:14px 16px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr;gap:4px 14px}
+.topicrow:last-child{border-bottom:0}
+.topicrow .t{font-weight:600;grid-column:2}
+.topicrow .meta{grid-column:2;font-size:.8rem;color:var(--muted)}
+.topicrow .stripe{grid-column:1;grid-row:1/span 2;width:4px;border-radius:2px;background:var(--pc)}
+.prio{font-size:.68rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:5px;padding:2px 7px;margin-left:8px;vertical-align:1px}
+.prio.core{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.prio.frequent{background:color-mix(in srgb,var(--gen) 16%,transparent);color:var(--gen)}
+.prio.seen{background:var(--surface2);color:var(--muted)}
+
+/* ---------- exams ---------- */
+.examgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:16px}
+.examcard{padding:16px;text-align:left;border:1px solid var(--line);background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow)}
+.examcard:hover{border-color:var(--muted)}
+.examcard h3{margin:0 0 8px;font-family:var(--serif);font-size:1.02rem}
+.examcard .qrow{display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--muted);padding:2px 0}
+.qcard{margin-top:16px;overflow:hidden}
+.qhead{padding:16px 18px;border-left:4px solid var(--pc);display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.qhead h3{font-family:var(--serif);margin:0;font-size:1.05rem;flex:1 1 300px}
+.qbody{padding:4px 18px 16px;border-top:1px solid var(--line);overflow-x:auto}
+.qbody .katex-display{margin:.7em 0}
+details.sketch{margin:0 18px 16px;border:1px dashed var(--line);border-radius:8px}
+details.sketch summary{cursor:pointer;padding:10px 14px;font-weight:600;color:var(--pc);list-style:none}
+details.sketch summary::before{content:"▸ ";font-size:.8em}
+details.sketch[open] summary::before{content:"▾ "}
+details.sketch .inner{padding:0 16px 12px;overflow-x:auto}
+.diff{letter-spacing:2px;font-size:.72rem;color:var(--pc)}
+.backbtn{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 12px;font-size:.85rem;color:var(--muted);margin-bottom:14px}
+
+/* ---------- flashcards & quiz ---------- */
+.deckmeta{display:flex;gap:14px;align-items:center;color:var(--muted);font-size:.85rem;margin:10px 0;flex-wrap:wrap}
+.bigcard{padding:26px clamp(16px,4vw,36px);min-height:230px;display:flex;flex-direction:column;gap:14px;border-top:3px solid var(--pc)}
+.bigcard .front{font-family:var(--serif);font-size:1.2rem;text-wrap:balance}
+.bigcard .back{border-top:1px solid var(--line);padding-top:14px;overflow-x:auto}
+.bigcard .src{font-size:.76rem;color:var(--muted);margin-top:auto}
+.actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:9px;padding:9px 16px;font-weight:600;box-shadow:var(--shadow)}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.miss{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 45%,transparent)}
+.btn.half{color:var(--gen);border-color:color-mix(in srgb,var(--gen) 45%,transparent)}
+.btn.got{color:var(--good);border-color:color-mix(in srgb,var(--good) 45%,transparent)}
+.progressbar{height:6px;border-radius:3px;background:var(--surface2);overflow:hidden;margin:8px 0}
+.progressbar div{height:100%;background:var(--pc,var(--ink));transition:width .25s}
+@media (prefers-reduced-motion: reduce){.progressbar div{transition:none}}
+.quizmeta{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--muted)}
+.weakrow{display:flex;justify-content:space-between;padding:8px 16px;border-bottom:1px solid var(--line);font-size:.9rem}
+.weakrow:last-child{border-bottom:0}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+
+/* markdown inside cards */
+.md p{margin:.5em 0}
+.md ul,.md ol{margin:.4em 0;padding-left:1.4em}
+.md li{margin:.25em 0}
+.md strong{font-weight:650}
+.md code{font-family:var(--mono);font-size:.85em;background:var(--surface2);border-radius:4px;padding:1px 4px}
+
+/* ---------- responsive ---------- */
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .rail{position:fixed;bottom:0;left:0;right:0;top:auto;height:auto;flex-direction:row;align-items:center;padding:6px 8px;border-right:0;border-top:1px solid var(--line);background:var(--surface);z-index:50}
+  .brand,.rail .spacer{display:none}
+  .rail nav{flex-direction:row;margin:0;flex:1;justify-content:space-around}
+  .navbtn{flex-direction:column;gap:3px;font-size:.62rem;padding:6px 8px}
+  .themebtn{font-size:.7rem;padding:6px}
+  .hero{grid-template-columns:1fr}
+  main{padding-bottom:120px}
+}
+</style>
+
+<div class="app">
+  <aside class="rail">
+    <div class="brand">FODL<br>Study Hub<small>יסודות הלמידה העמוקה</small></div>
+    <nav id="nav"></nav>
+    <div class="spacer"></div>
+    <button class="themebtn" id="themeToggle" type="button">◐ Theme</button>
+  </aside>
+  <main>
+    <section id="view-dash">
+      <h1>The exam has a shape. Learn the shape.</h1>
+      <p class="sub">Every FODL exam from 2020–2024 follows the same three-question template. This hub is built from your course's 9 lectures and all 12 past exams — translated, tagged, and drillable.</p>
+      <div class="card" style="padding:18px 20px">
+        <div class="datebox">
+          <span class="count" id="daysLeft"></span>
+          <span style="flex:1"></span>
+          <label for="examDate" style="font-size:.85rem;color:var(--muted)">Exam date</label>
+          <input type="date" id="examDate">
+        </div>
+      </div>
+      <div class="hero" id="pillarCards"></div>
+      <h2>One exam, three slots — average points per question</h2>
+      <div class="card" style="padding:18px 20px">
+        <div class="tmplbar" id="tmplBar"></div>
+        <div class="legendrow" id="tmplLegend"></div>
+      </div>
+      <h2>Recurring question archetypes <span class="pts">(drill these — they repeat across years)</span></h2>
+      <div class="card" id="archList"></div>
+      <h2>Your progress <span class="pts">(saved in this browser)</span></h2>
+      <div class="statrow" id="statRow"></div>
+    </section>
+
+    <section id="view-topics">
+      <h1>Topic map</h1>
+      <p class="sub">Every syllabus topic, where it's taught, and every exam question that tested it. Priorities reflect how often the graders actually ask.</p>
+      <div class="filters" id="topicFilters"></div>
+      <div class="card" id="topicList"></div>
+    </section>
+
+    <section id="view-exams">
+      <h1>Past exams, 2020–2024</h1>
+      <p class="sub">All 12 exams translated to English with per-question topic tags and collapsible solution sketches. Colors mark the pillar of each question.</p>
+      <div id="examHome"><div class="examgrid" id="examGrid"></div></div>
+      <div id="examDetail" style="display:none"></div>
+    </section>
+
+    <section id="view-flash">
+      <h1>Flashcards</h1>
+      <p class="sub">Definitions and theorems extracted from the lecture notes. The real exam allows no formula sheet — exact statements, with all conditions, are the bar.</p>
+      <div class="filters" id="flashFilters"></div>
+      <div class="deckmeta" id="deckMeta"></div>
+      <div class="progressbar"><div id="flashProg" style="width:0%"></div></div>
+      <div id="flashArea"></div>
+    </section>
+
+    <section id="view-quiz">
+      <h1>Quiz — real exam questions</h1>
+      <p class="sub">A random past-exam question. Solve it on paper like the real thing, then reveal the sketch and grade yourself honestly.</p>
+      <div class="filters" id="quizFilters"></div>
+      <div id="quizArea"></div>
+      <h2>Weak spots <span class="pts">(from your self-grades)</span></h2>
+      <div class="card" id="weakList"><div class="empty">Answer a few questions and your weak topics will show up here.</div></div>
+    </section>
+  </main>
+</div>
+
+<script id="data" type="application/json">__DATA__</script>
+<script>__MARKED_JS__</script>
+<script>__KATEX_JS__</script>
+<script>__AUTORENDER_JS__</script>
+<script>
+"use strict";
+const DATA = JSON.parse(document.getElementById("data").textContent);
+const $ = (s, el) => (el || document).querySelector(s);
+const PILLARS = ["Expressiveness", "Optimization", "Generalization"];
+const ICONS = {
+  dash: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1"/><rect x="9" y="9" width="5.5" height="5.5" rx="1"/></svg>',
+  topics: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="5" cy="12.5" r="2"/><path d="M5.8 5.2 10.2 7M6.6 11.5l3.6-2.2"/></svg>',
+  exams: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2.5" y="1.5" width="11" height="13" rx="1.5"/><path d="M5 5h6M5 8h6M5 11h3.5"/></svg>',
+  flash: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="4" width="10" height="8" rx="1.5"/><path d="M4.5 2h10v8"/></svg>',
+  quiz: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6.5"/><path d="M6 6.2c.2-1 1-1.7 2-1.7 1.1 0 2 .8 2 1.8 0 1.4-2 1.5-2 2.9"/><circle cx="8" cy="11.6" r=".4" fill="currentColor"/></svg>'
+};
+const ILLOS = {
+  Expressiveness: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polyline points="2,30 12,4 22,30 32,4 42,30 52,4 62,30 70,12"/></svg>',
+  Optimization: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4 C 22 6, 26 24, 46 28 S 66 30, 70 30"/><circle cx="63" cy="29.4" r="3.4" fill="currentColor" stroke="none"/></svg>',
+  Generalization: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6 C 24 8, 40 22, 70 24"/><path d="M2 32 C 24 30, 40 26, 70 25" stroke-dasharray="4 3"/></svg>'
+};
+const PILLAR_ROLE = {
+  Expressiveness: "Q1 · what can the network represent",
+  Optimization: "Q2 · gradient flow gets you there",
+  Generalization: "Q3 · why it works on unseen data"
+};
+
+/* ---------- storage ---------- */
+const store = {
+  data: JSON.parse(localStorage.getItem("fodlhub-v1") || "{}"),
+  save() { localStorage.setItem("fodlhub-v1", JSON.stringify(this.data)); }
+};
+store.data.cards = store.data.cards || {};
+store.data.quiz = store.data.quiz || [];
+
+/* ---------- markdown + math ---------- */
+function md(src) {
+  if (!src) return "";
+  const stash = [];
+  let s = src.replace(/\$\$[\s\S]+?\$\$/g, m => (stash.push(m), "" + (stash.length - 1) + ""));
+  s = s.replace(/\$[^\n$]+?\$/g, m => (stash.push(m), "" + (stash.length - 1) + ""));
+  let html = marked.parse(s);
+  html = html.replace(/(\d+)/g, (_, i) => stash[+i]
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+  return html;
+}
+function mathify(el) {
+  renderMathInElement(el, {
+    delimiters: [
+      { left: "$$", right: "$$", display: true },
+      { left: "$", right: "$", display: false },
+      { left: "\\(", right: "\\)", display: false },
+      { left: "\\[", right: "\\]", display: true }
+    ],
+    throwOnError: false
+  });
+}
+function setMd(el, src) { el.innerHTML = md(src); el.classList.add("md"); mathify(el); }
+
+/* ---------- nav ---------- */
+const VIEWS = [["dash", "Overview"], ["topics", "Topics"], ["exams", "Exams"], ["flash", "Flashcards"], ["quiz", "Quiz"]];
+const nav = $("#nav");
+VIEWS.forEach(([id, label]) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.className = "navbtn"; b.dataset.v = id;
+  b.innerHTML = ICONS[id] + "<span>" + label + "</span>";
+  b.onclick = () => show(id);
+  nav.appendChild(b);
+});
+function show(id) {
+  document.querySelectorAll("main section").forEach(s => s.classList.toggle("on", s.id === "view-" + id));
+  document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("on", b.dataset.v === id));
+  if (location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
+}
+
+/* ---------- theme ---------- */
+$("#themeToggle").onclick = () => {
+  const cur = document.documentElement.dataset.theme ||
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  const next = cur === "dark" ? "light" : "dark";
+  document.documentElement.dataset.theme = next;
+  store.data.theme = next; store.save();
+};
+if (store.data.theme) document.documentElement.dataset.theme = store.data.theme;
+
+/* ---------- dashboard ---------- */
+function slotAverages() {
+  const sums = {}, counts = {};
+  DATA.exams.forEach(e => e.questions.forEach(q => {
+    sums[q.pillar] = (sums[q.pillar] || 0) + q.pts;
+    counts[q.pillar] = (counts[q.pillar] || 0) + 1;
+  }));
+  return PILLARS.map(p => ({ pillar: p, avg: sums[p] ? Math.round(sums[p] / counts[p]) : 0, n: counts[p] || 0 }));
+}
+function renderDash() {
+  const avgs = slotAverages();
+  const pc = $("#pillarCards"); pc.innerHTML = "";
+  avgs.forEach(({ pillar, avg, n }) => {
+    const d = document.createElement("div");
+    d.className = "card pillarcard p-" + pillar;
+    d.innerHTML = ILLOS[pillar] +
+      "<h3>" + pillar + "</h3><div class='role'>" + PILLAR_ROLE[pillar] + "</div>" +
+      "<div class='avg'>" + avg + "<small>avg pts · " + n + " past questions</small></div>";
+    pc.appendChild(d);
+  });
+  const total = avgs.reduce((a, b) => a + b.avg, 0);
+  const bar = $("#tmplBar"); bar.innerHTML = "";
+  const leg = $("#tmplLegend"); leg.innerHTML = "";
+  avgs.forEach(({ pillar, avg }) => {
+    const seg = document.createElement("div");
+    seg.style.width = (100 * avg / total) + "%";
+    seg.className = "p-" + pillar; seg.style.background = "var(--pc)";
+    bar.appendChild(seg);
+    const l = document.createElement("span");
+    l.className = "p-" + pillar;
+    l.innerHTML = "<span class='dot' style='display:inline-block;vertical-align:-1px;margin-right:5px'></span><b>" + pillar + "</b> ≈" + avg + " pts";
+    leg.appendChild(l);
+  });
+  const al = $("#archList"); al.innerHTML = "";
+  DATA.archetypes.forEach((a, i) => {
+    const row = document.createElement("div");
+    const pillar = i < 4 ? "Expressiveness" : i < 8 ? "Optimization" : "Generalization";
+    row.className = "arch p-" + pillar;
+    row.innerHTML = "<span class='n'>" + (i + 1) + "</span><span class='mdslot'></span>" +
+      "<span class='freq'>" + "●".repeat(Math.max(1, a.count)) + "</span>";
+    al.appendChild(row);
+    setMd($(".mdslot", row), a.desc);
+  });
+  renderStats();
+  const input = $("#examDate");
+  input.value = store.data.examDate || "";
+  input.onchange = () => { store.data.examDate = input.value; store.save(); renderCountdown(); };
+  renderCountdown();
+}
+function renderCountdown() {
+  const el = $("#daysLeft");
+  if (!store.data.examDate) { el.textContent = "Set your exam date →"; return; }
+  const days = Math.ceil((new Date(store.data.examDate) - Date.now()) / 864e5);
+  el.innerHTML = days >= 0 ? "<b>" + days + "</b> days to the exam" : "Exam date passed — update it →";
+}
+function renderStats() {
+  const cardStats = Object.values(store.data.cards);
+  const mastered = cardStats.filter(c => c.last === "got").length;
+  const struggling = cardStats.filter(c => c.last === "miss").length;
+  const attempts = store.data.quiz.length;
+  const good = store.data.quiz.filter(q => q.grade === "got").length;
+  const rows = [
+    [DATA.cards.length, "flashcards in deck"],
+    [mastered, "cards mastered"],
+    [struggling, "cards to revisit"],
+    [attempts ? Math.round(100 * good / attempts) + "%" : "—", "quiz self-grade (" + attempts + " answered)"]
+  ];
+  const sr = $("#statRow"); sr.innerHTML = "";
+  rows.forEach(([v, k]) => {
+    const d = document.createElement("div");
+    d.className = "card stat";
+    d.innerHTML = "<div class='v'>" + v + "</div><div class='k'>" + k + "</div>";
+    sr.appendChild(d);
+  });
+}
+
+/* ---------- topics ---------- */
+let topicPillar = "Expressiveness";
+function renderTopicFilters() {
+  const f = $("#topicFilters"); f.innerHTML = "";
+  PILLARS.forEach(p => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chipbtn p-" + p + (topicPillar === p ? " on" : "");
+    b.textContent = p;
+    b.onclick = () => { topicPillar = p; renderTopicFilters(); renderTopics(); };
+    f.appendChild(b);
+  });
+}
+function renderTopics() {
+  const list = $("#topicList"); list.innerHTML = "";
+  const rows = DATA.topics.filter(t => t.pillar === topicPillar);
+  if (!rows.length) { list.innerHTML = "<div class='empty'>No topics parsed for this pillar.</div>"; return; }
+  rows.forEach(t => {
+    const d = document.createElement("div");
+    d.className = "topicrow p-" + t.pillar;
+    d.innerHTML = "<div class='stripe'></div><div class='t mdslot'></div>" +
+      "<div class='meta'>Taught: " + t.taught + " · Examined: " + t.examined + "</div>";
+    list.appendChild(d);
+    const slot = $(".mdslot", d);
+    setMd(slot, t.topic);
+    const badge = document.createElement("span");
+    badge.className = "prio " + t.priority;
+    badge.textContent = t.priority === "core" ? "core — every exam" : t.priority === "frequent" ? "frequent" : "appeared";
+    (slot.firstElementChild || slot).appendChild(badge);
+  });
+}
+
+/* ---------- exams ---------- */
+function examLabel(e) {
+  const parts = e.id.split("_");
+  return parts.length === 2 ? "Moed " + parts[0].toUpperCase() + " · " + parts[1] : "Example exam";
+}
+function renderExamGrid() {
+  const g = $("#examGrid"); g.innerHTML = "";
+  [...DATA.exams].sort((a, b) => (b.id.split("_")[1] || "0").localeCompare(a.id.split("_")[1] || "0") || a.id.localeCompare(b.id))
+    .forEach(e => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "examcard";
+      b.innerHTML = "<h3>" + examLabel(e) + "</h3>" +
+        e.questions.map(q =>
+          "<div class='qrow p-" + q.pillar + "'><span class='dot'></span>Q" + q.n + " · " + q.pillar +
+          "<span style='margin-left:auto' class='pts'>" + q.pts + " pts</span></div>").join("") +
+        "<div class='pts' style='margin-top:8px'>" + (e.total || "?") + " pts total</div>";
+      b.onclick = () => renderExamDetail(e);
+      g.appendChild(b);
+    });
+}
+function renderExamDetail(e) {
+  $("#examHome").style.display = "none";
+  const det = $("#examDetail"); det.style.display = "block"; det.innerHTML = "";
+  const back = document.createElement("button");
+  back.type = "button"; back.className = "backbtn"; back.textContent = "← All exams";
+  back.onclick = () => { det.style.display = "none"; $("#examHome").style.display = "block"; };
+  det.appendChild(back);
+  const h = document.createElement("h1"); h.textContent = examLabel(e); det.appendChild(h);
+  const sub = document.createElement("p"); sub.className = "sub";
+  sub.textContent = (e.date || "") + (e.total ? " · " + e.total + " points · 3 hours · no aid material" : "");
+  det.appendChild(sub);
+  e.questions.forEach(q => {
+    const c = document.createElement("div");
+    c.className = "card qcard p-" + q.pillar;
+    c.innerHTML =
+      "<div class='qhead'><h3>Q" + q.n + " · " + q.title + "</h3>" +
+      "<span class='pill'><span class='dot'></span>" + q.pillar + "</span>" +
+      "<span class='pts'>" + q.pts + " pts</span>" +
+      "<span class='diff' title='difficulty'>" + "●".repeat(q.difficulty) + "○".repeat(Math.max(0, 5 - q.difficulty)) + "</span></div>" +
+      "<div style='padding:8px 18px 0'>" + q.topics.map(t => "<span class='chip'>" + t + "</span>").join("") + "</div>" +
+      "<div class='qbody mdslot'></div>" +
+      "<details class='sketch'><summary>Solution sketch — try it yourself first</summary><div class='inner sketchslot'></div></details>";
+    det.appendChild(c);
+    setMd($(".mdslot", c), q.statement);
+    setMd($(".sketchslot", c), q.sketch);
+  });
+  det.scrollIntoView({ behavior: "auto", block: "start" });
+}
+
+/* ---------- flashcards ---------- */
+let flashPillar = "Expressiveness", flashKind = "all", deck = [], deckPos = 0, revealed = false;
+function cardId(c) { return c.lecture + "::" + c.front.slice(0, 60); }
+function buildDeck() {
+  deck = DATA.cards.filter(c => c.pillar === flashPillar && (flashKind === "all" || c.kind === flashKind));
+  const rank = c => { const s = store.data.cards[cardId(c)]; return !s ? 1 : s.last === "miss" ? 0 : s.last === "half" ? 2 : 3; };
+  deck.sort((a, b) => rank(a) - rank(b) || Math.random() - 0.5);
+  deckPos = 0; revealed = false;
+}
+function renderFlashFilters() {
+  const f = $("#flashFilters"); f.innerHTML = "";
+  PILLARS.forEach(p => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chipbtn p-" + p + (flashPillar === p ? " on" : "");
+    b.textContent = p + " (" + DATA.cards.filter(c => c.pillar === p).length + ")";
+    b.onclick = () => { flashPillar = p; buildDeck(); renderFlashFilters(); renderFlash(); };
+    f.appendChild(b);
+  });
+  [["all", "All"], ["def", "Definitions"], ["thm", "Theorems"]].forEach(([k, label]) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chipbtn" + (flashKind === k ? " on" : "");
+    b.textContent = label;
+    b.onclick = () => { flashKind = k; buildDeck(); renderFlashFilters(); renderFlash(); };
+    f.appendChild(b);
+  });
+}
+function renderFlash() {
+  const area = $("#flashArea");
+  $("#deckMeta").textContent = deck.length ? ("Card " + (deckPos + 1) + " of " + deck.length + " — misses come back first") : "";
+  $("#flashProg").style.width = deck.length ? (100 * deckPos / deck.length) + "%" : "0%";
+  $("#flashProg").parentElement.className = "progressbar p-" + flashPillar;
+  area.innerHTML = "";
+  if (!deck.length) { area.innerHTML = "<div class='card empty'>No cards match this filter.</div>"; return; }
+  if (deckPos >= deck.length) {
+    area.innerHTML = "<div class='card empty'>Deck done 🎉 — misses were logged and will lead the next run.<br><br></div>";
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn primary"; b.textContent = "Restart deck";
+    b.onclick = () => { buildDeck(); renderFlash(); };
+    area.firstElementChild.appendChild(b);
+    return;
+  }
+  const c = deck[deckPos];
+  const kindLabel = c.kind === "def" ? "State the definition, with all conditions:" : "State it precisely — assumptions included:";
+  const el = document.createElement("div");
+  el.className = "card bigcard p-" + c.pillar;
+  el.innerHTML = "<div class='pts'>" + kindLabel + "</div><div class='front mdslot'></div>" +
+    (revealed ? "<div class='back backslot'></div>" : "") +
+    "<div class='src'>" + c.lecture_title + "</div>";
+  area.appendChild(el);
+  setMd($(".mdslot", el), c.front);
+  if (revealed) setMd($(".backslot", el), c.back);
+  const act = document.createElement("div"); act.className = "actions";
+  if (!revealed) {
+    const b = document.createElement("button"); b.type = "button"; b.className = "btn primary"; b.textContent = "Reveal";
+    b.onclick = () => { revealed = true; renderFlash(); };
+    act.appendChild(b);
+  } else {
+    [["miss", "✗ Missed"], ["half", "◐ Almost"], ["got", "✓ Got it"]].forEach(([g, label]) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "btn " + g; b.textContent = label;
+      b.onclick = () => {
+        const id = cardId(c);
+        const s = store.data.cards[id] || { seen: 0 };
+        s.seen++; s.last = g; store.data.cards[id] = s; store.save();
+        deckPos++; revealed = false; renderFlash(); renderStats();
+      };
+      act.appendChild(b);
+    });
+  }
+  area.appendChild(act);
+}
+
+/* ---------- quiz ---------- */
+let quizPillar = "any", quizQ = null, quizRevealed = false;
+function pillarOfQuiz() { return quizPillar === "any" ? PILLARS[Math.floor(Math.random() * 3)] : quizPillar; }
+function pickQuiz() {
+  const done = new Set(store.data.quiz.slice(-8).map(q => q.qid));
+  const p = pillarOfQuiz();
+  const pool = [];
+  DATA.exams.forEach(e => e.questions.forEach(q => {
+    if (q.pillar === p && q.statement) pool.push({ exam: e, q, qid: e.id + "#Q" + q.n });
+  }));
+  const fresh = pool.filter(x => !done.has(x.qid));
+  const src = fresh.length ? fresh : pool;
+  quizQ = src[Math.floor(Math.random() * src.length)];
+  quizRevealed = false;
+}
+function renderQuizFilters() {
+  const f = $("#quizFilters"); f.innerHTML = "";
+  [["any", "Surprise me"], ...PILLARS.map(p => [p, p])].forEach(([k, label]) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chipbtn" + (k !== "any" ? " p-" + k : "") + (quizPillar === k ? " on" : "");
+    b.textContent = label;
+    b.onclick = () => { quizPillar = k; pickQuiz(); renderQuizFilters(); renderQuiz(); };
+    f.appendChild(b);
+  });
+}
+function renderQuiz() {
+  const area = $("#quizArea"); area.innerHTML = "";
+  if (!quizQ) pickQuiz();
+  if (!quizQ) { area.innerHTML = "<div class='card empty'>No questions available.</div>"; return; }
+  const { exam, q } = quizQ;
+  const el = document.createElement("div");
+  el.className = "card qcard p-" + q.pillar;
+  el.innerHTML =
+    "<div class='qhead'><h3>" + q.title + "</h3>" +
+    "<span class='pill'><span class='dot'></span>" + q.pillar + "</span>" +
+    "<span class='pts'>" + q.pts + " pts · " + examLabel(exam) + "</span></div>" +
+    "<div class='qbody mdslot'></div>" +
+    (quizRevealed ? "<div class='qbody sketchslot' style='border-top:1px dashed var(--line)'></div>" : "");
+  area.appendChild(el);
+  setMd($(".mdslot", el), q.statement);
+  if (quizRevealed) { const s = $(".sketchslot", el); setMd(s, "**Solution sketch**\n\n" + q.sketch); }
+  const act = document.createElement("div"); act.className = "actions";
+  if (!quizRevealed) {
+    const b1 = document.createElement("button"); b1.type = "button"; b1.className = "btn primary"; b1.textContent = "Reveal solution sketch";
+    b1.onclick = () => { quizRevealed = true; renderQuiz(); };
+    const b2 = document.createElement("button"); b2.type = "button"; b2.className = "btn"; b2.textContent = "Skip → another question";
+    b2.onclick = () => { pickQuiz(); renderQuiz(); };
+    act.append(b1, b2);
+  } else {
+    [["miss", "✗ Couldn't do it"], ["half", "◐ Partially"], ["got", "✓ Nailed it"]].forEach(([g, label]) => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "btn " + g; b.textContent = label;
+      b.onclick = () => {
+        store.data.quiz.push({ ts: Date.now(), qid: quizQ.qid, pillar: q.pillar, topics: q.topics, grade: g });
+        store.save(); pickQuiz(); renderQuiz(); renderWeak(); renderStats();
+      };
+      act.appendChild(b);
+    });
+  }
+  area.appendChild(act);
+}
+function renderWeak() {
+  const misses = {};
+  store.data.quiz.forEach(rec => {
+    if (rec.grade === "got") return;
+    (rec.topics || []).forEach(t => misses[t] = (misses[t] || 0) + (rec.grade === "miss" ? 2 : 1));
+  });
+  const rows = Object.entries(misses).sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const el = $("#weakList");
+  if (!rows.length) return;
+  el.innerHTML = rows.map(([t, n]) =>
+    "<div class='weakrow'><span class='chip'>" + t + "</span><span class='pts'>miss score " + n + "</span></div>").join("");
+}
+
+/* ---------- boot ---------- */
+renderDash();
+renderTopicFilters(); renderTopics();
+renderExamGrid();
+buildDeck(); renderFlashFilters(); renderFlash();
+renderQuizFilters(); renderQuiz(); renderWeak();
+const start = (location.hash || "#dash").slice(1);
+show(VIEWS.some(v => v[0] === start) ? start : "dash");
+</script>
