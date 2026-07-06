@@ -1,0 +1,4 @@
+# Course content stays out of git by owner's choice (public repo):
+# restore it per dl-exam-agent/README.md via scripts/restore_content.sh
+dl-exam-agent/materials/
+dl-exam-agent/index/
