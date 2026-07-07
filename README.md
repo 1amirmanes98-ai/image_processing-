@@ -13,8 +13,12 @@ figures, and full-site search): https://1amirmanes98-ai.github.io/image_processi
 
 ## 🔁 Build this for YOUR course
 
-Everything here is a reusable framework — the FODL content is just what it was fed.
-To replicate it for any other course:
+**Read [`REPLICATION.md`](REPLICATION.md) first** — it is the exact playbook with
+per-phase token budgets and the cost traps to avoid (a naive replication burns ~2M
+tokens; the playbook route costs ~400–800k). The scripts are course-agnostic: copy
+them verbatim and put all course specifics in `index/SITE_CONFIG.json`.
+
+The short version:
 
 1. **Create your own repo** (don't fork this one — you want your course, not mine).
 2. **Open a Claude Code session** on your repo ([claude.ai/code](https://claude.ai/code)),

@@ -14,20 +14,43 @@ import re
 import sys
 from pathlib import Path
 
-PILLAR_CANON = {
-    "expressiveness": "Expressiveness",
-    "optimization": "Optimization",
-    "generalization": "Generalization",
-    "practices": "Practices",
+# Course-specific values live in <index_dir>/SITE_CONFIG.json so this script and
+# the template can be copied VERBATIM to any other course. Missing file/keys fall
+# back to these FODL defaults. Internally, categories map onto four fixed "slot"
+# ids (the CSS color slots); only display names and detection keywords vary.
+DEFAULT_CONFIG = {
+    "courseName": "FODL Study Hub",
+    "courseSubtitle": "יסודות הלמידה העמוקה",
+    "heroTitle": "The exam has a shape. Learn the shape.",
+    "heroSub": ("Every FODL exam from 2020–2024 follows the same three-question "
+                "template. This hub is built from your course's 9 lectures and all "
+                "12 past exams — translated, tagged, and drillable."),
+    "examFormatLine": "3 hours · no aid material · 3 questions · ~105 points",
+    # slots: up to 4 categories, colored by the template's four color slots.
+    "slots": ["Expressiveness", "Optimization", "Generalization", "Practices"],
+    "slotKeywords": {"expressiveness": "Expressiveness", "optimization": "Optimization",
+                     "generalization": "Generalization", "practices": "Practices"},
+    "slotRoles": {"Expressiveness": "Q1 · what can the network represent",
+                  "Optimization": "Q2 · gradient flow gets you there",
+                  "Generalization": "Q3 · why it works on unseen data"},
+    # mock exams: question number -> slot
+    "mockSlotByQ": {"1": "Expressiveness", "2": "Optimization", "3": "Generalization"},
+    "askSuggestions": ["does Hoeffding appear in exam solutions?",
+                       "balancedness conservation law",
+                       "why does uniform convergence fail for deep learning",
+                       "NTK convergence", "Telgarsky sawtooth depth separation",
+                       "PAC-Bayes bound"],
+    "figures": True,  # the built-in computed figures are FODL-specific; set false elsewhere
 }
+CONFIG = dict(DEFAULT_CONFIG)
 
 
 def canon_pillar(raw: str) -> str:
     raw = (raw or "").strip().lower()
-    for k, v in PILLAR_CANON.items():
+    for k, v in CONFIG["slotKeywords"].items():
         if k in raw:
             return v
-    return "Practices"
+    return CONFIG["slots"][-1]
 
 
 def parse_exam(path: Path) -> dict:
@@ -215,7 +238,6 @@ def parse_archetypes(path: Path) -> list:
 
 MOCK_Q_RE = re.compile(r"^## Q(?:uestion)?\s*(\d+)\s*\((\d+)\s*pts?\)\s*[—-]\s*(.+)$",
                        re.MULTILINE)
-SLOT_PILLAR = {1: "Expressiveness", 2: "Optimization", 3: "Generalization"}
 
 
 def parse_mock(path: Path) -> dict:
@@ -248,7 +270,8 @@ def parse_mock(path: Path) -> dict:
         body = text[m.end():end].strip().strip("-— \n")
         exam["questions"].append({
             "n": qnum, "pts": int(m.group(2)), "title": m.group(3).strip(),
-            "topics": [], "pillar": SLOT_PILLAR.get(qnum, "Practices"),
+            "topics": [],
+            "pillar": CONFIG["mockSlotByQ"].get(str(qnum), CONFIG["slots"][-1]),
             "difficulty": 0, "maps_to": "",
             "statement": body, "sketch": solutions.get(qnum, ""),
         })
@@ -297,6 +320,9 @@ def inline_katex_css(css: str, fonts_dir: Path) -> str:
 
 def main():
     index_dir, libs_dir, template_p, out_p = (Path(a) for a in sys.argv[1:5])
+    cfg_p = index_dir / "SITE_CONFIG.json"
+    if cfg_p.exists():
+        CONFIG.update(json.loads(cfg_p.read_text(encoding="utf-8")))
     exams = sorted((parse_exam(p) for p in (index_dir / "exams").glob("*.md")),
                    key=lambda e: (e["id"].split("_")[-1], e["id"]))
     gen_dir = index_dir.parent / "generated_exams"
@@ -334,6 +360,8 @@ def main():
                  ("__KATEX_JS__", kjs),
                  ("__AUTORENDER_JS__", (libs_dir / "auto-render.min.js").read_text(encoding="utf-8")),
                  ("__MARKED_JS__", (libs_dir / "marked.min.js").read_text(encoding="utf-8")),
+                 ("__CONFIG__", json.dumps(CONFIG, ensure_ascii=False).replace("</", "<\\/")),
+                 ("__COURSE_NAME__", CONFIG["courseName"]),
                  ("__DATA__", payload)):
         assert k in html, f"placeholder {k} missing from template"
         html = html.replace(k, v)
