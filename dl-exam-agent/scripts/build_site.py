@@ -255,6 +255,32 @@ def parse_mock(path: Path) -> dict:
     return exam
 
 
+def parse_cheatsheet(path: Path):
+    """Parse CHEATSHEET.md (### items with **Statement/Use it when/Seen in/Watch out**)."""
+    if not path.exists():
+        return None
+    text = path.read_text(encoding="utf-8")
+    head = text.split("\n## ", 1)[0].splitlines()
+    out = {"title": head[0].lstrip("# ").strip(),
+           "intro": " ".join(l.strip() for l in head[1:] if l.strip()), "sections": []}
+    for m in re.finditer(r"\n## +(.+?)\n(.*?)(?=\n## |\Z)", text, re.DOTALL):
+        sec = {"name": m.group(1).strip(), "items": []}
+        body = m.group(2)
+        for im in re.finditer(r"\n### +(.+?)\n(.*?)(?=\n### |\Z)", "\n" + body, re.DOTALL):
+            item = {"name": im.group(1).strip()}
+            for key, field in (("Statement", "statement"), ("Use it when", "use"),
+                               ("Seen in", "seen"), ("Watch out", "watch")):
+                km = re.search(r"\*\*" + key + r":\*\*\s*(.*?)(?=\n\*\*[A-Z]|\Z)",
+                               im.group(2), re.DOTALL)
+                if km:
+                    item[field] = km.group(1).strip()
+            if item.get("statement"):
+                sec["items"].append(item)
+        if sec["items"]:
+            out["sections"].append(sec)
+    return out
+
+
 def inline_katex_css(css: str, fonts_dir: Path) -> str:
     """Replace font urls with woff2 data URIs; drop woff/ttf fallbacks."""
     def repl(m):
@@ -285,8 +311,9 @@ def main():
     topics = parse_topics(index_dir / "TOPICS.md", [n["name"] for n in notes])
     archetypes = parse_archetypes(index_dir / "EXAM_MAP.md")
 
+    cheat = parse_cheatsheet(index_dir / "CHEATSHEET.md")
     data = {"exams": exams, "mocks": mocks, "cards": cards, "topics": topics,
-            "archetypes": archetypes, "notes": notes,
+            "archetypes": archetypes, "notes": notes, "cheatsheet": cheat,
             "lectures": [{"name": l["name"], "title": l["title"], "pillar": l["pillar"],
                           "n_cards": len(l["cards"])} for l in lectures]}
 
@@ -326,6 +353,8 @@ def main():
     n_q = sum(len(e["questions"]) for e in exams)
     n_refs = sum(len(t["taught_refs"]) for t in topics)
     n_erefs = sum(len(t["exam_refs"]) for t in topics)
+    n_cheat = sum(len(s["items"]) for s in cheat["sections"]) if cheat else 0
+    print(f"cheatsheet_items={n_cheat}")
     print(f"exams={len(exams)} mocks={len(mocks)} "
           f"mock_questions={sum(len(m['questions']) for m in mocks)} "
           f"questions={n_q} cards={len(cards)} "
