@@ -258,7 +258,8 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 
     <section id="view-ask">
       <h1>Ask the course</h1>
-      <p class="sub">Type a question or a term — searches the lecture notes, recitations, homework, <b>and all exams (questions + solution sketches)</b>. You get a direct where-does-it-appear answer plus verbatim quoted passages. (For worked answers and grading, ask your tutor in a Claude session; this searches, it doesn't think.)</p>
+      <p class="sub">Type a question or a term — retrieval over <b>everything on this site</b>: lecture/recitation/homework notes, all exams with their solution sketches, the cheat sheet, and the topic map. You get a direct where-does-it-appear answer plus verbatim quoted passages. (For worked answers and grading, ask your tutor in a Claude session; this searches, it doesn't think.)</p>
+      <p class="pts" id="askCorpus" style="margin:0 0 10px"></p>
       <div class="askbox">
         <input id="askInput" type="search" placeholder="e.g. why does balancedness hold under gradient flow?" aria-label="Ask the lecture notes">
         <button class="btn primary" id="askBtn" type="button">Ask</button>
@@ -412,17 +413,31 @@ function questionCard(e, q) {
     "<div class='qbody mdslot'></div>" +
     "<details class='sketch'><summary>Solution sketch — try it yourself first</summary><div class='inner sketchslot'></div></details>";
   $(".examjump", c).onclick = () => { show("exams"); renderExamDetail(e); };
+  mathify($(".qhead", c)); // titles contain inline math
   setMd($(".mdslot", c), q.statement);
   const sk = $(".sketchslot", c);
   if (q.sketch) setMd(sk, q.sketch); else sk.innerHTML = "<p class='sub'>No sketch available.</p>";
   return c;
+}
+function collapsedQuestion(e, q) {
+  // tree node: closed by default, the full card builds lazily on first open
+  const d = document.createElement("details");
+  d.className = "note qwrap p-" + q.pillar;
+  d.innerHTML = "<summary><span class='pts' style='margin-right:8px'>" + examLabel(e) +
+    " · Q" + q.n + " (" + q.pts + " pts)</span> " + q.title + "</summary><div class='qslot' style='padding:0 14px 14px'></div>";
+  mathify($("summary", d));
+  let built = false;
+  d.addEventListener("toggle", () => {
+    if (d.open && !built) { built = true; $(".qslot", d).appendChild(questionCard(e, q)); }
+  });
+  return d;
 }
 function renderQuestionCards(refs, container) {
   let n = 0;
   refs.forEach(([eid, qn]) => {
     const e = examById[eid]; if (!e) return;
     const q = e.questions.find(x => x.n === qn); if (!q || !q.statement) return;
-    container.appendChild(questionCard(e, q)); n++;
+    container.appendChild(collapsedQuestion(e, q)); n++;
   });
   return n;
 }
@@ -698,6 +713,7 @@ function renderExamDetail(e) {
       "<div class='qbody mdslot'></div>" +
       "<details class='sketch'><summary>Solution sketch — try it yourself first</summary><div class='inner sketchslot'></div></details>";
     det.appendChild(c);
+    mathify($(".qhead", c));
     setMd($(".mdslot", c), q.statement);
     setMd($(".sketchslot", c), q.sketch);
   });
@@ -851,6 +867,7 @@ function renderQuiz() {
     "<div class='qbody mdslot'></div>" +
     (quizRevealed ? "<div class='qbody sketchslot' style='border-top:1px dashed var(--line)'></div>" : "");
   area.appendChild(el);
+  mathify($(".qhead", el));
   setMd($(".mdslot", el), q.statement);
   if (quizRevealed) { const s = $(".sketchslot", el); setMd(s, "**Solution sketch**\n\n" + q.sketch); }
   const act = document.createElement("div"); act.className = "actions";
@@ -910,11 +927,29 @@ function renderMemo() {
   list.innerHTML = "";
   cs.sections.forEach(sec => {
     const pillar = memoSecPillar(sec.name);
-    const head = document.createElement("div");
-    head.className = "memosec p-" + pillar;
-    head.innerHTML = "<h2>" + sec.name + "</h2><span class='pts'>" + sec.items.length + " items</span>";
-    list.appendChild(head);
-    sec.items.forEach(item => {
+    // tree node per section: closed by default, items build lazily on first open
+    const wrap = document.createElement("details");
+    wrap.className = "note p-" + pillar;
+    const known = () => sec.items.filter(i => store.data.memo[memoId(sec, i)]).length;
+    wrap.innerHTML = "<summary>" + sec.name +
+      " <span class='pts seccount' style='margin-left:auto'></span></summary><div class='notebody secslot'></div>";
+    const countEl = $(".seccount", wrap);
+    const refreshCount = () => countEl.textContent = known() + "/" + sec.items.length + " known";
+    refreshCount();
+    wrap.dataset.refresh = "1";
+    wrap.refreshCount = refreshCount;
+    list.appendChild(wrap);
+    let built = false;
+    wrap.addEventListener("toggle", () => {
+      if (!wrap.open || built) return;
+      built = true;
+      buildMemoSection(sec, pillar, $(".secslot", wrap), refreshCount);
+    });
+  });
+  renderMemoStats();
+}
+function buildMemoSection(sec, pillar, list, refreshCount) {
+  sec.items.forEach(item => {
       const id = memoId(sec, item);
       const el = document.createElement("div");
       el.className = "card memoitem p-" + pillar + (store.data.memo[id] ? " known" : "");
@@ -925,6 +960,7 @@ function renderMemo() {
         (item.watch ? "<div class='watch'>⚠ <span class='watchslot'></span></div>" : "") +
         "<div class='seen seenslot'></div></div>";
       list.appendChild(el);
+      mathify($(".iname", el)); // item names contain inline math
       setMd($(".stmt", el), item.statement);
       if (item.use) setMd($(".useslot", el), item.use);
       if (item.watch) setMd($(".watchslot", el), item.watch);
@@ -950,11 +986,9 @@ function renderMemo() {
       const cb = $("input", el);
       cb.onchange = () => {
         if (cb.checked) store.data.memo[id] = true; else delete store.data.memo[id];
-        store.save(); el.classList.toggle("known", cb.checked); renderMemoStats();
+        store.save(); el.classList.toggle("known", cb.checked); renderMemoStats(); refreshCount();
       };
     });
-  });
-  renderMemoStats();
 }
 
 /* ---------- ask (client-side retrieval, verbatim quotes) ---------- */
@@ -983,6 +1017,18 @@ function buildChunks() {
     pushSplit(q.statement || "", { srcLabel: label, sec: "question statement", pillar: q.pillar, exam: e.id, qn: q.n });
     pushSplit(q.sketch || "", { srcLabel: label, sec: "solution sketch", pillar: q.pillar, exam: e.id, qn: q.n });
   }));
+  // INVARIANT: every content type shown anywhere on this site must feed a chunk
+  // above or below (notes, exams+mocks incl. solutions, cheat sheet, topic map).
+  // The corpus is rebuilt from DATA on every page load, so it can never lag the
+  // deployed content; the composition line under the Ask box makes gaps visible.
+  if (DATA.cheatsheet) DATA.cheatsheet.sections.forEach(sec => sec.items.forEach(item => {
+    const text = "**" + item.name + ".** " + (item.statement || "") +
+      (item.use ? "\nUse it when: " + item.use : "") + (item.watch ? "\nWatch out: " + item.watch : "");
+    pushSplit(text, { srcLabel: "Cheat sheet — " + sec.name, sec: item.name.replace(/\$[^$]*\$/g, "").trim() || "item", pillar: memoSecPillar(sec.name) });
+  }));
+  (DATA.topics || []).forEach(t => pushSplit(
+    t.topic + "\nTaught in: " + t.taught + "\nExamined in: " + t.examined + " (priority: " + t.priority + ")",
+    { srcLabel: "Topic map — " + t.pillar, sec: "topic entry", pillar: t.pillar }));
   DF = {};
   CHUNKS.forEach(c => {
     c.toks = {};
@@ -1113,6 +1159,14 @@ renderQuizFilters(); renderQuiz(); renderWeak();
 renderMemo();
 $("#askBtn").onclick = renderAsk;
 $("#askInput").addEventListener("keydown", ev => { if (ev.key === "Enter") renderAsk(); });
+// corpus self-check: built from the same DATA the page renders, on every load
+buildChunks();
+(() => {
+  const by = {};
+  CHUNKS.forEach(c => { const k = c.exam ? "exam passages" : c.srcLabel.startsWith("Cheat sheet") ? "cheat-sheet items" : c.srcLabel.startsWith("Topic map") ? "topic entries" : "note passages"; by[k] = (by[k] || 0) + 1; });
+  $("#askCorpus").textContent = "Search index (rebuilt from this page on every load): " +
+    Object.entries(by).map(([k, v]) => v + " " + k).join(" · ") + " — " + CHUNKS.length + " passages total.";
+})();
 ["does Hoeffding appear in exam solutions?", "balancedness conservation law", "why does uniform convergence fail for deep learning", "NTK convergence", "Telgarsky sawtooth depth separation", "PAC-Bayes bound"].forEach(sug => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "chipbtn"; b.textContent = sug;
