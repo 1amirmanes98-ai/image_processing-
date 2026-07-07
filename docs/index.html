@@ -90,8 +90,15 @@ h2{font-family:var(--serif);font-size:1.22rem;margin:30px 0 12px}
 .stat{padding:14px 16px}
 .stat .v{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:1.5rem;font-weight:600}
 .stat .k{font-size:.76rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
-.arch{padding:12px 16px;display:flex;gap:12px;align-items:baseline;border-bottom:1px solid var(--line)}
+.arch{padding:12px 16px;display:flex;gap:12px;align-items:baseline;border-bottom:1px solid var(--line);width:100%;border-left:0;border-right:0;border-top:0;background:none;text-align:left;font:inherit;cursor:pointer}
+.arch:hover{background:var(--surface2)}
 .arch:last-child{border-bottom:0}
+.arch .go{color:var(--muted);flex:0 0 auto}
+details.notesec-d{border-top:1px solid var(--line);margin:0 -18px;padding:0 18px}
+details.notesec-d>summary{cursor:pointer;padding:11px 0;font-family:var(--serif);font-weight:650;font-size:.98rem;list-style:none;display:flex;gap:8px;align-items:baseline}
+details.notesec-d>summary::before{content:"▸";color:var(--pc,var(--muted));font-size:.75em}
+details.notesec-d[open]>summary::before{content:"▾"}
+details.notesec-d .secbody{padding:0 0 14px;overflow-x:auto}
 .arch .n{font-family:var(--mono);color:var(--muted);font-size:.8rem;flex:0 0 1.4em}
 .arch .freq{margin-left:auto;white-space:nowrap;flex:0 0 auto;letter-spacing:2px;color:var(--pc);font-size:.72rem}
 .datebox{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -298,6 +305,12 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
       <h2>Weak spots <span class="pts">(from your self-grades)</span></h2>
       <div class="card" id="weakList"><div class="empty">Answer a few questions and your weak topics will show up here.</div></div>
     </section>
+    <section id="view-qset">
+      <button class="backbtn" id="qsetBack" type="button">← Back</button>
+      <h1 id="qsetTitle"></h1>
+      <p class="sub" id="qsetSub"></p>
+      <div id="qsetList"></div>
+    </section>
   </main>
 </div>
 
@@ -378,11 +391,56 @@ VIEWS.forEach(([id, label]) => {
   b.onclick = () => show(id);
   nav.appendChild(b);
 });
+let lastView = "dash";
 function show(id) {
+  if (id !== "qset") lastView = id;
   document.querySelectorAll("main section").forEach(s => s.classList.toggle("on", s.id === "view-" + id));
   document.querySelectorAll(".navbtn").forEach(b => b.classList.toggle("on", b.dataset.v === id));
-  if (location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
+  if (id !== "qset" && location.hash !== "#" + id) history.replaceState(null, "", "#" + id);
 }
+
+/* ---------- shared: full question cards (statement + sealed sketch) ---------- */
+function questionCard(e, q) {
+  const c = document.createElement("div");
+  c.className = "card qcard p-" + q.pillar;
+  c.innerHTML =
+    "<div class='qhead'><h3>Q" + q.n + " · " + q.title + "</h3>" +
+    "<span class='pill'><span class='dot'></span>" + q.pillar + "</span>" +
+    "<span class='pts'>" + q.pts + " pts · <button type='button' class='srcbtn examjump'>" + examLabel(e) + "</button></span>" +
+    (q.difficulty ? "<span class='diff' title='difficulty'>" + "●".repeat(q.difficulty) + "○".repeat(Math.max(0, 5 - q.difficulty)) + "</span>" : "") + "</div>" +
+    "<div style='padding:8px 18px 0'>" + q.topics.map(t => "<span class='chip'>" + t + "</span>").join("") + "</div>" +
+    "<div class='qbody mdslot'></div>" +
+    "<details class='sketch'><summary>Solution sketch — try it yourself first</summary><div class='inner sketchslot'></div></details>";
+  $(".examjump", c).onclick = () => { show("exams"); renderExamDetail(e); };
+  setMd($(".mdslot", c), q.statement);
+  const sk = $(".sketchslot", c);
+  if (q.sketch) setMd(sk, q.sketch); else sk.innerHTML = "<p class='sub'>No sketch available.</p>";
+  return c;
+}
+function renderQuestionCards(refs, container) {
+  let n = 0;
+  refs.forEach(([eid, qn]) => {
+    const e = examById[eid]; if (!e) return;
+    const q = e.questions.find(x => x.n === qn); if (!q || !q.statement) return;
+    container.appendChild(questionCard(e, q)); n++;
+  });
+  return n;
+}
+function parseRefs(text) {
+  const out = [], re = /\b(?:([abc])[_ ]?(\d{4})|example)[\s_]*Q\s*(\d)/gi;
+  let m;
+  while ((m = re.exec(text))) out.push([m[1] ? m[1].toLowerCase() + "_" + m[2] : "example", +m[3]]);
+  return [...new Map(out.map(r => [r.join("#"), r])).values()];
+}
+function showQset(title, sub, refs) {
+  $("#qsetTitle").textContent = title;
+  const list = $("#qsetList"); list.innerHTML = "";
+  const n = renderQuestionCards(refs, list);
+  $("#qsetSub").textContent = n + " past-exam question" + (n === 1 ? "" : "s") + " of this pattern, newest first — " + sub;
+  show("qset");
+  window.scrollTo(0, 0);
+}
+$("#qsetBack") && ($("#qsetBack").onclick = () => show(lastView));
 
 /* ---------- theme ---------- */
 $("#themeToggle").onclick = () => {
@@ -429,11 +487,14 @@ function renderDash() {
   });
   const al = $("#archList"); al.innerHTML = "";
   DATA.archetypes.forEach((a, i) => {
-    const row = document.createElement("div");
+    const row = document.createElement("button");
+    row.type = "button";
     const pillar = i < 4 ? "Expressiveness" : i < 8 ? "Optimization" : "Generalization";
     row.className = "arch p-" + pillar;
     row.innerHTML = "<span class='n'>" + (i + 1) + "</span><span class='mdslot'></span>" +
-      "<span class='freq'>" + "●".repeat(Math.max(1, a.count)) + "</span>";
+      "<span class='freq'>" + "●".repeat(Math.max(1, a.count)) + "</span><span class='go'>›</span>";
+    const refs = parseRefs(a.desc);
+    row.onclick = () => refs.length && showQset(a.name, "click any exam name to open the full exam", refs);
     al.appendChild(row);
     setMd($(".mdslot", row), a.desc);
   });
@@ -560,33 +621,31 @@ function renderTopicDetail(t) {
     dt.className = "note p-" + t.pillar; if (i === 0) dt.open = true;
     dt.innerHTML = "<summary>" + noteLabel(n) + "</summary><div class='notebody'></div>";
     const body = $(".notebody", dt);
+    // Wikipedia-style tree: each section is a collapsed heading; content (and its
+    // math) renders lazily on first expand — keeps topic pages short and fast.
     n.sections.forEach(sec => {
-      const h4 = document.createElement("h4"); h4.textContent = sec.h; body.appendChild(h4);
-      const dv = document.createElement("div"); dv.className = "notesec";
-      body.appendChild(dv); setMd(dv, sec.b);
+      const sd = document.createElement("details");
+      sd.className = "notesec-d p-" + t.pillar;
+      sd.innerHTML = "<summary>" + sec.h + "</summary><div class='secbody mdslot'></div>";
+      let rendered = false;
+      sd.addEventListener("toggle", () => {
+        if (sd.open && !rendered) { rendered = true; setMd($(".mdslot", sd), sec.b); }
+      });
+      body.appendChild(sd);
     });
     det.appendChild(dt);
   });
 
-  // examined in
+  // the actual past-exam questions on this topic, inline, sketches sealed
   if (nq) {
-    const h2e = document.createElement("h2"); h2e.textContent = "Where the exam tested it"; det.appendChild(h2e);
-    const wrap = document.createElement("div"); wrap.className = "card";
-    (t.exam_refs || []).forEach(([eid, qn]) => {
-      const e = examById[eid]; if (!e) return;
-      const q = e.questions.find(x => x.n === qn); if (!q) return;
-      const row = document.createElement("button");
-      row.type = "button"; row.className = "weakrow p-" + q.pillar;
-      row.style.cssText = "width:100%;border:0;background:none;text-align:left;cursor:pointer;align-items:baseline;gap:10px;display:flex";
-      row.innerHTML = "<span style='font-weight:600'>" + examLabel(e) + " · Q" + qn + "</span>" +
-        "<span class='meta' style='color:var(--muted);font-size:.85rem;flex:1'>" + q.title + "</span>" +
-        "<span class='pts'>" + q.pts + " pts</span>";
-      row.onclick = () => { show("exams"); renderExamDetail(e); };
-      wrap.appendChild(row);
-    });
-    det.appendChild(wrap);
+    const h2e = document.createElement("h2");
+    h2e.textContent = "The past-exam questions on this topic";
+    det.appendChild(h2e);
+    const pe = document.createElement("p"); pe.className = "sub";
+    pe.textContent = "Full statements below; solutions stay sealed until you open them. Click an exam name to open the whole exam.";
+    det.appendChild(pe);
+    renderQuestionCards(t.exam_refs || [], det);
   }
-  mathify(det); // exam-question titles in the tested-in list contain math
   window.scrollTo(0, 0);
 }
 
