@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Intro to Statistics Study Hub</title>
+<title>__COURSE_NAME__</title>
 <style>
 __KATEX_CSS__
 </style>
@@ -7,7 +7,7 @@ __KATEX_CSS__
 :root{
   --bg:#F5F6FA; --surface:#FFFFFF; --surface2:#ECEEF3; --ink:#1C2130; --muted:#5B6377;
   --line:#DCDFE9; --shadow:0 1px 2px rgba(28,33,48,.06),0 4px 14px rgba(28,33,48,.05);
-  --exp:#6D5AE6; --opt:#0E9888; --gen:#C8720D; --two:#3B7DD8; --prac:#5B6377;
+  --exp:#6D5AE6; --opt:#0E9888; --gen:#C8720D; --prac:#5B6377;
   --good:#2E8B57; --bad:#C43D3D;
   --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
   --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -18,20 +18,20 @@ __KATEX_CSS__
   :root{
     --bg:#12151F; --surface:#1A1E2C; --surface2:#242A3C; --ink:#E8EAF2; --muted:#9AA1B8;
     --line:#2E3448; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
-    --exp:#9B8CFF; --opt:#2FBFAE; --gen:#E89A3C; --two:#6FA8FF; --prac:#9AA1B8;
+    --exp:#9B8CFF; --opt:#2FBFAE; --gen:#E89A3C; --prac:#9AA1B8;
     --good:#4CAF7D; --bad:#E06A6A;
   }
 }
 :root[data-theme="dark"]{
   --bg:#12151F; --surface:#1A1E2C; --surface2:#242A3C; --ink:#E8EAF2; --muted:#9AA1B8;
   --line:#2E3448; --shadow:0 1px 2px rgba(0,0,0,.4),0 4px 14px rgba(0,0,0,.3);
-  --exp:#9B8CFF; --opt:#2FBFAE; --gen:#E89A3C; --two:#6FA8FF; --prac:#9AA1B8;
+  --exp:#9B8CFF; --opt:#2FBFAE; --gen:#E89A3C; --prac:#9AA1B8;
   --good:#4CAF7D; --bad:#E06A6A;
 }
 :root[data-theme="light"]{
   --bg:#F5F6FA; --surface:#FFFFFF; --surface2:#ECEEF3; --ink:#1C2130; --muted:#5B6377;
   --line:#DCDFE9; --shadow:0 1px 2px rgba(28,33,48,.06),0 4px 14px rgba(28,33,48,.05);
-  --exp:#6D5AE6; --opt:#0E9888; --gen:#C8720D; --two:#3B7DD8; --prac:#5B6377;
+  --exp:#6D5AE6; --opt:#0E9888; --gen:#C8720D; --prac:#5B6377;
   --good:#2E8B57; --bad:#C43D3D;
 }
 *{box-sizing:border-box}
@@ -64,10 +64,9 @@ h2{font-family:var(--serif);font-size:1.22rem;margin:30px 0 12px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
 
 /* pillar coloring */
-.p-Descriptive{--pc:var(--exp)}
-.p-Estimation{--pc:var(--opt)}
-.p-Testing{--pc:var(--gen)}
-.p-TwoSample{--pc:var(--two)}
+.p-Expressiveness{--pc:var(--exp)}
+.p-Optimization{--pc:var(--opt)}
+.p-Generalization{--pc:var(--gen)}
 .p-Practices{--pc:var(--prac)}
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:.72rem;font-weight:650;letter-spacing:.06em;text-transform:uppercase;color:var(--pc);background:color-mix(in srgb,var(--pc) 12%,transparent);border-radius:999px;padding:3px 10px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--pc);flex:0 0 auto}
@@ -75,8 +74,7 @@ h2{font-family:var(--serif);font-size:1.22rem;margin:30px 0 12px}
 .pts{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--muted)}
 
 /* ---------- dashboard ---------- */
-.hero{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:18px}
-@media (max-width:1080px) and (min-width:821px){.hero{grid-template-columns:repeat(2,1fr)}}
+.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
 .pillarcard{padding:18px;position:relative;overflow:hidden;border-top:3px solid var(--pc)}
 .pillarcard h3{font-family:var(--serif);margin:10px 0 2px;font-size:1.06rem}
 .pillarcard .role{font-size:.78rem;color:var(--muted)}
@@ -221,15 +219,15 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 
 <div class="app">
   <aside class="rail">
-    <div class="brand">Statistics<br>Study Hub<small>מבוא לסטטיסטיקה</small></div>
+    <div class="brand" id="brand"></div>
     <nav id="nav"></nav>
     <div class="spacer"></div>
     <button class="themebtn" id="themeToggle" type="button">◐ Theme</button>
   </aside>
   <main>
     <section id="view-dash">
-      <h1>The exam has a shape. Learn the shape.</h1>
-      <p class="sub">Every Intro to Statistics final follows the same template: a true/false claims battery plus computational questions on estimation, testing, and comparing groups. This hub is built from your course's written summary, the lecture slides, and all 19 past finals (2012–2025) — translated, tagged, and drillable.</p>
+      <h1 id="heroTitle"></h1>
+      <p class="sub" id="heroSub"></p>
       <div class="card" style="padding:18px 20px">
         <div class="datebox">
           <span class="count" id="daysLeft"></span>
@@ -239,7 +237,7 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
         </div>
       </div>
       <div class="hero" id="pillarCards"></div>
-      <h2>Where the points live — average points per exam, by pillar</h2>
+      <h2>One exam, three slots — average points per question</h2>
       <div class="card" style="padding:18px 20px">
         <div class="tmplbar" id="tmplBar"></div>
         <div class="legendrow" id="tmplLegend"></div>
@@ -262,10 +260,10 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 
     <section id="view-ask">
       <h1>Ask the course</h1>
-      <p class="sub">Type a question or a term — retrieval over <b>everything on this site</b>: the week-by-week notes, the slide-deck notes, all 19 exams with their solution sketches, the cheat sheet, and the topic map. You get a direct where-does-it-appear answer plus verbatim quoted passages. (For worked answers and grading, ask your tutor in a Claude session; this searches, it doesn't think.)</p>
+      <p class="sub">Type a question or a term — retrieval over <b>everything on this site</b>: lecture/recitation/homework notes, all exams with their solution sketches, the cheat sheet, and the topic map. You get a direct where-does-it-appear answer plus verbatim quoted passages. (For worked answers and grading, ask your tutor in a Claude session; this searches, it doesn't think.)</p>
       <p class="pts" id="askCorpus" style="margin:0 0 10px"></p>
       <div class="askbox">
-        <input id="askInput" type="search" placeholder="e.g. when is the Wilson interval better than Wald?" aria-label="Ask the course notes">
+        <input id="askInput" type="search" placeholder="e.g. why does balancedness hold under gradient flow?" aria-label="Ask the lecture notes">
         <button class="btn primary" id="askBtn" type="button">Ask</button>
       </div>
       <div class="suggest" id="askSuggest"></div>
@@ -273,8 +271,8 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
     </section>
 
     <section id="view-exams">
-      <h1>Past exams, 2012–2025</h1>
-      <p class="sub">All 19 finals translated to English with per-question topic tags and collapsible solution sketches. Colors mark the pillar of each question. Five exams (a2020, b2021, b2023, b2024, b2025) come with official solutions — their sketches follow them.</p>
+      <h1>Past exams, 2020–2024</h1>
+      <p class="sub">All 12 exams translated to English with per-question topic tags and collapsible solution sketches. Colors mark the pillar of each question.</p>
       <div id="examHome">
         <div class="examgrid" id="examGrid"></div>
         <h2 id="mockHead" style="display:none">Mock exams — generated by your tutor <span class="pts">(novel variants, never copies; solutions sealed below each question)</span></h2>
@@ -285,7 +283,7 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 
     <section id="view-flash">
       <h1>Flashcards</h1>
-      <p class="sub">Definitions, formulas, and results extracted from the course notes. The real exam allows two self-made formula pages — these cards are how you make sure everything on them is correct and understood.</p>
+      <p class="sub">Definitions and theorems extracted from the lecture notes. The real exam allows no formula sheet — exact statements, with all conditions, are the bar.</p>
       <div class="filters" id="flashFilters"></div>
       <div class="deckmeta" id="deckMeta"></div>
       <div class="progressbar"><div id="flashProg" style="width:0%"></div></div>
@@ -294,7 +292,7 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 
     <section id="view-memo">
       <h1>Know these cold</h1>
-      <p class="sub">The exam allows a calculator and two double-sided formula pages. This is the curated list of what belongs on those pages — and in your head — with the exact statement, when to reach for it, and where past exams used it. Tick what you already know; it saves in this browser.</p>
+      <p class="sub">The exam allows no aid material. This is the curated list of theorems, formulas, and canonical examples worth hard memorization — with the exact statement, when to reach for it, and where past exams used it. Tick what you already know; it saves in this browser.</p>
       <div class="card" style="padding:14px 18px;margin-bottom:6px">
         <div class="deckmeta" id="memoStats" style="margin:0"></div>
         <div class="progressbar" style="margin:10px 0 2px"><div id="memoProg" style="width:0%;background:var(--good)"></div></div>
@@ -304,7 +302,7 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 
     <section id="view-quiz">
       <h1>Quiz — real exam questions</h1>
-      <p class="sub">A random past-exam question. Solve it on paper like the real thing (calculator and your formula sheets allowed), then reveal the sketch and grade yourself honestly.</p>
+      <p class="sub">A random past-exam question. Solve it on paper like the real thing, then reveal the sketch and grade yourself honestly.</p>
       <div class="filters" id="quizFilters"></div>
       <div id="quizArea"></div>
       <h2>Weak spots <span class="pts">(from your self-grades)</span></h2>
@@ -319,16 +317,34 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
   </main>
 </div>
 
+<script id="config" type="application/json">__CONFIG__</script>
 <script id="data" type="application/json">__DATA__</script>
 <script>__MARKED_JS__</script>
 <script>__KATEX_JS__</script>
 <script>__AUTORENDER_JS__</script>
 <script>
 "use strict";
+const CONFIG = JSON.parse(document.getElementById("config").textContent);
 const DATA = JSON.parse(document.getElementById("data").textContent);
 const $ = (s, el) => (el || document).querySelector(s);
-const PILLARS = ["Descriptive", "Estimation", "Testing", "TwoSample"];
-const PILLAR_LABEL = { Descriptive: "Descriptive", Estimation: "Estimation", Testing: "Testing", TwoSample: "Two-Sample", Practices: "General" };
+// Categories come from SITE_CONFIG.json ("slots", single-word names); the first
+// three are the primary categories, the last is the misc bucket. Colors map to
+// the four fixed slot palettes via a generated stylesheet, so any names work.
+const PILLARS = CONFIG.slots.slice(0, 3);
+(() => {
+  const vars = ["--exp", "--opt", "--gen", "--prac"];
+  const st = document.createElement("style");
+  st.textContent = CONFIG.slots.map((s, i) =>
+    ".p-" + s.replace(/[^\w-]/g, "") + "{--pc:var(" + (vars[i] || "--prac") + ")}").join("");
+  document.head ? document.head.appendChild(st) : document.body.appendChild(st);
+  document.title = CONFIG.courseName;
+  const parts = CONFIG.courseName.split(" ");
+  document.getElementById("brand").innerHTML =
+    parts.slice(0, 1).join(" ") + "<br>" + (parts.slice(1).join(" ") || "Study Hub") +
+    (CONFIG.courseSubtitle ? "<small>" + CONFIG.courseSubtitle + "</small>" : "");
+  document.getElementById("heroTitle").textContent = CONFIG.heroTitle;
+  document.getElementById("heroSub").textContent = CONFIG.heroSub;
+})();
 const ICONS = {
   dash: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1"/><rect x="9" y="9" width="5.5" height="5.5" rx="1"/></svg>',
   topics: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="5" cy="12.5" r="2"/><path d="M5.8 5.2 10.2 7M6.6 11.5l3.6-2.2"/></svg>',
@@ -339,22 +355,16 @@ const ICONS = {
   memo: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 4.5 4 6l2.5-2.5M2.5 9.5 4 11l2.5-2.5"/><path d="M9 5h5M9 10h5"/></svg>'
 };
 const ILLOS = {
-  Descriptive: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 30h64" opacity=".45"/><rect x="8" y="18" width="9" height="12"/><rect x="21" y="8" width="9" height="22"/><rect x="34" y="13" width="9" height="17"/><rect x="47" y="22" width="9" height="8"/><rect x="60" y="26" width="8" height="4"/></svg>',
-  Estimation: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 17h52"/><path d="M10 11v12M62 11v12"/><circle cx="36" cy="17" r="3.4" fill="currentColor" stroke="none"/></svg>',
-  Testing: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 30 C 18 30, 24 6, 36 6 S 54 30, 68 30"/><path d="M56 26.5 C 60 24, 64 28, 68 30 L 68 30 56 30 Z" fill="currentColor" stroke="none" opacity=".55"/><path d="M56 30v-4" stroke-dasharray="2 2"/></svg>',
-  TwoSample: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h20M6 12v-4M26 12v-4" opacity=".8"/><rect x="10" y="4" width="12" height="8"/><path d="M40 26h26M40 26v-5M66 26v-5" opacity=".8"/><rect x="46" y="18" width="14" height="8"/><path d="M16 12v10M53 26v-14" stroke-dasharray="2 2" opacity=".6"/></svg>',
+  Expressiveness: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><polyline points="2,30 12,4 22,30 32,4 42,30 52,4 62,30 70,12"/></svg>',
+  Optimization: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4 C 22 6, 26 24, 46 28 S 66 30, 70 30"/><circle cx="63" cy="29.4" r="3.4" fill="currentColor" stroke="none"/></svg>',
+  Generalization: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6 C 24 8, 40 22, 70 24"/><path d="M2 32 C 24 30, 40 26, 70 25" stroke-dasharray="4 3"/></svg>'
 };
-const PILLAR_ROLE = {
-  Descriptive: "weeks 1–4 · describe & model the data",
-  Estimation: "weeks 5–6 · estimate with a margin of error",
-  Testing: "weeks 7–8 · test hypotheses, control errors",
-  TwoSample: "weeks 9–11 · compare groups & variables"
-};
+const PILLAR_ROLE = CONFIG.slotRoles || {};
 
 /* ---------- storage ---------- */
 const store = {
-  data: JSON.parse(localStorage.getItem("statshub-v1") || "{}"),
-  save() { localStorage.setItem("statshub-v1", JSON.stringify(this.data)); }
+  data: JSON.parse(localStorage.getItem("fodlhub-v1") || "{}"),
+  save() { localStorage.setItem("fodlhub-v1", JSON.stringify(this.data)); }
 };
 store.data.cards = store.data.cards || {};
 store.data.quiz = store.data.quiz || [];
@@ -407,7 +417,7 @@ function questionCard(e, q) {
   c.className = "card qcard p-" + q.pillar;
   c.innerHTML =
     "<div class='qhead'><h3>Q" + q.n + " · " + q.title + "</h3>" +
-    "<span class='pill'><span class='dot'></span>" + PILLAR_LABEL[q.pillar] + "</span>" +
+    "<span class='pill'><span class='dot'></span>" + q.pillar + "</span>" +
     "<span class='pts'>" + q.pts + " pts · <button type='button' class='srcbtn examjump'>" + examLabel(e) + "</button></span>" +
     (q.difficulty ? "<span class='diff' title='difficulty'>" + "●".repeat(q.difficulty) + "○".repeat(Math.max(0, 5 - q.difficulty)) + "</span>" : "") + "</div>" +
     "<div style='padding:8px 18px 0'>" + q.topics.map(t => "<span class='chip'>" + t + "</span>").join("") + "</div>" +
@@ -472,14 +482,12 @@ if (store.data.theme) document.documentElement.dataset.theme = store.data.theme;
 
 /* ---------- dashboard ---------- */
 function slotAverages() {
-  // average points per EXAM by pillar (the exam has ~100 pts; where do they live?)
   const sums = {}, counts = {};
   DATA.exams.forEach(e => e.questions.forEach(q => {
     sums[q.pillar] = (sums[q.pillar] || 0) + q.pts;
     counts[q.pillar] = (counts[q.pillar] || 0) + 1;
   }));
-  const nExams = Math.max(1, DATA.exams.length);
-  return PILLARS.map(p => ({ pillar: p, avg: sums[p] ? Math.round(sums[p] / nExams) : 0, n: counts[p] || 0 }));
+  return PILLARS.map(p => ({ pillar: p, avg: sums[p] ? Math.round(sums[p] / counts[p]) : 0, n: counts[p] || 0 }));
 }
 function renderDash() {
   const avgs = slotAverages();
@@ -487,9 +495,9 @@ function renderDash() {
   avgs.forEach(({ pillar, avg, n }) => {
     const d = document.createElement("div");
     d.className = "card pillarcard p-" + pillar;
-    d.innerHTML = ILLOS[pillar] +
-      "<h3>" + PILLAR_LABEL[pillar] + "</h3><div class='role'>" + PILLAR_ROLE[pillar] + "</div>" +
-      "<div class='avg'>" + avg + "<small>avg pts/exam · " + n + " past questions</small></div>";
+    d.innerHTML = (CONFIG.figures && ILLOS[pillar] ? ILLOS[pillar] : "") +
+      "<h3>" + pillar + "</h3><div class='role'>" + (PILLAR_ROLE[pillar] || "") + "</div>" +
+      "<div class='avg'>" + avg + "<small>avg pts · " + n + " past questions</small></div>";
     pc.appendChild(d);
   });
   const total = avgs.reduce((a, b) => a + b.avg, 0);
@@ -502,19 +510,19 @@ function renderDash() {
     bar.appendChild(seg);
     const l = document.createElement("span");
     l.className = "p-" + pillar;
-    l.innerHTML = "<span class='dot' style='display:inline-block;vertical-align:-1px;margin-right:5px'></span><b>" + PILLAR_LABEL[pillar] + "</b> ≈" + avg + " pts";
+    l.innerHTML = "<span class='dot' style='display:inline-block;vertical-align:-1px;margin-right:5px'></span><b>" + pillar + "</b> ≈" + avg + " pts";
     leg.appendChild(l);
   });
   const tc = $("#tmplBar").closest(".card");
-  if (tc && !tc.nextElementSibling?.classList?.contains("figd")) tc.after(figNode("normal"));
+  if (tc && !tc.nextElementSibling?.classList?.contains("figd")) tc.after(figNode("pillars"));
   const al = $("#archList"); al.innerHTML = "";
   DATA.archetypes.forEach((a, i) => {
     const row = document.createElement("button");
     row.type = "button";
-    const pillar = a.pillar || "Practices";
+    const pillar = i < 4 ? PILLARS[0] : i < 8 ? PILLARS[1] : (PILLARS[2] || PILLARS[0]);
     row.className = "arch p-" + pillar;
     row.innerHTML = "<span class='n'>" + (i + 1) + "</span><span class='mdslot'></span>" +
-      "<span class='freq' title='" + a.count + " past questions'>" + "●".repeat(Math.max(1, Math.min(14, a.count))) + "</span><span class='go'>›</span>";
+      "<span class='freq'>" + "●".repeat(Math.max(1, a.count)) + "</span><span class='go'>›</span>";
     const refs = parseRefs(a.desc);
     row.onclick = () => refs.length && showQset(a.name, "click any exam name to open the full exam", refs);
     al.appendChild(row);
@@ -554,13 +562,13 @@ function renderStats() {
 }
 
 /* ---------- topics ---------- */
-let topicPillar = "Descriptive";
+let topicPillar = PILLARS[0];
 function renderTopicFilters() {
   const f = $("#topicFilters"); f.innerHTML = "";
   PILLARS.forEach(p => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "chipbtn p-" + p + (topicPillar === p ? " on" : "");
-    b.textContent = PILLAR_LABEL[p];
+    b.textContent = p;
     b.onclick = () => { topicPillar = p; renderTopicFilters(); renderTopics(); };
     f.appendChild(b);
   });
@@ -593,10 +601,8 @@ const noteByName = {};
 const examById = {};
 [...DATA.exams, ...(DATA.mocks || [])].forEach(e => examById[e.id] = e);
 function noteLabel(n) {
-  // titles look like "week_05 — Point estimation & the CLT" / "slides_11 — Paired samples"
-  return n.title
-    .replace(/^week_0?(\d+)\s*[—-]\s*/i, (_, w) => "Week " + w + " — ")
-    .replace(/^slides_0?(\d+)\s*[—-]\s*/i, (_, w) => "Slides " + w + " — ");
+  const prefix = n.kind === "recitation" ? "Recitation — " : n.kind === "homework" ? "Homework — " : "";
+  return n.title.toLowerCase().startsWith(n.kind) ? n.title : prefix + n.title;
 }
 function renderTopicDetail(t) {
   $("#topicHome").style.display = "none";
@@ -608,7 +614,7 @@ function renderTopicDetail(t) {
   const head = document.createElement("div");
   head.className = "p-" + t.pillar;
   head.innerHTML = "<h1 class='mdslot' style='display:inline'></h1>" +
-    "<p class='sub' style='margin-top:8px'><span class='pill'><span class='dot'></span>" + PILLAR_LABEL[t.pillar] + "</span> " +
+    "<p class='sub' style='margin-top:8px'><span class='pill'><span class='dot'></span>" + t.pillar + "</span> " +
     "<span class='prio " + t.priority + "'>" + (t.priority === "core" ? "core — appears essentially every exam" : t.priority === "frequent" ? "frequent variant" : "appeared 1–3 times") + "</span></p>";
   det.appendChild(head);
   setMd($(".mdslot", head), t.topic);
@@ -685,7 +691,7 @@ function examCardButton(e) {
   b.type = "button"; b.className = "examcard";
   b.innerHTML = "<h3>" + examLabel(e) + (e.mock ? " <span class='pill' style='--pc:var(--exp);vertical-align:2px'>new</span>" : "") + "</h3>" +
     e.questions.map(q =>
-      "<div class='qrow p-" + q.pillar + "'><span class='dot'></span>Q" + q.n + " · " + PILLAR_LABEL[q.pillar] +
+      "<div class='qrow p-" + q.pillar + "'><span class='dot'></span>Q" + q.n + " · " + q.pillar +
       "<span style='margin-left:auto' class='pts'>" + q.pts + " pts</span></div>").join("") +
     "<div class='pts' style='margin-top:8px'>" + (e.total || "?") + " pts total</div>";
   b.onclick = () => renderExamDetail(e);
@@ -709,14 +715,14 @@ function renderExamDetail(e) {
   det.appendChild(back);
   const h = document.createElement("h1"); h.textContent = examLabel(e); det.appendChild(h);
   const sub = document.createElement("p"); sub.className = "sub";
-  sub.textContent = (e.date || "") + (e.total ? " · " + e.total + " points · 3 hours · calculator + formula sheets allowed" : "");
+  sub.textContent = (e.date || "") + (e.total ? " · " + e.total + " points · " + CONFIG.examFormatLine : "");
   det.appendChild(sub);
   e.questions.forEach(q => {
     const c = document.createElement("div");
     c.className = "card qcard p-" + q.pillar;
     c.innerHTML =
       "<div class='qhead'><h3>Q" + q.n + " · " + q.title + "</h3>" +
-      "<span class='pill'><span class='dot'></span>" + PILLAR_LABEL[q.pillar] + "</span>" +
+      "<span class='pill'><span class='dot'></span>" + q.pillar + "</span>" +
       "<span class='pts'>" + q.pts + " pts</span>" +
       (q.difficulty ? "<span class='diff' title='difficulty'>" + "●".repeat(q.difficulty) + "○".repeat(Math.max(0, 5 - q.difficulty)) + "</span>" : "") + "</div>" +
       "<div style='padding:8px 18px 0'>" + q.topics.map(t => "<span class='chip'>" + t + "</span>").join("") + "</div>" +
@@ -732,7 +738,7 @@ function renderExamDetail(e) {
 }
 
 /* ---------- flashcards ---------- */
-let flashPillar = "Descriptive", flashKind = "all", deck = [], deckPos = 0, revealed = false;
+let flashPillar = PILLARS[0], flashKind = "all", deck = [], deckPos = 0, revealed = false;
 let flashScope = null; // {label, lectures:[...]}
 function setFlashScope(t, lecRefs) {
   flashScope = { label: "topic scope", lectures: lecRefs, pillar: t.pillar };
@@ -759,7 +765,7 @@ function renderFlashFilters() {
   } else PILLARS.forEach(p => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "chipbtn p-" + p + (flashPillar === p ? " on" : "");
-    b.textContent = PILLAR_LABEL[p] + " (" + DATA.cards.filter(c => c.pillar === p).length + ")";
+    b.textContent = p + " (" + DATA.cards.filter(c => c.pillar === p).length + ")";
     b.onclick = () => { flashPillar = p; buildDeck(); renderFlashFilters(); renderFlash(); };
     f.appendChild(b);
   });
@@ -786,7 +792,7 @@ function renderFlash() {
     return;
   }
   const c = deck[deckPos];
-  const kindLabel = c.kind === "def" ? "State the definition, with all conditions:" : "State it precisely — formula, assumptions and all:";
+  const kindLabel = c.kind === "def" ? "State the definition, with all conditions:" : "State it precisely — assumptions included:";
   const el = document.createElement("div");
   el.className = "card bigcard p-" + c.pillar;
   el.innerHTML = "<div class='pts'>" + kindLabel + "</div><div class='front mdslot'></div>" +
@@ -822,7 +828,7 @@ function setQuizScope(t) {
   quizScope = { label: "topic scope", refs: t.exam_refs, pillar: t.pillar };
   pickQuiz(); renderQuizFilters(); renderQuiz();
 }
-function pillarOfQuiz() { return quizPillar === "any" ? PILLARS[Math.floor(Math.random() * PILLARS.length)] : quizPillar; }
+function pillarOfQuiz() { return quizPillar === "any" ? PILLARS[Math.floor(Math.random() * 3)] : quizPillar; }
 function pickQuiz() {
   const done = new Set(store.data.quiz.slice(-8).map(q => q.qid));
   const pool = [];
@@ -854,7 +860,7 @@ function renderQuizFilters() {
     f.appendChild(chip);
     return;
   }
-  [["any", "Surprise me"], ...PILLARS.map(p => [p, PILLAR_LABEL[p]])].forEach(([k, label]) => {
+  [["any", "Surprise me"], ...PILLARS.map(p => [p, p])].forEach(([k, label]) => {
     const b = document.createElement("button");
     b.type = "button";
     b.className = "chipbtn" + (k !== "any" ? " p-" + k : "") + (quizPillar === k ? " on" : "");
@@ -872,7 +878,7 @@ function renderQuiz() {
   el.className = "card qcard p-" + q.pillar;
   el.innerHTML =
     "<div class='qhead'><h3>" + q.title + "</h3>" +
-    "<span class='pill'><span class='dot'></span>" + PILLAR_LABEL[q.pillar] + "</span>" +
+    "<span class='pill'><span class='dot'></span>" + q.pillar + "</span>" +
     "<span class='pts'>" + q.pts + " pts · " + examLabel(exam) + "</span></div>" +
     "<div class='qbody mdslot'></div>" +
     (quizRevealed ? "<div class='qbody sketchslot' style='border-top:1px dashed var(--line)'></div>" : "");
@@ -916,11 +922,11 @@ function renderWeak() {
 /* ---------- memorize (cheat sheet with know-it tracking) ---------- */
 function memoSecPillar(name) {
   const n = name.toLowerCase();
-  if (/descriptive|regression|correlation|normal|probabilit|transform|design|quantile|qq/.test(n)) return "Descriptive";
-  if (/estimat|confidence|interval|clt|central limit|sampling/.test(n)) return "Estimation";
-  if (/test|power|p-value|hypothes|error/.test(n)) return "Testing";
-  if (/two|paired|categor|chi|independen|nonparametric|wilcoxon|permutation|proportion.*compar|contingency/.test(n)) return "TwoSample";
-  return "Practices";
+  for (const [kw, slot] of Object.entries(CONFIG.slotKeywords)) if (n.includes(kw)) return slot;
+  // FODL-era fallbacks (harmless for other courses)
+  if (n.includes("example")) return CONFIG.slots[0];
+  if (n.includes("probability") || n.includes("concentration")) return CONFIG.slots[2] || CONFIG.slots[0];
+  return CONFIG.slots[CONFIG.slots.length - 1];
 }
 function memoId(sec, item) { return (sec.name + "::" + item.name).slice(0, 80); }
 store.data.memo = store.data.memo || {};
@@ -1015,199 +1021,185 @@ function figCanvas(el, w, h) {
   return ctx;
 }
 const FIGS = {
-  normal: {
-    title: "The standard normal and its 5% rejection region",
-    pillar: "Testing",
-    caption: "Computed: the N(0,1) density with the two-sided α=0.05 rejection region shaded — |Z| ≥ z₀.₉₇₅ = 1.96. One-sided tests at 5% cut at 1.645 instead (dashed). These two numbers carry most Z-test and CI questions on this exam.",
+  sawtooth: {
+    title: "Depth doubles the sawtooth",
+    pillar: "Expressiveness",
+    caption: "Computed: the width-3 tent map g and its self-compositions. Pieces double with every composition (2 → 4 → 8): an L-layer net oscillates ~2^L times while a shallow net needs width ~2^L to keep up (Telgarsky, Lecture 2).",
     draw(cv) {
       const W = 640, H = 300, ctx = figCanvas(cv, W, H);
-      const ink = cssVar("--ink"), muted = cssVar("--muted"), col = cssVar("--gen"), bad = cssVar("--bad");
-      const x0 = 40, y0 = 16, w = W - 80, h = H - 66;
-      const R = 3.6, sx = z => x0 + (z + R) / (2 * R) * w;
-      const pdf = z => Math.exp(-z * z / 2) / Math.sqrt(2 * Math.PI);
-      const sy = d => y0 + h - d / 0.42 * h;
-      // shaded rejection tails |z| >= 1.96
-      ctx.fillStyle = bad; ctx.globalAlpha = .30;
-      [[-R, -1.96], [1.96, R]].forEach(([a, b]) => {
-        ctx.beginPath(); ctx.moveTo(sx(a), sy(0));
-        for (let z = a; z <= b + 1e-9; z += .01) ctx.lineTo(sx(z), sy(pdf(z)));
-        ctx.lineTo(sx(b), sy(0)); ctx.closePath(); ctx.fill();
-      });
-      ctx.globalAlpha = 1;
-      // density
-      ctx.strokeStyle = col; ctx.lineWidth = 2.2; ctx.beginPath();
-      for (let i = 0; i <= 640; i++) {
-        const z = -R + i / 640 * 2 * R, px = sx(z), py = sy(pdf(z));
-        i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-      }
-      ctx.stroke();
-      // axis + markers
-      ctx.strokeStyle = muted; ctx.lineWidth = 1; ctx.beginPath();
-      ctx.moveTo(x0, sy(0)); ctx.lineTo(x0 + w, sy(0)); ctx.stroke();
-      ctx.setLineDash([4, 4]); ctx.strokeStyle = muted;
-      [[-1.645, "-1.645"], [1.645, "1.645"]].forEach(([z]) => {
-        ctx.beginPath(); ctx.moveTo(sx(z), sy(0)); ctx.lineTo(sx(z), sy(pdf(z)) - 12); ctx.stroke();
-      });
-      ctx.setLineDash([]);
-      ctx.fillStyle = ink; ctx.font = "12px " + cssVar("--sans"); ctx.textAlign = "center";
-      [[-1.96, "-1.96"], [1.96, "1.96"], [0, "0"], [-1.645, "-1.645"], [1.645, "1.645"]].forEach(([z, t]) =>
-        ctx.fillText(t, sx(z), sy(0) + 16));
-      ctx.fillStyle = bad; ctx.fillText("2.5%", sx(-2.55), sy(0) - 26); ctx.fillText("2.5%", sx(2.55), sy(0) - 26);
-      ctx.fillStyle = muted; ctx.fillText("accept H₀ region (two-sided α=5%)", sx(0), y0 + 12);
-      ctx.textAlign = "left";
-    }
-  },
-  clt: {
-    title: "The CLT in action: the mean's distribution narrows like 1/√n",
-    pillar: "Estimation",
-    caption: "Computed densities of the sample mean X̄ for n = 1, 4, 16 (population σ = 1): N(μ, σ²/n) gets taller and narrower — the standard error σ/√n halves each time n quadruples. This single picture explains why every CI has a √n in the denominator.",
-    draw(cv) {
-      const W = 640, H = 300, ctx = figCanvas(cv, W, H);
-      const ink = cssVar("--ink"), muted = cssVar("--muted");
-      const cols = [muted, cssVar("--exp"), cssVar("--opt")];
-      const x0 = 40, y0 = 14, w = W - 80, h = H - 60;
-      const R = 3.2, sx = v => x0 + (v + R) / (2 * R) * w;
-      const ns = [1, 4, 16], maxd = Math.sqrt(16) * 0.3989;
-      const sy = d => y0 + h - d / (maxd * 1.06) * h;
-      ctx.strokeStyle = muted; ctx.lineWidth = 1; ctx.beginPath();
-      ctx.moveTo(x0, sy(0)); ctx.lineTo(x0 + w, sy(0)); ctx.stroke();
-      ns.forEach((n, k) => {
-        const sd = 1 / Math.sqrt(n);
-        const pdf = v => Math.exp(-v * v / (2 * sd * sd)) / (sd * Math.sqrt(2 * Math.PI));
-        ctx.strokeStyle = cols[k]; ctx.lineWidth = 2.1; ctx.beginPath();
-        for (let i = 0; i <= 640; i++) {
-          const v = -R + i / 640 * 2 * R, px = sx(v), py = sy(pdf(v));
+      const ink = cssVar("--ink"), muted = cssVar("--muted"), col = cssVar("--exp");
+      const g = x => x < .5 ? 2 * x : 2 - 2 * x;
+      for (let k = 1; k <= 3; k++) {
+        const y0 = 8 + (k - 1) * 98, h = 78, x0 = 46, w = W - 66;
+        ctx.strokeStyle = muted; ctx.lineWidth = 1; ctx.globalAlpha = .5;
+        ctx.strokeRect(x0, y0, w, h); ctx.globalAlpha = 1;
+        ctx.strokeStyle = col; ctx.lineWidth = 2; ctx.beginPath();
+        for (let i = 0; i <= 600; i++) {
+          let x = i / 600, y = x;
+          for (let j = 0; j < k; j++) y = g(y);          // the actual composition
+          const px = x0 + x * w, py = y0 + h - y * h;
           i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
         }
         ctx.stroke();
-        ctx.fillStyle = cols[k]; ctx.font = "12.5px " + cssVar("--sans");
-        ctx.fillText("n=" + n + "  (SE=" + sd.toFixed(2) + ")", sx(0.62 + 0.42 * (2 - k)), sy(pdf(0)) + (k === 0 ? -6 : 14));
-      });
-      ctx.fillStyle = ink; ctx.font = "12px " + cssVar("--sans");
-      ctx.fillText("μ", sx(0) - 3, sy(0) + 16);
+        ctx.fillStyle = ink; ctx.font = "13px " + cssVar("--serif");
+        ctx.fillText(k === 1 ? "g — 2 pieces" : k === 2 ? "g∘g — 4 pieces" : "g∘g∘g — 8 pieces", x0 + 6, y0 + 14);
+      }
     }
   },
-  regression: {
-    title: "Least squares: the line that minimizes squared residuals",
-    pillar: "Descriptive",
-    caption: "Computed on a fixed 10-point dataset: the least-squares line ŷ = a + bx with b = r·s_y/s_x, a = ȳ − b·x̄, drawn with its residual segments. The slope, intercept, and r are computed live from the plotted points — nothing is hand-drawn.",
+  phase: {
+    title: "Gradient flow rides the conserved hyperbolas",
+    pillar: "Optimization",
+    caption: "Computed trajectories (RK4) of gradient flow on L(w₁,w₂)=½(w₁w₂−1)². Solid teal paths are the real flow; dashed curves are the level sets w₁²−w₂²=const — balancedness (Lecture 4) says the flow can never leave its hyperbola. Green curve: the minima set w₁w₂=1.",
+    draw(cv) {
+      const W = 640, H = 340, ctx = figCanvas(cv, W, H);
+      const muted = cssVar("--muted"), opt = cssVar("--opt"), good = cssVar("--good"), ink = cssVar("--ink");
+      const R = 2.3, sx = v => (v + R) / (2 * R) * (W - 40) + 20, sy = v => H - 20 - (v + R) / (2 * R) * (H - 40);
+      // dashed conserved hyperbolas w1^2 - w2^2 = c
+      ctx.setLineDash([4, 4]); ctx.lineWidth = 1; ctx.strokeStyle = muted; ctx.globalAlpha = .6;
+      [-3, -1.5, 0, 1.5, 3].forEach(c => {
+        [-1, 1].forEach(sgn => {
+          ctx.beginPath(); let started = false;
+          for (let w2 = -R; w2 <= R; w2 += .01) {
+            const v = w2 * w2 + c;
+            if (v < 0) { started = false; continue; }
+            const w1 = sgn * Math.sqrt(v);
+            if (Math.abs(w1) > R) { started = false; continue; }
+            const px = sx(w1), py = sy(w2);
+            started ? ctx.lineTo(px, py) : (ctx.moveTo(px, py), started = true);
+          }
+          ctx.stroke();
+        });
+      });
+      ctx.setLineDash([]); ctx.globalAlpha = 1;
+      // minima curve w1*w2 = 1
+      ctx.strokeStyle = good; ctx.lineWidth = 1.5;
+      [[.44, R], [-R, -.44]].forEach(([a, b]) => {
+        ctx.beginPath(); let st = false;
+        for (let w1 = a; w1 <= b; w1 += .01) {
+          const w2 = 1 / w1;
+          if (Math.abs(w2) > R) { st = false; continue; }
+          st ? ctx.lineTo(sx(w1), sy(w2)) : (ctx.moveTo(sx(w1), sy(w2)), st = true);
+        }
+        ctx.stroke();
+      });
+      // real GF trajectories, RK4 on -∇L
+      const f = ([a, b]) => { const r = a * b - 1; return [-r * b, -r * a]; };
+      ctx.strokeStyle = opt; ctx.lineWidth = 1.8;
+      for (let i = 0; i < 18; i++) {
+        const th = i / 18 * 2 * Math.PI;
+        let p = [2.1 * Math.cos(th), 2.1 * Math.sin(th)];
+        ctx.beginPath(); ctx.moveTo(sx(p[0]), sy(p[1]));
+        for (let s = 0; s < 900; s++) {
+          const h = .008, k1 = f(p), p2 = [p[0] + h / 2 * k1[0], p[1] + h / 2 * k1[1]],
+            k2 = f(p2), p3 = [p[0] + h / 2 * k2[0], p[1] + h / 2 * k2[1]],
+            k3 = f(p3), p4 = [p[0] + h * k3[0], p[1] + h * k3[1]], k4 = f(p4);
+          p = [p[0] + h / 6 * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]),
+               p[1] + h / 6 * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1])];
+          if (Math.abs(p[0]) > R || Math.abs(p[1]) > R) break;
+          ctx.lineTo(sx(p[0]), sy(p[1]));
+        }
+        ctx.stroke();
+      }
+      ctx.fillStyle = ink; ctx.font = "12px " + cssVar("--sans");
+      ctx.fillText("w₂", sx(0) + 6, 16); ctx.fillText("w₁", W - 34, sy(0) - 6);
+    }
+  },
+  sigma: {
+    title: "Rich get richer: singular-value dynamics",
+    pillar: "Optimization",
+    caption: "Computed σᵣ(t) for the depth-3 dynamics σ̇ᵣ = −3(σᵣ²)^(2/3)(σᵣ−σᵣ*) from tiny init σᵣ(0)=0.01, targets σ*=3, 2, 1, 0.4. Modes with large targets take off first and sequentially; small ones stall near zero — the implicit low-rank bias of deep matrix factorization (Lecture 8).",
+    draw(cv) {
+      const W = 640, H = 300, ctx = figCanvas(cv, W, H);
+      const muted = cssVar("--muted"), ink = cssVar("--ink");
+      const cols = [cssVar("--opt"), cssVar("--exp"), cssVar("--gen"), muted];
+      const T = 9, dt = .002, n = Math.round(T / dt);
+      const targets = [3, 2, 1, .4], x0 = 44, y0 = 14, w = W - 64, h = H - 52;
+      ctx.strokeStyle = muted; ctx.globalAlpha = .5; ctx.strokeRect(x0, y0, w, h); ctx.globalAlpha = 1;
+      targets.forEach((s, r) => {
+        let sig = .01;
+        ctx.strokeStyle = cols[r]; ctx.lineWidth = 2; ctx.beginPath();
+        ctx.moveTo(x0, y0 + h - sig / 3.2 * h);
+        for (let i = 1; i <= n; i++) {
+          sig += dt * (-3 * Math.pow(sig * sig, 2 / 3) * (sig - s)); // the actual ODE
+          if (i % 25 === 0) ctx.lineTo(x0 + i / n * w, y0 + h - Math.min(sig, 3.2) / 3.2 * h);
+        }
+        ctx.stroke();
+        ctx.fillStyle = cols[r]; ctx.font = "12px " + cssVar("--sans");
+        ctx.fillText("σ*=" + s, x0 + w + 4 - 40, y0 + h - s / 3.2 * h - 4);
+      });
+      ctx.fillStyle = ink; ctx.font = "12px " + cssVar("--sans");
+      ctx.fillText("t →", x0 + w - 24, y0 + h + 16); ctx.fillText("σᵣ(t)", x0 + 2, y0 + 12);
+    }
+  },
+  minnorm: {
+    title: "GD finds the minimum-norm solution",
+    pillar: "Generalization",
+    caption: "Computed GD iterates (dots) on ½(w·x−y)² for one equation w·x=1, x=(1, 0.6), from w=0. The trajectory never leaves the row space span{x} (dashed ray) and converges to the projection of 0 onto the solution line — the minimum-norm solution (ring). Any other point on the line (×) also fits the data but has larger norm (dotted circle = the min-norm radius). Lecture 7's implicit bias.",
     draw(cv) {
       const W = 640, H = 320, ctx = figCanvas(cv, W, H);
-      const ink = cssVar("--ink"), muted = cssVar("--muted"), col = cssVar("--exp"), bad = cssVar("--bad");
-      const X = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-      const Y = [2.1, 2.5, 3.4, 3.2, 4.4, 4.6, 5.6, 5.4, 6.5, 6.6];
-      const n = X.length, mx = X.reduce((a, b) => a + b) / n, my = Y.reduce((a, b) => a + b) / n;
-      let sxx = 0, syy = 0, sxy = 0;
-      for (let i = 0; i < n; i++) { sxx += (X[i] - mx) ** 2; syy += (Y[i] - my) ** 2; sxy += (X[i] - mx) * (Y[i] - my); }
-      const b = sxy / sxx, a = my - b * mx, r = sxy / Math.sqrt(sxx * syy);
-      const x0 = 46, y0 = 14, w = W - 76, h = H - 64;
-      const sx = v => x0 + (v - 0) / 11 * w, sy = v => y0 + h - (v - 1) / 7 * h;
-      ctx.strokeStyle = muted; ctx.globalAlpha = .5; ctx.strokeRect(x0, y0, w, h); ctx.globalAlpha = 1;
-      // residuals
-      ctx.strokeStyle = bad; ctx.lineWidth = 1.4;
-      for (let i = 0; i < n; i++) {
-        ctx.beginPath(); ctx.moveTo(sx(X[i]), sy(Y[i])); ctx.lineTo(sx(X[i]), sy(a + b * X[i])); ctx.stroke();
+      const muted = cssVar("--muted"), opt = cssVar("--opt"), good = cssVar("--good"), bad = cssVar("--bad"), ink = cssVar("--ink");
+      const R = 1.6, sx = v => (v + .55) / R * (W - 60) + 30, sy = v => H - 30 - (v + .35) / R * (H - 60);
+      const X = [1, .6], y = 1, nrm2 = X[0] * X[0] + X[1] * X[1];
+      // solution line w·x = 1
+      ctx.strokeStyle = ink; ctx.lineWidth = 1.5; ctx.beginPath();
+      const lineW2 = w1 => (y - X[0] * w1) / X[1];
+      ctx.moveTo(sx(-.4), sy(lineW2(-.4))); ctx.lineTo(sx(1.05), sy(lineW2(1.05))); ctx.stroke();
+      // row space ray
+      ctx.setLineDash([5, 4]); ctx.strokeStyle = muted; ctx.beginPath();
+      ctx.moveTo(sx(0), sy(0)); ctx.lineTo(sx(1.05), sy(.63)); ctx.stroke(); ctx.setLineDash([]);
+      // min-norm point + its norm circle
+      const mn = [X[0] * y / nrm2, X[1] * y / nrm2], rr = Math.hypot(mn[0], mn[1]);
+      ctx.setLineDash([2, 4]); ctx.strokeStyle = good; ctx.beginPath();
+      ctx.arc(sx(0), sy(0), (sx(rr) - sx(0)), 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]);
+      // GD iterates
+      let wv = [0, 0]; ctx.fillStyle = opt;
+      for (let k = 0; k < 14; k++) {
+        ctx.beginPath(); ctx.arc(sx(wv[0]), sy(wv[1]), 3.2, 0, 2 * Math.PI); ctx.fill();
+        const r = wv[0] * X[0] + wv[1] * X[1] - y;
+        wv = [wv[0] - .35 * r * X[0], wv[1] - .35 * r * X[1]];   // the actual GD step
       }
-      // fitted line
-      ctx.strokeStyle = col; ctx.lineWidth = 2.2; ctx.beginPath();
-      ctx.moveTo(sx(0.5), sy(a + b * 0.5)); ctx.lineTo(sx(10.5), sy(a + b * 10.5)); ctx.stroke();
-      // points
-      ctx.fillStyle = ink;
-      for (let i = 0; i < n; i++) { ctx.beginPath(); ctx.arc(sx(X[i]), sy(Y[i]), 3.4, 0, 2 * Math.PI); ctx.fill(); }
-      ctx.fillStyle = col; ctx.font = "12.5px " + cssVar("--sans");
-      ctx.fillText("ŷ = " + a.toFixed(2) + " + " + b.toFixed(2) + "x   (r = " + r.toFixed(3) + ", R² = " + (r * r).toFixed(3) + ")", x0 + 10, y0 + 18);
-      ctx.fillStyle = bad; ctx.fillText("residuals", sx(8.6), sy(5.2));
-    }
-  },
-  power: {
-    title: "Power grows with effect size and with n",
-    pillar: "Testing",
-    caption: "Computed power of the one-sided Z test (H₀: μ = 0 vs H₁: μ > 0, σ = 1, α = 0.05): power(μ) = 1 − Φ(1.645 − μ√n). At μ = 0 the curve starts exactly at α = 0.05; quadrupling n (25 → 100) doubles √n and steepens the climb to 1. This is the exam's favorite power picture.",
-    draw(cv) {
-      const W = 640, H = 300, ctx = figCanvas(cv, W, H);
-      const ink = cssVar("--ink"), muted = cssVar("--muted");
-      const cols = [cssVar("--gen"), cssVar("--opt")];
-      // Φ via Abramowitz-Stegun 7.1.26 erf approximation (|err| < 1.5e-7)
-      const Phi = z => {
-        const t = 1 / (1 + 0.3275911 * Math.abs(z) / Math.SQRT2);
-        const e = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-z * z / 2);
-        return z >= 0 ? 0.5 * (1 + e) : 0.5 * (1 - e);
-      };
-      const x0 = 46, y0 = 14, w = W - 76, h = H - 64;
-      const MU = 0.8, sx = m => x0 + m / MU * w, sy = p => y0 + h - p * h;
-      ctx.strokeStyle = muted; ctx.globalAlpha = .5; ctx.strokeRect(x0, y0, w, h); ctx.globalAlpha = 1;
-      // alpha line
-      ctx.setLineDash([4, 4]); ctx.strokeStyle = muted; ctx.beginPath();
-      ctx.moveTo(x0, sy(.05)); ctx.lineTo(x0 + w, sy(.05)); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(x0, sy(.8)); ctx.lineTo(x0 + w, sy(.8)); ctx.stroke(); ctx.setLineDash([]);
-      [25, 100].forEach((n, k) => {
-        ctx.strokeStyle = cols[k]; ctx.lineWidth = 2.2; ctx.beginPath();
-        for (let i = 0; i <= 600; i++) {
-          const m = i / 600 * MU, p = 1 - Phi(1.645 - m * Math.sqrt(n));
-          const px = sx(m), py = sy(p);
-          i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-        }
-        ctx.stroke();
-        ctx.fillStyle = cols[k]; ctx.font = "12.5px " + cssVar("--sans");
-        const mlab = k ? 0.28 : 0.52;
-        ctx.fillText("n = " + n, sx(mlab) + 6, sy(1 - Phi(1.645 - mlab * Math.sqrt(n))) - 8);
-      });
+      ctx.strokeStyle = good; ctx.lineWidth = 2; ctx.beginPath();
+      ctx.arc(sx(mn[0]), sy(mn[1]), 6, 0, 2 * Math.PI); ctx.stroke();
+      // a worse solution on the line
+      const other = [-.25, lineW2(-.25)];
+      ctx.strokeStyle = bad; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(sx(other[0]) - 5, sy(other[1]) - 5); ctx.lineTo(sx(other[0]) + 5, sy(other[1]) + 5);
+      ctx.moveTo(sx(other[0]) + 5, sy(other[1]) - 5); ctx.lineTo(sx(other[0]) - 5, sy(other[1]) + 5); ctx.stroke();
       ctx.fillStyle = ink; ctx.font = "12px " + cssVar("--sans");
-      ctx.fillText("α = 0.05", x0 + 6, sy(.05) - 6);
-      ctx.fillText("power 0.8", x0 + 6, sy(.8) - 6);
-      ctx.fillText("true μ →", x0 + w - 52, sy(0) + 16);
-      ctx.save(); ctx.translate(x0 - 30, y0 + h / 2); ctx.rotate(-Math.PI / 2);
-      ctx.textAlign = "center"; ctx.fillText("power", 0, 0); ctx.restore();
+      ctx.fillText("w·x = 1 (all solutions)", sx(.62), sy(lineW2(.62)) - 8);
+      ctx.fillText("span{x}", sx(.86), sy(.52));
+      ctx.fillStyle = good; ctx.fillText("min-norm", sx(mn[0]) + 9, sy(mn[1]) + 4);
+      ctx.fillStyle = bad; ctx.fillText("fits too, bigger ‖w‖", sx(other[0]) + 8, sy(other[1]) + 4);
     }
   },
-  ranksum: {
-    title: "Wilcoxon rank-sum: the exact null distribution (n = m = 4)",
-    pillar: "TwoSample",
-    caption: "Computed by full enumeration: all C(8,4) = 70 equally-likely rank assignments under H₀, giving the exact distribution of W = sum of group-1 ranks (mean n(N+1)/2 = 18, variance nm(N+1)/12 = 12). The dashed curve is the normal approximation the course uses for larger samples — already close at n = m = 4.",
+  pillars: {
+    title: "The three-pillar decomposition",
+    pillar: "Practices",
+    caption: "The course's organizing identity (Lecture 1): the population loss of the learned predictor splits into training error (Optimization: did we minimize L_S?), estimation error (Generalization: does L_S track L_D?), and approximation error (Expressiveness: can the class express a good predictor at all?).",
     draw(cv) {
-      const W = 640, H = 300, ctx = figCanvas(cv, W, H);
-      const ink = cssVar("--ink"), muted = cssVar("--muted"), col = cssVar("--two") || cssVar("--gen");
-      // enumerate all 4-subsets of ranks 1..8
-      const counts = {};
-      let total = 0;
-      for (let a = 1; a <= 5; a++) for (let b = a + 1; b <= 6; b++)
-        for (let c = b + 1; c <= 7; c++) for (let d = c + 1; d <= 8; d++) {
-          const wsum = a + b + c + d; counts[wsum] = (counts[wsum] || 0) + 1; total++;
-        }
-      const ws = Object.keys(counts).map(Number).sort((x, y) => x - y);
-      const pmax = Math.max(...ws.map(v => counts[v])) / total;
-      const x0 = 46, y0 = 14, w = W - 76, h = H - 64;
-      const lo = ws[0] - 1, hi = ws[ws.length - 1] + 1;
-      const sx = v => x0 + (v - lo) / (hi - lo) * w, sy = p => y0 + h - p / (pmax * 1.12) * h;
-      ctx.strokeStyle = muted; ctx.lineWidth = 1; ctx.beginPath();
-      ctx.moveTo(x0, sy(0)); ctx.lineTo(x0 + w, sy(0)); ctx.stroke();
-      const bw = w / (hi - lo) * 0.72;
-      ws.forEach(v => {
-        const p = counts[v] / total;
+      const W = 640, H = 170, ctx = figCanvas(cv, W, H);
+      const ink = cssVar("--ink"), segs = [["Training error", cssVar("--opt"), .24], ["Estimation error", cssVar("--gen"), .33], ["Approximation error", cssVar("--exp"), .43]];
+      let x = 40; const y0 = 62, h = 30, w = W - 80;
+      ctx.font = "13px " + cssVar("--sans");
+      segs.forEach(([label, col, frac]) => {
         ctx.fillStyle = col; ctx.globalAlpha = .85;
-        ctx.fillRect(sx(v) - bw / 2, sy(p), bw, sy(0) - sy(p));
+        ctx.fillRect(x, y0, w * frac, h); ctx.globalAlpha = 1;
+        ctx.fillStyle = col;
+        ctx.fillText(label, x + 4, y0 + h + 18);
+        ctx.font = "11px " + cssVar("--sans"); ctx.fillStyle = cssVar("--muted");
+        ctx.fillText(label === "Training error" ? "Optimization" : label === "Estimation error" ? "Generalization" : "Expressiveness", x + 4, y0 + h + 34);
+        ctx.font = "13px " + cssVar("--sans");
+        x += w * frac;
       });
-      ctx.globalAlpha = 1;
-      // normal approx N(18, 12)
-      const mu = 18, sd = Math.sqrt(12);
-      ctx.setLineDash([5, 4]); ctx.strokeStyle = ink; ctx.lineWidth = 1.6; ctx.beginPath();
-      for (let i = 0; i <= 600; i++) {
-        const v = lo + i / 600 * (hi - lo);
-        const p = Math.exp(-((v - mu) ** 2) / (2 * 12)) / (sd * Math.sqrt(2 * Math.PI));
-        const px = sx(v), py = sy(p);
-        i ? ctx.lineTo(px, py) : ctx.moveTo(px, py);
-      }
-      ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle = ink; ctx.font = "12px " + cssVar("--sans"); ctx.textAlign = "center";
-      [10, 14, 18, 22, 26].forEach(v => ctx.fillText(v, sx(v), sy(0) + 16));
-      ctx.fillText("W", sx(hi) + 6, sy(0) + 16); ctx.textAlign = "left";
-      ctx.fillText("exact P(W=w) · dashed: N(18, 12)", x0 + 8, y0 + 12);
+      ctx.fillStyle = ink; ctx.font = "14px " + cssVar("--serif");
+      ctx.fillText("L_D(ĥ)  —  population loss of the learned predictor", 40, 30);
+      ctx.strokeStyle = ink; ctx.beginPath(); ctx.moveTo(40, 40); ctx.lineTo(40 + w, 40); ctx.stroke();
     }
   }
 };
 const MOUNTED_FIGS = [];
 function figNode(id) {
-  const f = FIGS[id]; if (!f) return document.createDocumentFragment();
+  const f = FIGS[id]; if (!f || !CONFIG.figures) return document.createDocumentFragment();
   const d = document.createElement("details");
   d.className = "note figd p-" + (f.pillar || "Practices");
   d.innerHTML = "<summary>📈 Figure — " + f.title + "</summary>" +
@@ -1224,18 +1216,17 @@ function figsForText(text, map) {
   return out;
 }
 const FIG_TOPIC_MAP = [
-  [/normal distribution|qq|z[- ]test|rejection|critical value/i, "normal"],
-  [/clt|central limit|point estimation|sampling distribution|standard error/i, "clt"],
-  [/regression|least squares|correlation/i, "regression"],
-  [/power|sample size/i, "power"],
-  [/wilcoxon|rank[- ]?sum|permutation/i, "ranksum"],
+  [/depth separation|piecewise-linear\/constant/i, "sawtooth"],
+  [/balancedness|scalar linear|conservation/i, "phase"],
+  [/matrix factorization/i, "sigma"],
+  [/min-norm/i, "minnorm"],
 ];
 const FIG_MEMO_MAP = [
-  [/z_?\{?0?\.?9|1\.96|quantile.*normal|normal.*table/i, "normal"],
-  [/clt|central limit|standard error/i, "clt"],
-  [/least[- ]squares|regression line|correlation coefficient/i, "regression"],
-  [/power|sample[- ]size/i, "power"],
-  [/wilcoxon|rank[- ]?sum/i, "ranksum"],
+  [/sawtooth/i, "sawtooth"],
+  [/balancedness conservation/i, "phase"],
+  [/singular-value \/ eigenvalue dynamics/i, "sigma"],
+  [/min-norm implicit bias/i, "minnorm"],
+  [/three-pillar/i, "pillars"],
 ];
 
 /* ---------- ask (client-side retrieval, verbatim quotes) ---------- */
@@ -1276,7 +1267,7 @@ function buildChunks() {
   (DATA.topics || []).forEach(t => pushSplit(
     t.topic + "\nTaught in: " + t.taught + "\nExamined in: " + t.examined + " (priority: " + t.priority + ")",
     { srcLabel: "Topic map — " + t.pillar, sec: "topic entry", pillar: t.pillar }));
-  Object.values(FIGS).forEach(f => pushSplit(f.title + ". " + f.caption,
+  if (CONFIG.figures) Object.values(FIGS).forEach(f => pushSplit(f.title + ". " + f.caption,
     { srcLabel: "Figure — " + f.title, sec: "figure caption", pillar: f.pillar }));
   DF = {};
   CHUNKS.forEach(c => {
@@ -1416,7 +1407,7 @@ buildChunks();
   $("#askCorpus").textContent = "Search index (rebuilt from this page on every load): " +
     Object.entries(by).map(([k, v]) => v + " " + k).join(" · ") + " — " + CHUNKS.length + " passages total.";
 })();
-["when is the Wilson interval better than Wald?", "power of a one-sided Z test", "chi-square vs Fisher exact for a 2x2 table", "does the odds ratio appear in exam solutions?", "Wilcoxon rank sum with ties", "method of moments uniform distribution"].forEach(sug => {
+(CONFIG.askSuggestions || []).forEach(sug => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "chipbtn"; b.textContent = sug;
   b.onclick = () => { $("#askInput").value = sug; renderAsk(); };

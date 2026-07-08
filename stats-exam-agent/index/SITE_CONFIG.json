@@ -1,0 +1,30 @@
+{
+  "courseName": "Statistics Study Hub",
+  "courseSubtitle": "מבוא לסטטיסטיקה",
+  "heroTitle": "The exam has a shape. Learn the shape.",
+  "heroSub": "Every Intro to Statistics final follows the same template: a true/false claims battery plus computational questions on estimation, testing, and comparing groups. Built from your course's written summary, the lecture slides, and all 19 past finals (2012–2025) — translated, tagged, and drillable.",
+  "examFormatLine": "3 hours · calculator + two double-sided formula pages · usually 4 questions",
+  "slots": ["Descriptive", "Estimation", "Testing", "General"],
+  "slotKeywords": {
+    "descriptive": "Descriptive",
+    "estimation": "Estimation",
+    "twosample": "Testing",
+    "two-sample": "Testing",
+    "testing": "Testing"
+  },
+  "slotRoles": {
+    "Descriptive": "weeks 1–4 · describe & model the data",
+    "Estimation": "weeks 5–6 · estimate with a margin of error",
+    "Testing": "weeks 7–11 · test hypotheses & compare groups"
+  },
+  "mockSlotByQ": { "1": "Estimation", "2": "Testing", "3": "Testing", "4": "Testing" },
+  "askSuggestions": [
+    "when is the Wilson interval better than Wald?",
+    "power of a one-sided Z test",
+    "chi-square vs Fisher exact for a 2x2 table",
+    "does the odds ratio appear in exam solutions?",
+    "Wilcoxon rank sum with ties",
+    "method of moments for a uniform distribution"
+  ],
+  "figures": false
+}
