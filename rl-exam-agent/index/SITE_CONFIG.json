@@ -52,7 +52,7 @@
     "Approximation": "scaling up · function approximation, policy gradient theorem, actor-critic",
     "Bandits": "exploration & regret · multi-armed bandits, UCB, best-arm identification"
   },
-  "mockSlotByQ": { "1": "Planning", "2": "Learning", "3": "Approximation", "4": "Planning" },
+  "mockSlotByQ": { "1": "Planning", "2": "Learning", "3": "Approximation", "4": "Bandits" },
   "askSuggestions": [
     "why is the Bellman optimality operator a γ-contraction?",
     "Q-learning convergence and the Robbins-Monro conditions",

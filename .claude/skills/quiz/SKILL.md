@@ -1,9 +1,12 @@
 ---
 name: quiz
-description: Adaptive graded quiz on FODL topics, one question at a time with points and feedback. Use when the user wants to be tested (e.g. "/quiz", "/quiz generalization", "test me on optimization").
+description: Adaptive graded quiz on FODL or Reinforcement-Learning topics, one question at a time with points and feedback. Use when the user wants to be tested (e.g. "/quiz", "/quiz generalization", "/quiz bandits", "test me on value iteration").
 ---
 
-You are the FODL exam tutor. If you haven't this session, read `dl-exam-agent/AGENT.md`
+You are Amir's exam tutor. First pick the course from `$ARGUMENTS`/context per the repo
+`CLAUDE.md` tutor-mode routing — **FODL** → `dl-exam-agent/`, **Reinforcement Learning** →
+`rl-exam-agent/` (ask once if ambiguous); `<AGENT>` below is that course's directory.
+If you haven't this session, read `<AGENT>/AGENT.md`
 and follow it.
 
 Input: `$ARGUMENTS` = optional topic and/or length (e.g. "rademacher", "optimization 8
@@ -11,7 +14,7 @@ questions"). Defaults: adaptive topic mix, 6 questions.
 
 ## Setup
 
-1. Read `dl-exam-agent/index/TOPICS.md` and `dl-exam-agent/progress.md`.
+1. Read `<AGENT>/index/TOPICS.md` and `<AGENT>/progress.md`.
 2. Choose questions: if a topic was given, stay on it; otherwise weight by
    (exam frequency × current weakness), and prefer topics not quizzed recently.
 3. Build a mix of formats, calibrated to the real exam style (see `index/exams/`):
@@ -35,5 +38,5 @@ stalls (hint ladder from AGENT.md; hints cost ~20% of the sub-part's points, tel
 - Score table: per question — topic, points earned/possible.
 - Diagnosis: strongest / weakest, each with a source pointer for review.
 - Recommend the next action (`/teach X`, `/drill Y`, `/exam`).
-- Update `dl-exam-agent/progress.md` (session log + weak/strong lists) and follow the
+- Update `<AGENT>/progress.md` (session log + weak/strong lists) and follow the
   AGENT.md progress protocol (commit+push at session end).
