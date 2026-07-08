@@ -4,3 +4,11 @@ dl-exam-agent/materials/
 dl-exam-agent/index/
 # ...except the site config, which is code-not-content and needed for replication
 !dl-exam-agent/index/SITE_CONFIG.json
+# Same policy for the statistics tutor (stats-exam-agent/README.md):
+stats-exam-agent/materials/
+stats-exam-agent/index/
+# ...except the site config, which is code-not-content and needed for replication
+!stats-exam-agent/index/SITE_CONFIG.json
+
+# Python bytecode
+__pycache__/

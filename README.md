@@ -11,6 +11,15 @@ See [`dl-exam-agent/README.md`](dl-exam-agent/README.md).
 mock exams, flashcards, quizzes, a 56-item memorization cheat sheet, computed concept
 figures, and full-site search): https://1amirmanes98-ai.github.io/image_processing-/
 
+## 📊 Intro to Statistics Exam Tutor
+
+Same framework, second course: a personal exam-prep agent for **Intro to Statistics**
+(TAU 0365.1813, Prof. Ruth Heller), built from the course summary, lecture slides, and
+**19 past finals (2012–2025)**. See
+[`stats-exam-agent/README.md`](stats-exam-agent/README.md).
+
+**The study site**: https://1amirmanes98-ai.github.io/image_processing-/stats/
+
 ## 🔁 Build this for YOUR course
 
 **Read [`REPLICATION.md`](REPLICATION.md) first** — it is the exact playbook with
