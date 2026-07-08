@@ -275,6 +275,8 @@ def parse_mock(path: Path) -> dict:
             "difficulty": 0, "maps_to": "",
             "statement": body, "sketch": solutions.get(qnum, ""),
         })
+    if exam["questions"]:  # derive total from the questions (course-agnostic)
+        exam["total"] = str(sum(q["pts"] for q in exam["questions"]))
     return exam
 
 

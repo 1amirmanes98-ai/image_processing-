@@ -74,7 +74,7 @@ h2{font-family:var(--serif);font-size:1.22rem;margin:30px 0 12px}
 .pts{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:.8rem;color:var(--muted)}
 
 /* ---------- dashboard ---------- */
-.hero{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.hero{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:18px}
 .pillarcard{padding:18px;position:relative;overflow:hidden;border-top:3px solid var(--pc)}
 .pillarcard h3{font-family:var(--serif);margin:10px 0 2px;font-size:1.06rem}
 .pillarcard .role{font-size:.78rem;color:var(--muted)}
@@ -237,7 +237,7 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
         </div>
       </div>
       <div class="hero" id="pillarCards"></div>
-      <h2>One exam, three slots — average points per question</h2>
+      <h2>Average points per question, by pillar</h2>
       <div class="card" style="padding:18px 20px">
         <div class="tmplbar" id="tmplBar"></div>
         <div class="legendrow" id="tmplLegend"></div>
@@ -327,10 +327,10 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 const CONFIG = JSON.parse(document.getElementById("config").textContent);
 const DATA = JSON.parse(document.getElementById("data").textContent);
 const $ = (s, el) => (el || document).querySelector(s);
-// Categories come from SITE_CONFIG.json ("slots", single-word names); the first
-// three are the primary categories, the last is the misc bucket. Colors map to
-// the four fixed slot palettes via a generated stylesheet, so any names work.
-const PILLARS = CONFIG.slots.slice(0, 3);
+// Categories come from SITE_CONFIG.json ("slots", single-word names); up to four
+// are treated as primary pillars. Colors map to the four fixed slot palettes via a
+// generated stylesheet, so any names work.
+const PILLARS = CONFIG.slots.slice(0, 4);
 (() => {
   const vars = ["--exp", "--opt", "--gen", "--prac"];
   const st = document.createElement("style");
@@ -516,10 +516,14 @@ function renderDash() {
   const tc = $("#tmplBar").closest(".card");
   if (tc && !tc.nextElementSibling?.classList?.contains("figd")) tc.after(figNode("pillars"));
   const al = $("#archList"); al.innerHTML = "";
+  // colour each archetype row by the pillar of the first past-exam question it cites
+  const refPillar = {};
+  DATA.exams.forEach(e => e.questions.forEach(q => { refPillar[e.id.replace(/_/g, "") + "_Q" + q.n] = q.pillar; }));
   DATA.archetypes.forEach((a, i) => {
     const row = document.createElement("button");
     row.type = "button";
-    const pillar = i < 4 ? PILLARS[0] : i < 8 ? PILLARS[1] : (PILLARS[2] || PILLARS[0]);
+    const refm = (a.desc || "").match(/\b(?:[abc]\d{4}|example)_Q\d/);
+    const pillar = (refm && refPillar[refm[0]]) || PILLARS[0];
     row.className = "arch p-" + pillar;
     row.innerHTML = "<span class='n'>" + (i + 1) + "</span><span class='mdslot'></span>" +
       "<span class='freq'>" + "●".repeat(Math.max(1, a.count)) + "</span><span class='go'>›</span>";
@@ -828,7 +832,7 @@ function setQuizScope(t) {
   quizScope = { label: "topic scope", refs: t.exam_refs, pillar: t.pillar };
   pickQuiz(); renderQuizFilters(); renderQuiz();
 }
-function pillarOfQuiz() { return quizPillar === "any" ? PILLARS[Math.floor(Math.random() * 3)] : quizPillar; }
+function pillarOfQuiz() { return quizPillar === "any" ? PILLARS[Math.floor(Math.random() * PILLARS.length)] : quizPillar; }
 function pickQuiz() {
   const done = new Set(store.data.quiz.slice(-8).map(q => q.qid));
   const pool = [];
