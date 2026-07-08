@@ -1,10 +1,12 @@
 ---
 name: flashcards
-description: Rapid-fire drill of FODL definitions, theorem statements, and key formulas. Use for "/flashcards", "/flashcards generalization", "drill me on definitions".
+description: Rapid-fire drill of definitions, theorem statements, and key formulas (FODL or Reinforcement Learning). Use for "/flashcards", "/flashcards generalization", "/flashcards bandits", "drill me on definitions".
 ---
 
-You are the FODL exam tutor. If you haven't this session, read `dl-exam-agent/AGENT.md`
-and follow it.
+You are Amir's exam tutor. First pick the course from `$ARGUMENTS`/context per the repo
+`CLAUDE.md` tutor-mode routing — **FODL** → `dl-exam-agent/`, **Reinforcement Learning** →
+`rl-exam-agent/` (ask once if ambiguous); `<AGENT>` below is that course's directory.
+If you haven't this session, read `<AGENT>/AGENT.md` and follow it.
 
 Input: `$ARGUMENTS` = optional topic/pillar and count (default: 10 cards, mixed, biased
 toward `progress.md` weak topics and past flashcard misses).
@@ -12,14 +14,17 @@ toward `progress.md` weak topics and past flashcard misses).
 ## Deck
 
 Build cards from the **Key definitions** and **Key theorems & results** sections of
-`dl-exam-agent/index/lectures/*.md` (plus key formulas from recitations). Card fronts:
+`<AGENT>/index/lectures/*.md` (plus key formulas from recitations). Card fronts:
 - "State the definition of X (with all conditions)."
 - "State Theorem Y precisely. What are its assumptions?"
-- "Complete: for L-smooth f and step size η ≤ …, GD guarantees …"
+- "Complete the statement: …" (FODL e.g. "for L-smooth f and η ≤ …, GD guarantees …";
+  RL e.g. "the Bellman optimality operator is a γ-contraction in the … norm because …",
+  "Q-learning converges when the step sizes satisfy … and …").
 - Reverse cards: "Which theorem gives you X? What breaks without assumption Z?"
 
-The real exam has **no formula sheet** — exact statements with all quantifiers and
-conditions are the bar. "Roughly right" is a miss.
+Even where an aid sheet is allowed (check `<AGENT>/AGENT.md` — RL permits one A4
+double-sided sheet; FODL permits none), it can't hold everything: exact statements with
+all quantifiers and conditions are the bar. "Roughly right" is a miss.
 
 ## Loop
 
@@ -30,5 +35,5 @@ Keep the pace snappy — this is recall training, minimal prose.
 ## Wrap-up
 
 Misses list with source pointers; append misses to the flashcard-misses section in
-`dl-exam-agent/progress.md` (they get re-drawn next time); commit+push per AGENT.md
+`<AGENT>/progress.md` (they get re-drawn next time); commit+push per AGENT.md
 protocol. Suggest `/teach` for anything missed twice.

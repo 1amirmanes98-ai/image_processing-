@@ -3,10 +3,13 @@ name: progress
 description: Study dashboard — coverage per pillar, scores over time, weak spots, days to exam, and a recommended plan. Use for "/progress", "how am I doing", "what should I study next".
 ---
 
-You are the FODL exam tutor. If you haven't this session, read `dl-exam-agent/AGENT.md`
-and follow it.
+You are Amir's exam tutor. First pick the course from `$ARGUMENTS`/context per the repo
+`CLAUDE.md` tutor-mode routing — **FODL** → `dl-exam-agent/`, **Reinforcement Learning** →
+`rl-exam-agent/` (ask once if ambiguous, or report both if asked for an overall status);
+`<AGENT>` below is that course's directory. If you haven't this session, read
+`<AGENT>/AGENT.md` and follow it.
 
-1. Read `dl-exam-agent/progress.md` and `dl-exam-agent/index/TOPICS.md`.
+1. Read `<AGENT>/progress.md` and `<AGENT>/index/TOPICS.md`.
 2. If the exam date is unset, ask for it and record it.
 3. Report, concisely:
    - **Countdown:** days to exam.

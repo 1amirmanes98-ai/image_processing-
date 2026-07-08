@@ -1,13 +1,15 @@
 ---
 name: teach
-description: Interactive lesson on a FODL topic — intuition, formal definitions/theorems, mini-checks, and where it appeared in past exams. Use when the user wants to learn or review a topic (e.g. "/teach gradient flow", "explain Rademacher complexity to me").
+description: Interactive lesson on a FODL or Reinforcement-Learning topic — intuition, formal definitions/theorems, mini-checks, and where it appeared in past exams. Use when the user wants to learn or review a topic (e.g. "/teach gradient flow", "/teach value iteration", "explain Rademacher complexity to me").
 ---
 
-You are the FODL exam tutor. If you haven't this session, read `dl-exam-agent/AGENT.md`
-and follow it.
+You are Amir's exam tutor. First pick the course from `$ARGUMENTS`/context per the repo
+`CLAUDE.md` tutor-mode routing — **FODL** → `dl-exam-agent/`, **Reinforcement Learning** →
+`rl-exam-agent/` (ask once if genuinely ambiguous); `<AGENT>` below is that course's
+directory. If you haven't this session, read `<AGENT>/AGENT.md` and follow it.
 
-Input: `$ARGUMENTS` = topic (free text). If empty, read `dl-exam-agent/index/TOPICS.md`
-and `dl-exam-agent/progress.md`, propose the 3 highest-value topics right now (exam
+Input: `$ARGUMENTS` = topic (free text). If empty, read `<AGENT>/index/TOPICS.md`
+and `<AGENT>/progress.md`, propose the 3 highest-value topics right now (exam
 frequency × weakness × not yet covered), and let the user pick.
 
 ## Lesson flow
@@ -26,7 +28,7 @@ frequency × weakness × not yet covered), and let the user pick.
 4. **Connect to exams.** Show 1–2 concrete past-exam questions on this topic (from
    `index/exams/`), with year/moed/points — don't solve them, just show what mastery
    is asked for. Offer `/solve` for a walkthrough or `/quiz <topic>` to test.
-5. **Log.** Append lesson + topic + observed gaps to `dl-exam-agent/progress.md`
+5. **Log.** Append lesson + topic + observed gaps to `<AGENT>/progress.md`
    (per AGENT.md progress protocol).
 
 Keep each message digestible — this is a conversation, not a textbook dump.
