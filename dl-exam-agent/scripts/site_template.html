@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>FODL Study Hub</title>
+<title>__COURSE_NAME__</title>
 <style>
 __KATEX_CSS__
 </style>
@@ -219,15 +219,15 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
 
 <div class="app">
   <aside class="rail">
-    <div class="brand">FODL<br>Study Hub<small>יסודות הלמידה העמוקה</small></div>
+    <div class="brand" id="brand"></div>
     <nav id="nav"></nav>
     <div class="spacer"></div>
     <button class="themebtn" id="themeToggle" type="button">◐ Theme</button>
   </aside>
   <main>
     <section id="view-dash">
-      <h1>The exam has a shape. Learn the shape.</h1>
-      <p class="sub">Every FODL exam from 2020–2024 follows the same three-question template. This hub is built from your course's 9 lectures and all 12 past exams — translated, tagged, and drillable.</p>
+      <h1 id="heroTitle"></h1>
+      <p class="sub" id="heroSub"></p>
       <div class="card" style="padding:18px 20px">
         <div class="datebox">
           <span class="count" id="daysLeft"></span>
@@ -317,15 +317,34 @@ details.note h4{font-family:var(--serif);font-size:1rem;margin:16px 0 6px}
   </main>
 </div>
 
+<script id="config" type="application/json">__CONFIG__</script>
 <script id="data" type="application/json">__DATA__</script>
 <script>__MARKED_JS__</script>
 <script>__KATEX_JS__</script>
 <script>__AUTORENDER_JS__</script>
 <script>
 "use strict";
+const CONFIG = JSON.parse(document.getElementById("config").textContent);
 const DATA = JSON.parse(document.getElementById("data").textContent);
 const $ = (s, el) => (el || document).querySelector(s);
-const PILLARS = ["Expressiveness", "Optimization", "Generalization"];
+// Categories come from SITE_CONFIG.json ("slots", single-word names); the first
+// three are the primary categories, the last is the misc bucket. Colors map to
+// the four fixed slot palettes via a generated stylesheet, so any names work.
+const PILLARS = CONFIG.slots.slice(0, 3);
+(() => {
+  const vars = ["--exp", "--opt", "--gen", "--prac"];
+  const st = document.createElement("style");
+  st.textContent = CONFIG.slots.map((s, i) =>
+    ".p-" + s.replace(/[^\w-]/g, "") + "{--pc:var(" + (vars[i] || "--prac") + ")}").join("");
+  document.head ? document.head.appendChild(st) : document.body.appendChild(st);
+  document.title = CONFIG.courseName;
+  const parts = CONFIG.courseName.split(" ");
+  document.getElementById("brand").innerHTML =
+    parts.slice(0, 1).join(" ") + "<br>" + (parts.slice(1).join(" ") || "Study Hub") +
+    (CONFIG.courseSubtitle ? "<small>" + CONFIG.courseSubtitle + "</small>" : "");
+  document.getElementById("heroTitle").textContent = CONFIG.heroTitle;
+  document.getElementById("heroSub").textContent = CONFIG.heroSub;
+})();
 const ICONS = {
   dash: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="9" y="1.5" width="5.5" height="5.5" rx="1"/><rect x="1.5" y="9" width="5.5" height="5.5" rx="1"/><rect x="9" y="9" width="5.5" height="5.5" rx="1"/></svg>',
   topics: '<svg width="17" height="17" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="2"/><circle cx="12" cy="8" r="2"/><circle cx="5" cy="12.5" r="2"/><path d="M5.8 5.2 10.2 7M6.6 11.5l3.6-2.2"/></svg>',
@@ -340,11 +359,7 @@ const ILLOS = {
   Optimization: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 4 C 22 6, 26 24, 46 28 S 66 30, 70 30"/><circle cx="63" cy="29.4" r="3.4" fill="currentColor" stroke="none"/></svg>',
   Generalization: '<svg width="72" height="34" viewBox="0 0 72 34" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6 C 24 8, 40 22, 70 24"/><path d="M2 32 C 24 30, 40 26, 70 25" stroke-dasharray="4 3"/></svg>'
 };
-const PILLAR_ROLE = {
-  Expressiveness: "Q1 · what can the network represent",
-  Optimization: "Q2 · gradient flow gets you there",
-  Generalization: "Q3 · why it works on unseen data"
-};
+const PILLAR_ROLE = CONFIG.slotRoles || {};
 
 /* ---------- storage ---------- */
 const store = {
@@ -480,8 +495,8 @@ function renderDash() {
   avgs.forEach(({ pillar, avg, n }) => {
     const d = document.createElement("div");
     d.className = "card pillarcard p-" + pillar;
-    d.innerHTML = ILLOS[pillar] +
-      "<h3>" + pillar + "</h3><div class='role'>" + PILLAR_ROLE[pillar] + "</div>" +
+    d.innerHTML = (CONFIG.figures && ILLOS[pillar] ? ILLOS[pillar] : "") +
+      "<h3>" + pillar + "</h3><div class='role'>" + (PILLAR_ROLE[pillar] || "") + "</div>" +
       "<div class='avg'>" + avg + "<small>avg pts · " + n + " past questions</small></div>";
     pc.appendChild(d);
   });
@@ -700,7 +715,7 @@ function renderExamDetail(e) {
   det.appendChild(back);
   const h = document.createElement("h1"); h.textContent = examLabel(e); det.appendChild(h);
   const sub = document.createElement("p"); sub.className = "sub";
-  sub.textContent = (e.date || "") + (e.total ? " · " + e.total + " points · 3 hours · no aid material" : "");
+  sub.textContent = (e.date || "") + (e.total ? " · " + e.total + " points · " + CONFIG.examFormatLine : "");
   det.appendChild(sub);
   e.questions.forEach(q => {
     const c = document.createElement("div");
@@ -907,10 +922,11 @@ function renderWeak() {
 /* ---------- memorize (cheat sheet with know-it tracking) ---------- */
 function memoSecPillar(name) {
   const n = name.toLowerCase();
-  if (n.includes("expressiveness") || n.includes("example")) return "Expressiveness";
-  if (n.includes("optimization")) return "Optimization";
-  if (n.includes("generalization") || n.includes("probability") || n.includes("concentration")) return "Generalization";
-  return "Practices";
+  for (const [kw, slot] of Object.entries(CONFIG.slotKeywords)) if (n.includes(kw)) return slot;
+  // FODL-era fallbacks (harmless for other courses)
+  if (n.includes("example")) return CONFIG.slots[0];
+  if (n.includes("probability") || n.includes("concentration")) return CONFIG.slots[2] || CONFIG.slots[0];
+  return CONFIG.slots[CONFIG.slots.length - 1];
 }
 function memoId(sec, item) { return (sec.name + "::" + item.name).slice(0, 80); }
 store.data.memo = store.data.memo || {};
@@ -1183,7 +1199,7 @@ const FIGS = {
 };
 const MOUNTED_FIGS = [];
 function figNode(id) {
-  const f = FIGS[id]; if (!f) return document.createDocumentFragment();
+  const f = FIGS[id]; if (!f || !CONFIG.figures) return document.createDocumentFragment();
   const d = document.createElement("details");
   d.className = "note figd p-" + (f.pillar || "Practices");
   d.innerHTML = "<summary>📈 Figure — " + f.title + "</summary>" +
@@ -1251,7 +1267,7 @@ function buildChunks() {
   (DATA.topics || []).forEach(t => pushSplit(
     t.topic + "\nTaught in: " + t.taught + "\nExamined in: " + t.examined + " (priority: " + t.priority + ")",
     { srcLabel: "Topic map — " + t.pillar, sec: "topic entry", pillar: t.pillar }));
-  Object.values(FIGS).forEach(f => pushSplit(f.title + ". " + f.caption,
+  if (CONFIG.figures) Object.values(FIGS).forEach(f => pushSplit(f.title + ". " + f.caption,
     { srcLabel: "Figure — " + f.title, sec: "figure caption", pillar: f.pillar }));
   DF = {};
   CHUNKS.forEach(c => {
@@ -1391,7 +1407,7 @@ buildChunks();
   $("#askCorpus").textContent = "Search index (rebuilt from this page on every load): " +
     Object.entries(by).map(([k, v]) => v + " " + k).join(" · ") + " — " + CHUNKS.length + " passages total.";
 })();
-["does Hoeffding appear in exam solutions?", "balancedness conservation law", "why does uniform convergence fail for deep learning", "NTK convergence", "Telgarsky sawtooth depth separation", "PAC-Bayes bound"].forEach(sug => {
+(CONFIG.askSuggestions || []).forEach(sug => {
   const b = document.createElement("button");
   b.type = "button"; b.className = "chipbtn"; b.textContent = sug;
   b.onclick = () => { $("#askInput").value = sug; renderAsk(); };
