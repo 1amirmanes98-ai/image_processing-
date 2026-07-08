@@ -88,6 +88,7 @@ def parse_exam(path: Path) -> dict:
         km = re.search(r"\*\*Solution sketch[^:]*:\*\*\s*\n(.*)", block, re.DOTALL)
         if km:
             sketch = km.group(1).strip()
+        hm = re.search(r"\*\*Hint[^:]*:\*\*\s*(.+?)(?=\n\*\*|\Z)", block, re.DOTALL)
         exam["questions"].append({
             "n": qnum,
             "pts": pts,
@@ -97,6 +98,7 @@ def parse_exam(path: Path) -> dict:
             "difficulty": int(diff_m.group(1)) if diff_m else 0,
             "maps_to": maps_m.group(1).strip() if maps_m else "",
             "statement": stmt,
+            "hint": hm.group(1).strip() if hm else "",
             "sketch": sketch,
         })
     return exam
@@ -268,12 +270,18 @@ def parse_mock(path: Path) -> dict:
         end = heads[i + 1].start() if i + 1 < len(heads) else len(text)
         qnum = int(m.group(1))
         body = text[m.end():end].strip().strip("-— \n")
+        sol = solutions.get(qnum, "")
+        # a mock solution block may carry a brief **Hint:** and a **Full solution:**
+        hm = re.search(r"\*\*Hint[^:]*:\*\*\s*(.+?)(?=\n\*\*Full solution|\Z)", sol, re.DOTALL)
+        fm = re.search(r"\*\*Full solution[^:]*:\*\*\s*(.+)", sol, re.DOTALL)
+        hint = hm.group(1).strip() if hm else ""
+        full = fm.group(1).strip() if fm else sol
         exam["questions"].append({
             "n": qnum, "pts": int(m.group(2)), "title": m.group(3).strip(),
             "topics": [],
             "pillar": CONFIG["mockSlotByQ"].get(str(qnum), CONFIG["slots"][-1]),
             "difficulty": 0, "maps_to": "",
-            "statement": body, "sketch": solutions.get(qnum, ""),
+            "statement": body, "hint": hint, "sketch": full,
         })
     if exam["questions"]:  # derive total from the questions (course-agnostic)
         exam["total"] = str(sum(q["pts"] for q in exam["questions"]))
