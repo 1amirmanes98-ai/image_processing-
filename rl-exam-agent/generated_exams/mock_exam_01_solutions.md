@@ -4,6 +4,12 @@ All numeric answers below were verified with a `python3`/numpy computation.
 
 ## Q1 — Machine maintenance MDP
 
+**Hint:** Only the current machine state matters. Write the two Bellman optimality equations,
+run value iteration a couple of steps from $V_0\equiv0$, then solve the $2\times2$ linear system
+for the (run, repair) policy.
+
+**Full solution:**
+
 **(a)** $S=\{W,B\}$. Actions: $A(W)=\{\text{run},\text{service}\}$, $A(B)=\{\text{repair}\}$.
 Rewards: $R(W,\text{run})=10$, $R(W,\text{service})=4$, $R(B,\text{repair})=-3$.
 Transitions: $P(W\mid W,\text{run})=0.7,\ P(B\mid W,\text{run})=0.3$; $P(W\mid W,\text{service})=1$;
@@ -31,6 +37,12 @@ vs service $=4+0.9\cdot72.36=69.13$; run wins, consistent with $\pi^*(W)=\text{r
 
 ## Q2 — TD(0) vs first-visit MC
 
+**Hint:** TD(0) bootstraps off the current (still-zero) next-state estimates, so on the first
+pass only immediate rewards move the values; first-visit MC uses the full observed return from
+each state.
+
+**Full solution:**
+
 **(a)** TD(0) update $V(s)\leftarrow V(s)+\alpha\big(r+\gamma V(s')-V(s)\big)$, in visit order:
 - $s_1$: target $=2+V(s_2)=2$; $V(s_1)=0+0.5(2-0)=\mathbf{1.0}$.
 - $s_2$: target $=1+V(s_3)=1$ (still $0$); $V(s_2)=0+0.5(1-0)=\mathbf{0.5}$.
@@ -51,6 +63,12 @@ TD converges to them over many episodes.)
 
 ## Q3 — Softmax policy gradient
 
+**Hint:** Write $\log\pi(a\mid s)=\theta^\top\phi(s,a)-\log\sum_{a'}e^{\theta^\top\phi(s,a')}$ and
+differentiate to get $\phi(s,a)-\mathbb{E}_\pi[\phi]$. Then evaluate at $\theta=(0.5,0)$ and take
+one REINFORCE step.
+
+**Full solution:**
+
 **(a)** $\log\pi(a\mid s;\theta)=\theta^\top\phi(s,a)-\log\sum_{a'}e^{\theta^\top\phi(s,a')}$.
 Differentiating, $\nabla_\theta\log\pi(a\mid s)=\phi(s,a)-\dfrac{\sum_{a'}e^{\theta^\top\phi(s,a')}\phi(s,a')}{\sum_{a'}e^{\theta^\top\phi(s,a')}}
 =\phi(s,a)-\sum_{a'}\pi(a'\mid s)\phi(s,a')=\phi(s,a)-\mathbb{E}_{a'\sim\pi}[\phi(s,a')]$.
@@ -65,6 +83,12 @@ $\nabla_\theta\log\pi(a_1\mid s)=(1,0)-(0.6225,0.3775)=\mathbf{(0.3775,\,-0.3775
 =\mathbf{(0.6133,\,-0.1133)}$. The update raises the probability of the rewarded action $a_1$.
 
 ## Q4 — Explore-then-commit regret
+
+**Hint:** Split the regret into the forced exploration ($m$ pulls of the worse arm) plus the
+commit phase weighted by the probability of committing to the wrong arm (bound it with
+Hoeffding). Then choose $m$ to balance the two terms.
+
+**Full solution:**
 
 **(a)** During exploration each arm is pulled $m$ times. Pulling the optimal arm costs $0$ regret;
 pulling the other arm costs $\Delta$ each. So exploration regret $=m\cdot\Delta$ exactly (the $m$
