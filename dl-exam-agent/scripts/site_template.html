@@ -1231,8 +1231,12 @@ const FIG_MEMO_MAP = [
 
 /* ---------- ask (client-side retrieval, verbatim quotes) ---------- */
 let CHUNKS = null, DF = null;
-const STOP = new Set(["the","a","an","of","in","on","for","to","and","or","is","are","that","with","we","it","as","by","be","at","this","from","does","do","did","appear","appears","appearing","any","there","where","which","when","how","why","what","can","could","would","give","me","show","have","has","was","were","will","if","not","also","about","them","they","you","i","straight","answer","example","examples"]);
-const tokenize = s => (s.toLowerCase().match(/[a-z][a-z0-9'-]+|\d+/g) || []).filter(w => !STOP.has(w));
+const STOP = new Set(["the","a","an","of","in","on","for","to","and","or","is","are","that","with","we","it","as","by","be","at","this","from","does","do","did","appear","appears","appearing","any","there","where","which","when","how","why","what","can","could","would","give","me","show","have","has","was","were","will","if","not","also","about","them","they","you","i","straight","answer","example","examples",
+  // Hebrew stopwords — searchable Hebrew content works out of the box
+  "של","את","זה","זו","על","עם","הוא","היא","הם","הן","אם","או","גם","כל","לא","יש","אין","מה","איך","למה","מתי","איפה","האם","אני","אתה","אז","אבל","רק","עוד","כי","מן","בין","אחרי","לפני","כאשר","כדי","היכן","האת"]);
+const tokenize = s => (s.toLowerCase().match(/[a-z][a-z0-9'-]+|[֐-׿][֐-׿'׳״"-]*|\d+/g) || [])
+  .map(w => w.replace(/^ה(?=[֐-׿]{2})/, ""))   // strip Hebrew definite article
+  .filter(w => !STOP.has(w));
 function pushSplit(text, meta) {
   const parts = [];
   let cur = "";

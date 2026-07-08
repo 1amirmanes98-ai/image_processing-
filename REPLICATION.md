@@ -90,6 +90,36 @@ cheat sheet (compile from index with per-item source check — ≈80k); figures
 (write per-course, computed not drawn); full adversarial audit (≈150–300k —
 worth it, but run ONE audit pass at the end, not after every phase).
 
+## Phase 6 — Hebrew-language course (do this ONLY when one actually exists)
+
+Hebrew **content** already works: index files may be written in Hebrew (math stays
+LTR inside KaTeX automatically), and the Ask tokenizer understands Hebrew words
+(with a Hebrew stopword list and definite-article stripping). Keep the *structural*
+markers of the index format in English (`**Def (…).**`, `## Q1 (40 pts) — …`,
+`**Statement:**`) — the parsers key on them; only the prose goes Hebrew.
+
+A Hebrew **UI** (RTL) is a one-session template upgrade. Checklist:
+1. Add to SITE_CONFIG.json: `"dir": "rtl"`, `"lang": "he"`, and a `"ui"` strings
+   object; template boot sets `document.documentElement.dir/lang` from config and
+   reads every UI string via `CONFIG.ui.<key>` with English fallbacks.
+2. CSS: convert physical properties to logical ones — `border-left` →
+   `border-inline-start` (the colored card stripes: `.qhead`, `.hit`, `.memoitem`,
+   `.topicrow .stripe`), `text-align:left` → `start`, `margin/padding-left/right` →
+   `-inline-start/-end`. Flex/grid mirror automatically.
+3. Force LTR islands: `.katex, .katex-display, code, pre { direction: ltr;
+   unicode-bidi: isolate; }` — and verify mixed Hebrew-text + inline-math
+   paragraphs visually (this is most of the verification work).
+4. Verify RTL in headless Chromium at desktop + 390px widths; check the bottom
+   mobile nav order and that `overflow-x` didn't flip.
+
+Ready-made Hebrew UI strings pack (translate-once, copy into `"ui"`):
+nav: סקירה · נושאים · חיפוש · מבחנים · לשינון · כרטיסיות · בוחן;
+buttons: גלה את הפתרון · ידעתי ✓ · כמעט ◐ · פספסתי ✗ · דלג לשאלה אחרת ·
+חזרה · ערבב לי · הצג במבחן המלא; headings: החומר מהשיעור ·
+שאלות מבחן בנושא הזה · סקיצת פתרון — נסו לבד קודם · ידוע לי (מעקב שינון) ·
+תבנית המבחן · דפוסי שאלות חוזרים; misc: נקודות · קושי · הופיע ב־ ·
+נבנה מחדש בכל טעינה · ימים למבחן.
+
 ## Anti-patterns that burned tokens the first time
 
 - Rewriting/adapting `site_template.html` instead of using SITE_CONFIG. (Biggest sink.)
