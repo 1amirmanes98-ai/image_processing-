@@ -22,7 +22,34 @@ never committed**).
 Read `notes-formatter/DESIGN.md` before you write any HTML — it is the authoring
 contract (every CSS class, the RTL/LTR bidi rules, and the fidelity rules).
 
+## Speed rules (learned from real runs — see `notes-formatter/RUNLOG.md`)
+
+These exist because early runs took ~30 min. Apply them; they do not trade off
+quality:
+
+- **Run inline, don't delegate wholesale.** If your session model is already the
+  strongest available, execute this workflow yourself instead of spawning one
+  background agent to do everything — a handoff adds waiting plus duplicated QA.
+  Delegate only truly parallel side-work (see next rule) or when your context is
+  nearly full.
+- **Parallelize page reads.** Issue 4–6 `Read` calls *in a single message* per
+  batch. Never read scan pages one call at a time.
+- **Single-pass authoring for inputs ≤ ~12 pages.** Author each `content.html`
+  section right after reading its page batch. Use a separate scratch transcript
+  pass only for bigger inputs.
+- **Fan out independent verification.** When correctness-checking a solved exam,
+  each question is independent: spawn parallel subagents (one per question,
+  structured output) while you author — don't re-derive five problems serially.
+- **Targeted QA re-reads.** Full page-by-page QA on the *first* build only.
+  After a targeted fix, re-read just the affected page(s) + the last page, and
+  sanity-check page count with `pdfinfo`. Don't re-read all N pages per iteration.
+- **Log every run.** Append a line to `notes-formatter/RUNLOG.md` (step 8) and
+  read it at the start of a run — it is the cross-session memory of this tool.
+
 ## Workflow
+
+### 0. Learn from past runs
+Read `notes-formatter/RUNLOG.md` (if present) — apply any lessons recorded there.
 
 ### 1. Bootstrap
 Run `notes-formatter/scripts/bootstrap.sh`. It installs `poppler-utils` if
@@ -37,14 +64,16 @@ notes-formatter/scripts/rasterize.sh outputs/<slug>/pages  <input.pdf | images..
 ```
 
 ### 3. Survey (before transcribing)
-`Read` the page PNGs in batches of 4–6. Build a mental map of the notebook:
-its sections, their order, which items Amir marked important (`#`), his
-abbreviations, and any exercises. Do **not** start writing HTML until you've
-seen every page.
+`Read` the page PNGs in batches of 4–6 — **all Reads of a batch in one message,
+in parallel**. Build a mental map of the notebook: its sections, their order,
+which items Amir marked important (`#`), his abbreviations, and any exercises.
+Do **not** start writing HTML until you've seen every page.
 
 ### 4. Transcribe & author `content.html`
-Write `outputs/<slug>/content.html` section by section, re-reading the relevant
-page PNGs as you go. Follow `DESIGN.md`. **Fidelity rules (non-negotiable):**
+Write `outputs/<slug>/content.html` **section by section as you read** (single
+pass; for inputs > ~12 pages you may keep a scratch transcript first), re-reading
+a specific page only when ambiguous. Follow `DESIGN.md`.
+**Fidelity rules (non-negotiable):**
 - **Preserve the notebook's structure and order** — don't reorganise.
 - **`#` / `.imp` only where the notebook marks it** — not what you think matters.
 - **Anything beyond the notebook goes in a `.box.bonus`**, clearly flagged as an
@@ -69,7 +98,9 @@ This writes `rendered.html`, the self-contained `<slug>.html`, the `<slug>.pdf`,
 and `qa/page-NN.png`.
 
 ### 6. Mandatory visual QA loop
-`Read` **every** `outputs/<slug>/qa/page-*.png` and check:
+On the **first build**, `Read` **every** `outputs/<slug>/qa/page-*.png` (in
+parallel batches). On rebuilds after a targeted fix, re-read **only the affected
+page(s) + the last page** and verify the page count via `pdfinfo`. Check:
 - Hebrew renders RTL in **David Libre** (not a sans fallback);
 - math renders via KaTeX (no raw `\( \)` / `\[ \]` visible), bidi correct around
   formulas;
@@ -90,3 +121,13 @@ SendUserFile(files=["outputs/<slug>/<slug>.pdf", "outputs/<slug>/<slug>.html"], 
 Outputs are personal course content — **deliver in chat only, never git commit
 them** (`outputs/` is gitignored). Report any `.unclear` spots you left for the
 user to confirm.
+
+### 8. Log the run (cross-session memory)
+Append one line to `notes-formatter/RUNLOG.md`:
+```
+| YYYY-MM-DD | <slug> | <in pages> | <out pages> | <QA iterations> | <wall time> | <lesson, or "-"> |
+```
+Keep lessons about **process** (speed, QA, pipeline), never course content.
+If a lesson generalizes, also fold it into the "Speed rules" section above —
+that is how this skill gets faster over time. Committing RUNLOG.md + SKILL.md
+updates is allowed and encouraged (they are tool metadata, not personal content).
