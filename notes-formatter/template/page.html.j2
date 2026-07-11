@@ -1,0 +1,61 @@
+<!doctype html>
+<html dir="rtl" lang="he">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title }}</title>
+
+  {# notes.css — inlined by build_pdf.py with vendor url()s already resolved
+     (absolute file:// for the print copy, data: URIs for the deliverable). #}
+  <style>{{ notes_css }}</style>
+
+  {# KaTeX stylesheet — either a <link href=file://…> (print) or an inlined
+     <style> block with its fonts as data: URIs (deliverable). #}
+  {{ katex_css_block }}
+</head>
+<body>
+  {# The visible title lives inside the content (its .hero); {{ title }} only
+     feeds <title> and the printed page footer. #}
+  <main class="doc">
+    {{ body }}
+    {% if footer_meta %}<div class="doc-foot">{{ footer_meta }}</div>{% endif %}
+  </main>
+
+  {# KaTeX + auto-render — <script src=file://…> (print) or inlined (deliverable). #}
+  {{ katex_js_block }}
+
+  {# Render math, wait for fonts, then signal the CDP driver we are ready. #}
+  <script>
+    (function () {
+      function render() {
+        try {
+          if (typeof renderMathInElement === "function") {
+            renderMathInElement(document.body, {
+              delimiters: [
+                { left: "\\[", right: "\\]", display: true },
+                { left: "\\(", right: "\\)", display: false }
+              ],
+              throwOnError: false
+            });
+          }
+        } catch (e) {
+          console.error("KaTeX render error:", e);
+        }
+        var fontsReady = (document.fonts && document.fonts.ready)
+          ? document.fonts.ready : Promise.resolve();
+        fontsReady.then(function () {
+          // one more frame so layout settles before printToPDF
+          requestAnimationFrame(function () {
+            requestAnimationFrame(function () { window.__RENDER_DONE__ = true; });
+          });
+        });
+      }
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", render);
+      } else {
+        render();
+      }
+    })();
+  </script>
+</body>
+</html>

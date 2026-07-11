@@ -1,0 +1,454 @@
+/* ============================================================================
+   notes.css — design system for "handwritten Hebrew notes → typed PDF"
+   RTL (dir=rtl, lang=he), David Libre body, KaTeX math.
+   Palette + layout calibrated against the reference (innerproductsummary.pdf).
+   NOTE: @font-face url()s below are RELATIVE to this file (template/notes.css).
+         build_pdf.py rewrites them to absolute file:// (print) or data: URIs
+         (self-contained deliverable) when it inlines this stylesheet.
+   ============================================================================ */
+
+/* ---- Fonts ------------------------------------------------------------- */
+@font-face {
+  font-family: "David Libre"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("../vendor/fonts/DavidLibre-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "David Libre"; font-style: normal; font-weight: 500; font-display: swap;
+  src: url("../vendor/fonts/DavidLibre-Medium.ttf") format("truetype");
+}
+@font-face {
+  font-family: "David Libre"; font-style: normal; font-weight: 700; font-display: swap;
+  src: url("../vendor/fonts/DavidLibre-Bold.ttf") format("truetype");
+}
+
+/* ---- Palette ----------------------------------------------------------- */
+:root {
+  --ink:        #0f172a;   /* slate-900 body text            */
+  --muted:      #5b6b7d;   /* muted / secondary text         */
+  --border:     #e2e8f0;   /* hairline borders               */
+  --page-bg:    #ffffff;
+
+  --def:        #1d4ed8;   --def-bg:   #eef4ff;   /* הגדרה  */
+  --thm:        #15803d;   --thm-bg:   #f0fdf4;   /* משפט/טענה */
+  --trick:      #7c3aed;   --trick-bg: #f5f3ff;   /* טריק   */
+  --note:       #c2410c;   --note-bg:  #fff7ed;   /* דגש    */
+  --note-accent:#d97706;
+  --warn:       #dc2626;   --warn-bg:  #fef2f2;   /* זהירות */
+  --bonus:      #0f766e;   --bonus-bg: #f0fdfa;   /* בונוס  */
+
+  --chip-a:     #1c2733;   /* dark chip (start)              */
+  --chip-b:     #0f172a;   /* dark chip (end)                */
+
+  --amber:      #d97706;   --amber-ink: #b45309;  --amber-bg: #fffbeb;  --amber-brd: #fcd34d;
+  --star:       #eab308;
+  --grid:       #e7eef8;   /* graph-paper grid line          */
+}
+
+/* ---- Reset-ish / base -------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+html { font-size: 11pt; }
+
+body {
+  direction: rtl;
+  text-align: right;
+  font-family: "David Libre", "Frank Ruhl Libre", serif;
+  font-weight: 400;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--page-bg);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  counter-reset: section;
+}
+
+p { margin: 0.35em 0; }
+strong, b { font-weight: 700; }
+a { color: var(--def); text-decoration: none; }
+
+h1, h2, h3, h4 { line-height: 1.3; margin: 0.6em 0 0.35em; break-after: avoid; }
+h1 { font-size: 1.55rem; font-weight: 700; }
+h2 { font-size: 1.28rem; font-weight: 700; }
+h3 { font-size: 1.1rem;  font-weight: 700; }
+
+ul, ol { margin: 0.35em 0; padding-inline-start: 1.35em; }
+li { margin: 0.18em 0; }
+
+hr { border: 0; border-top: 1px solid var(--border); margin: 1.1em 0; }
+
+/* ============================================================================
+   Hero header (page 1) — graph-paper card with title, subtitle, legend, abbrev
+   ============================================================================ */
+.hero {
+  border: 1px solid #dbe6f3;
+  border-radius: 14px;
+  padding: 1.05em 1.35em 1.15em;
+  margin: 0 0 1.25em;
+  background:
+    repeating-linear-gradient(0deg,  var(--grid) 0 1px, transparent 1px 22px),
+    repeating-linear-gradient(90deg, var(--grid) 0 1px, transparent 1px 22px),
+    #ffffff;
+  break-inside: avoid;
+}
+.hero .eyebrow { color: var(--muted); font-size: 0.85rem; margin: 0 0 0.15em; }
+.hero h1 {
+  display: inline-block;
+  font-size: 1.95rem;
+  font-weight: 700;
+  margin: 0.05em 0 0.15em;
+  padding-bottom: 0.12em;
+  border-bottom: 3px solid var(--def);
+}
+.hero .subtitle { color: #334155; font-size: 1.05rem; margin: 0.1em 0 0.65em; }
+
+/* plain title/meta when the hero card is not used */
+.doc-title { font-size: 1.7rem; font-weight: 700; margin: 0 0 0.15em; }
+.doc-meta  { color: var(--muted); font-size: 0.85rem; margin: 0 0 1em; }
+
+/* optional closing meta line (build_pdf --meta), e.g. "נבנה מתוך סיכום ההרצאה…" */
+.doc-foot {
+  text-align: center; color: var(--muted); font-size: 0.8rem;
+  margin-top: 1.5em; padding-top: 0.8em; border-top: 1px solid var(--border);
+}
+
+/* ============================================================================
+   Callout boxes — .box + variant. Pill label auto-generated from the variant;
+   override with data-label="…" (e.g. משפט → טענה / מסקנה / תכונות / תרגיל).
+   Optional inline title:  <div class="box def"><span class="t">…</span> body</div>
+   ============================================================================ */
+.box {
+  position: relative;
+  border: 1px solid var(--border);
+  border-inline-start: 5px solid var(--muted);
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.7em 0.95em 0.75em;
+  margin: 0.85em 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.box > p:first-of-type { margin-top: 0.15em; }
+.box > :last-child { margin-bottom: 0; }
+
+/* pill label — inline-block so an optional .t title shares its line */
+.box::before {
+  content: attr(data-label);
+  display: inline-block;
+  vertical-align: middle;
+  margin-bottom: 0.45em;
+  margin-inline-end: 0.5em;
+  padding: 0.14em 0.7em;
+  border-radius: 7px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: var(--muted);
+}
+.box > .t {                         /* bold, accent-colored heading beside pill */
+  display: inline;
+  vertical-align: middle;
+  font-weight: 700;
+}
+
+/* variant fills + accents */
+.box.def   { border-inline-start-color: var(--def);   background: var(--def-bg);   }
+.box.thm   { border-inline-start-color: var(--thm);   background: var(--thm-bg);   }
+.box.trick { border-inline-start-color: var(--trick); background: var(--trick-bg); }
+.box.note  { border-inline-start-color: var(--note);  background: var(--note-bg);  }
+.box.warn  { border-inline-start-color: var(--warn);  background: var(--warn-bg);  }
+.box.bonus { border-inline-start-color: var(--bonus); background: var(--bonus-bg); }
+
+.box.def::before   { background: var(--def);   }
+.box.thm::before   { background: var(--thm);   }
+.box.trick::before { background: var(--trick); }
+.box.note::before  { background: var(--note);  }
+.box.warn::before  { background: var(--warn);  }
+.box.bonus::before { background: var(--bonus); }
+
+.box.def   > .t { color: var(--def);   }
+.box.thm   > .t { color: var(--thm);   }
+.box.trick > .t { color: var(--trick); }
+.box.note  > .t { color: var(--note);  }
+.box.warn  > .t { color: var(--warn);  }
+.box.bonus > .t { color: var(--bonus); }
+
+.box.def:not([data-label])::before   { content: "הגדרה";  }
+.box.thm:not([data-label])::before   { content: "משפט";   }
+.box.trick:not([data-label])::before { content: "טריק";   }
+.box.note:not([data-label])::before  { content: "דגש";    }
+.box.warn:not([data-label])::before  { content: "זהירות"; }
+.box.bonus:not([data-label])::before { content: "בונוס";  }
+
+/* compact single-line variant (e.g. בונוס one-liners) */
+.box.tight { padding-top: 0.5em; padding-bottom: 0.5em; }
+.box.tight::before { margin-bottom: 0; }
+
+/* dashed variant (e.g. "חלק חסר – להשלמה") */
+.box.dashed { border-style: dashed; border-inline-start-style: solid; background: #fff; }
+
+/* box flagged important: red "#" badge pinned to the leading-top outer corner */
+.box.imp::after {
+  content: "#";
+  position: absolute;
+  top: -0.55em;
+  inset-inline-start: -0.55em;
+  width: 1.45em; height: 1.45em;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 6px;
+  background: var(--warn);
+  color: #fff; font-weight: 700; font-size: 0.8rem;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* ============================================================================
+   .imp — inline "חשוב במיוחד" amber chip (mirrors Amir's "#" mark)
+   <span class="imp">חשוב במיוחד</span>   →   "# חשוב במיוחד"
+   ============================================================================ */
+span.imp {
+  display: inline-block;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+  border: 1px solid var(--amber-brd);
+  border-radius: 6px;
+  padding: 0.02em 0.5em;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+span.imp::before { content: "# "; opacity: 0.8; }
+
+/* ============================================================================
+   .unclear — illegible handwriting marker (dashed amber). NEVER silently guess.
+   ============================================================================ */
+.unclear {
+  position: relative;
+  border: 1.5px dashed var(--amber);
+  background: repeating-linear-gradient(135deg, #fffbeb 0 8px, #fff7e0 8px 16px);
+  border-radius: 8px;
+  padding: 0.6em 0.9em;
+  margin: 0.8em 0;
+  color: var(--amber-ink);
+  break-inside: avoid;
+}
+.unclear::before {
+  content: "לא ברור בכתב היד";
+  display: table;
+  margin-bottom: 0.4em;
+  padding: 0.1em 0.7em;
+  border-radius: 7px;
+  font-size: 0.68rem; font-weight: 700; color: #fff;
+  background: var(--amber);
+}
+
+/* ============================================================================
+   .section-chip — bold dark title with an auto-numbered dark navy badge
+   <h2 class="section-chip">תבניות בי־לינאריות</h2>
+   ============================================================================ */
+.section-chip {
+  counter-increment: section;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin: 1.5em 0 0.7em;
+  padding-bottom: 0.32em;
+  border-bottom: 1.5px solid var(--border);
+  color: var(--ink);
+  font-size: 1.34rem;
+  font-weight: 700;
+  break-after: avoid;
+  break-inside: avoid;
+}
+.section-chip::before {              /* dark numbered badge on the leading (right) edge */
+  content: counter(section);
+  flex: 0 0 auto;
+  width: 1.55em; height: 1.55em;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 7px;
+  background: linear-gradient(135deg, var(--chip-a), var(--chip-b));
+  color: #fff; font-size: 0.86em; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.section-chip.no-num { counter-increment: none; }
+.section-chip.no-num::before { content: none; }
+
+/* ============================================================================
+   .dict-table — dictionary / R↔C comparison table
+   ============================================================================ */
+table.dict-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.85em 0;
+  font-size: 0.95rem;
+}
+.dict-table caption {
+  caption-side: top; text-align: right; font-weight: 700;
+  color: var(--muted); padding-bottom: 0.35em;
+}
+.dict-table th, .dict-table td {
+  border: 1px solid var(--border);
+  padding: 0.42em 0.7em;
+  text-align: right;
+  vertical-align: top;
+}
+.dict-table thead th {
+  background: var(--chip-b);
+  color: #fff; font-weight: 700;
+  border-color: var(--chip-b);
+}
+.dict-table tbody tr:nth-child(even) { background: #f8fafc; }
+.dict-table tbody tr { break-inside: avoid; }
+.dict-table td.k, .dict-table th[scope="row"] { font-weight: 700; }
+
+/* ============================================================================
+   .topic-map — "מפת נושא": a row of colored column-cards
+   ============================================================================ */
+.topic-map {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7em;
+  margin: 0.9em 0;
+}
+.topic-map .tm-col {
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--muted);
+  border-radius: 11px;
+  background: #fff;
+  padding: 0.7em 0.85em 0.75em;
+  break-inside: avoid;
+}
+.topic-map .tm-col > .h { font-weight: 700; margin-bottom: 0.4em; color: var(--ink); }
+.topic-map .tm-col.def   { border-top-color: var(--def);   }  .topic-map .tm-col.def   > .h { color: var(--def);   }
+.topic-map .tm-col.thm   { border-top-color: var(--thm);   }  .topic-map .tm-col.thm   > .h { color: var(--thm);   }
+.topic-map .tm-col.trick { border-top-color: var(--trick); }  .topic-map .tm-col.trick > .h { color: var(--trick); }
+.topic-map .tm-col.bonus { border-top-color: var(--bonus); }  .topic-map .tm-col.bonus > .h { color: var(--bonus); }
+.topic-map ul { list-style: none; margin: 0; padding-inline-start: 0; }
+.topic-map li { position: relative; padding-inline-start: 1em; margin: 0.16em 0; font-size: 0.95rem; }
+.topic-map li::before { content: "•"; position: absolute; inset-inline-start: 0.1em; color: var(--muted); }
+.topic-map li.star::before { content: "★"; color: var(--star); font-size: 0.85em; top: 0.12em; }
+.tm-here {
+  display: inline-block; margin-bottom: 0.35em;
+  padding: 0.08em 0.6em; border-radius: 999px;
+  background: var(--trick); color: #fff; font-size: 0.68rem; font-weight: 700;
+}
+
+/* ============================================================================
+   .legend — page-1 key: bordered pills, each with a colored round dot
+   ============================================================================ */
+.legend {
+  display: flex; flex-wrap: wrap; gap: 0.4em 0.5em;
+  margin: 0.15em 0 0.55em;
+  padding: 0; list-style: none;
+}
+.legend .lg {
+  display: inline-flex; align-items: center; gap: 0.4em;
+  border: 1px solid var(--border); border-radius: 999px;
+  background: #fff; padding: 0.12em 0.7em;
+  font-size: 0.82rem; white-space: nowrap;
+}
+.legend .lg::before {
+  content: ""; width: 0.62em; height: 0.62em; border-radius: 50%;
+  background: var(--sw, var(--muted));
+}
+.legend .lg.def   { --sw: var(--def);   }
+.legend .lg.thm   { --sw: var(--thm);   }
+.legend .lg.trick { --sw: var(--trick); }
+.legend .lg.note  { --sw: var(--note);  }
+.legend .lg.warn  { --sw: var(--warn);  }
+.legend .lg.bonus { --sw: var(--bonus); }
+.legend .lg.imp   { border-color: var(--amber-brd); background: var(--amber-bg); color: var(--amber-ink); font-weight: 700; }
+.legend .lg.imp::before { content: "#"; width: auto; height: auto; border-radius: 0; background: none; color: var(--amber); font-weight: 700; }
+
+/* ============================================================================
+   .abbrev — "קיצורים" strip: a plain middot-separated muted line
+   ============================================================================ */
+.abbrev { margin: 0.3em 0 0; color: var(--muted); font-size: 0.85rem; }
+.abbrev .lead { font-weight: 700; color: var(--ink); margin-inline-end: 0.3em; }
+.abbrev .ab { white-space: nowrap; }
+.abbrev .ab:not(:last-child)::after { content: " · "; color: #94a3b8; }
+.abbrev .ab .t { font-weight: 700; color: #334155; }
+
+/* ============================================================================
+   .steps — CSS-counter numbered exercise steps; .result highlights the answer
+   ============================================================================ */
+ol.steps { counter-reset: step; list-style: none; margin: 0.8em 0; padding: 0; }
+ol.steps > li {
+  counter-increment: step;
+  position: relative;
+  padding: 0.35em 2.4em 0.35em 0.2em;   /* leading pad for the badge (right in RTL) */
+  margin: 0.3em 0;
+  break-inside: avoid;
+}
+ol.steps > li::before {
+  content: counter(step);
+  position: absolute; inset-inline-start: 0; top: 0.3em;
+  width: 1.7em; height: 1.7em;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 999px;
+  background: #eef4ff; color: var(--def); border: 1.5px solid var(--def);
+  font-weight: 700; font-size: 0.82rem;
+}
+ol.steps > li.result {
+  background: var(--thm-bg); border: 1px solid #bbf7d0; border-radius: 8px;
+  padding-inline-end: 0.7em;
+}
+ol.steps > li.result::before { content: "✓"; background: var(--thm); color: #fff; border-color: var(--thm); }
+
+/* ============================================================================
+   .formula-grid — quick formula sheet: a grid of titled cards
+   ============================================================================ */
+.formula-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7em;
+  margin: 0.9em 0;
+}
+.formula-grid.cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.formula-grid .fcard {
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--def);
+  border-radius: 9px;
+  background: #fff;
+  padding: 0.5em 0.75em 0.6em;
+  break-inside: avoid;
+}
+.formula-grid .fcard .ft {
+  font-size: 0.82rem; font-weight: 700; color: var(--def);
+  text-align: right; margin-bottom: 0.25em;
+}
+.formula-grid .fcard .math { margin: 0.1em 0 0; }
+.formula-grid .fcard.thm   { border-top-color: var(--thm);   }  .formula-grid .fcard.thm   .ft { color: var(--thm);   }
+.formula-grid .fcard.trick { border-top-color: var(--trick); }  .formula-grid .fcard.trick .ft { color: var(--trick); }
+.formula-grid .fcard.note  { border-top-color: var(--note);  }  .formula-grid .fcard.note  .ft { color: var(--note);  }
+.formula-grid .fcard.bonus { border-top-color: var(--bonus); }  .formula-grid .fcard.bonus .ft { color: var(--bonus); }
+
+/* ============================================================================
+   Math — KaTeX bidi handling
+   ============================================================================ */
+.math { direction: ltr; text-align: center; margin: 0.55em 0; overflow-x: auto; }
+.katex { unicode-bidi: isolate; }
+.katex-display { margin: 0.4em 0; }
+span[dir="ltr"] { unicode-bidi: isolate; }   /* protect latin/number runs in RTL text */
+
+/* highlighted inline definition (reference uses a soft amber mark) */
+mark, .hl { background: #fef9c3; color: inherit; padding: 0 0.15em; border-radius: 3px; }
+
+/* ============================================================================
+   Print
+   ============================================================================ */
+@page { size: A4; }
+
+@media print {
+  html, body { background: #fff; }
+  .box, .unclear, .hero, .topic-map .tm-col,
+  .formula-grid .fcard, .section-chip { break-inside: avoid; }
+  .dict-table tbody tr { break-inside: avoid; }
+  .section-chip, h1, h2, h3, h4 { break-after: avoid; }
+  p, li { orphans: 3; widows: 3; }
+}
