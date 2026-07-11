@@ -272,3 +272,32 @@ When the handwriting is genuinely illegible, emit a **visible** dashed amber box
 6. **Exercises are guided.** Use `.steps`, and highlight the final result with
    `.result`.
 ```
+
+## Voice & genre (learned from user feedback — non-negotiable)
+
+The document speaks **in the author's (Amir's) voice, addressing students** —
+general, didactic, first-person-plural where natural ("שימו לב", "בודקים",
+"נציב"). **Never refer to the author in third person** — no "אמיר כתב",
+"אמיר צדק", "הפתרון של אמיר". The reader should feel the author is giving
+*them* remarks, not being graded by someone else.
+
+Two genres, choose per input:
+
+- **Lecture summary** (a notebook of notes): faithful transcript of the
+  notebook's content and order; the fidelity rules above apply as written.
+- **Solved exercise / exam solutions**: the body is the **full correct
+  solution**, written cleanly to the reader. A mistake found in the source
+  becomes a didactic **`.box.warn` labeled `טעות נפוצה`** ("common mistake"):
+  show the wrong path and how it propagates — without attributing it to anyone.
+  Good remarks from the source are woven in as the author's own tips
+  (`.box.trick` / `.box.note`). Incomplete parts are simply completed in the
+  main flow (no "the notebook stopped here"); use `.box.bonus` (label `העשרה`)
+  only for enrichment beyond the exam's scope. Include the exam question
+  statement (a `.box.def` labeled `שאלה`) above each solution.
+
+Label boxes for the genre via `data-label` — e.g. `נקודות מפתח ✓` (green
+per-question summary), `טעות נפוצה` (warn), `העשרה` (bonus), `שאלה` (def).
+
+One more layout rule discovered in practice: inline SVG figures must carry
+`style="...;direction:ltr"` — otherwise coordinate labels like `(1,−1)` come
+out bidi-scrambled under the RTL document root.

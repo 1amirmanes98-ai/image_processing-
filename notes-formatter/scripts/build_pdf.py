@@ -153,6 +153,9 @@ def main():
     if args.qa:
         qa = outdir / "qa"
         qa.mkdir(exist_ok=True)
+        # clear stale rasters from a previous (possibly longer) build
+        for old in qa.glob("page-*.png"):
+            old.unlink()
         qc = subprocess.run(
             ["pdftoppm", "-r", "110", "-png", str(out_pdf), str(qa / "page")],
         )

@@ -72,7 +72,11 @@ Do **not** start writing HTML until you've seen every page.
 ### 4. Transcribe & author `content.html`
 Write `outputs/<slug>/content.html` **section by section as you read** (single
 pass; for inputs > ~12 pages you may keep a scratch transcript first), re-reading
-a specific page only when ambiguous. Follow `DESIGN.md`.
+a specific page only when ambiguous. Follow `DESIGN.md` — including its
+**Voice & genre** section: the document speaks in the author's voice to
+students ("שימו לב", "טעות נפוצה"), **never** about the user in third person
+("אמיר כתב" is wrong); for exam solutions the body is the clean correct
+solution and source mistakes become didactic "טעות נפוצה" boxes.
 **Fidelity rules (non-negotiable):**
 - **Preserve the notebook's structure and order** — don't reorganise.
 - **`#` / `.imp` only where the notebook marks it** — not what you think matters.

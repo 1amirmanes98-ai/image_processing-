@@ -9,6 +9,7 @@ When a lesson generalizes, fold it into the "Speed rules" section of
 |---|---|---|---|---|---|---|
 | 2026-07-11 | inner-product-spaces | 16 | 9 | 2 | ~25 min | Two-pass transcript + full QA re-read each iteration was slow; single background agent = orchestrator waits idle. |
 | 2026-07-11 | optimization-exam-x-2023 | 13+5 (questionnaire) | 9 | 2 | ~29 min (84 tool calls, ~267k tokens) | Serial per-question re-derivation dominated; independent questions should be verified by parallel subagents. Full 9-page QA re-read after a 2-line fix wasted ~⅓ of QA time. Orchestrator duplicated QA (5 more page reads) — spot-check ≤3 pages when executor already did full QA. |
+| 2026-07-11 | optimization-exam-x-2023 (voice rewrite) | — (rewrite of existing content.html) | 8 | 2 | ~10 min, inline | User feedback: never third-person about the author ("אמיר צדק") — document speaks in the author's voice to students; mistakes → "טעות נפוצה" boxes. Encoded as DESIGN.md "Voice & genre". Also: SVG needs direction:ltr under RTL root; build_pdf.py now clears stale qa/*.png. Inline run + parallel reads + targeted QA re-read ≈ 3x faster than the delegated first pass. |
 
 ## Standing lessons (encoded in SKILL.md "Speed rules")
 1. Run inline when the session model is already the executor model — no wholesale delegation.
