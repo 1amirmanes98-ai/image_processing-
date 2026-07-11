@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<style>
+/* Tuned for WeasyPrint + David Libre RTL. Font paths are relative to base_url
+   (project root) — keep the fonts/ folder next to the HTML or pass base_url. */
+@font-face { font-family: 'David Libre'; src: url('fonts/DavidLibre-Regular.ttf'); font-weight: normal; }
+@font-face { font-family: 'David Libre'; src: url('fonts/DavidLibre-Bold.ttf'); font-weight: bold; }
+@page { size: A4; margin: 1.7cm 1.6cm; @bottom-center { content: counter(page); font-family: 'DejaVu Sans'; font-size: 9pt; color: #888; } }
+body { font-family: 'David Libre', serif; direction: rtl; font-size: 11pt; line-height: 1.55; color: #1a1a2e; margin: 0; }
+h1 { font-size: 18pt; color: #16324f; border-bottom: 3px solid #16324f; padding-bottom: 6px; margin-bottom: 2px;}
+.subtitle { color:#555; font-size: 10.5pt; margin-bottom: 14px;}
+h2 { font-size: 14.5pt; color: #ffffff; background: #16324f; padding: 5px 12px; border-radius: 6px; margin-top: 22px; page-break-after: avoid;}
+h3 { font-size: 12pt; color: #16324f; margin: 14px 0 4px 0; page-break-after: avoid;}
+/* restatement of the question */
+.stmt { background: #eef2f7; border-right: 4px solid #94a9c4; padding: 7px 11px; border-radius: 4px; font-size: 10.5pt; color:#333; margin: 8px 0;}
+/* true/false or yes/no badges */
+.yes, .tf-true { display:inline-block; background:#1e7d43; color:#fff; padding: 1px 12px; border-radius: 10px; font-weight: bold; font-size: 10.5pt;}
+.no, .tf-false { display:inline-block; background:#b02a30; color:#fff; padding: 1px 12px; border-radius: 10px; font-weight: bold; font-size: 10.5pt;}
+/* inline & display math: LTR-isolated, DejaVu for glyph coverage (√ Σ ≤ χ² X̄) */
+.math { direction: ltr; unicode-bidi: isolate; font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; }
+.mblock { direction: ltr; unicode-bidi: isolate; font-family: 'DejaVu Sans', sans-serif; font-size: 10.5pt; text-align: center; background:#f7f9fc; border:1px solid #dde5ef; border-radius: 6px; padding: 6px 10px; margin: 7px 24px; page-break-inside: avoid;}
+/* the signature insight box — REQUIRED once per question.
+   The 💡 lightbulb is drawn by CSS as an embedded SVG on `.insight .t::before`.
+   DO NOT type a literal 💡 emoji in the HTML: WeasyPrint renders color-emoji
+   (Noto Color Emoji) with broken vertical metrics, so the glyph floats out of
+   the line to the top of the page. The SVG below is self-contained (no font,
+   no network) and sits inline correctly in RTL. */
+.insight { background: #fff8e1; border: 1.5px solid #e0b93c; border-radius: 8px; padding: 8px 12px; margin: 10px 0; page-break-inside: avoid; font-size: 10.5pt;}
+.insight .t { font-weight: bold; color: #8a6d00; }
+.insight .t::before { content:""; display:inline-block; width:1.05em; height:1.05em; vertical-align:-0.16em; margin-left:0.34em; background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2VhYTMwMCIgZD0iTTEyIDIuMkE2LjYgNi42IDAgMCAwIDcuOSAxNGMuODYuNzIgMS40MyAxLjYyIDEuNjMgMi42bC4xNC43aDQuNjZsLjE0LS43Yy4yLS45OC43Ny0xLjg4IDEuNjMtMi42QTYuNiA2LjYgMCAwIDAgMTIgMi4yeiIvPjxyZWN0IHg9IjkuMSIgeT0iMTguMSIgd2lkdGg9IjUuOCIgaGVpZ2h0PSIxLjUiIHJ4PSIwLjYiIGZpbGw9IiNhODc5MGEiLz48cmVjdCB4PSI5LjciIHk9IjIwLjIiIHdpZHRoPSI0LjYiIGhlaWdodD0iMS41IiByeD0iMC43IiBmaWxsPSIjYTg3OTBhIi8+PC9zdmc+"); background-size:contain; background-repeat:no-repeat; background-position:center; }
+/* reusable inline lightbulb for anywhere OUTSIDE an insight header (subtitle, prose).
+   Use <span class="bulb"></span> instead of typing a literal 💡. */
+.bulb { display:inline-block; width:1em; height:1em; vertical-align:-0.13em; background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2VhYTMwMCIgZD0iTTEyIDIuMkE2LjYgNi42IDAgMCAwIDcuOSAxNGMuODYuNzIgMS40MyAxLjYyIDEuNjMgMi42bC4xNC43aDQuNjZsLjE0LS43Yy4yLS45OC43Ny0xLjg4IDEuNjMtMi42QTYuNiA2LjYgMCAwIDAgMTIgMi4yeiIvPjxyZWN0IHg9IjkuMSIgeT0iMTguMSIgd2lkdGg9IjUuOCIgaGVpZ2h0PSIxLjUiIHJ4PSIwLjYiIGZpbGw9IiNhODc5MGEiLz48cmVjdCB4PSI5LjciIHk9IjIwLjIiIHdpZHRoPSI0LjYiIGhlaWdodD0iMS41IiByeD0iMC43IiBmaWxsPSIjYTg3OTBhIi8+PC9zdmc+"); background-size:contain; background-repeat:no-repeat; background-position:center; }
+/* data-inconsistency / convention notes */
+.warn { background: #fdecea; border: 1.5px solid #d9838a; border-radius: 8px; padding: 8px 12px; margin: 10px 0; font-size: 10.5pt; page-break-inside: avoid;}
+/* bottom-line answer */
+.final { background:#e8f5ec; border:1.5px solid #57a773; border-radius:6px; padding: 6px 11px; margin: 8px 0; font-weight:bold; page-break-inside: avoid;}
+/* breakdown-point / secondary result box */
+.bp { background:#f3eefb; border:1.5px solid #8e6cc0; border-radius:6px; padding: 6px 11px; margin: 8px 0; page-break-inside: avoid;}
+table { border-collapse: collapse; margin: 8px auto; }
+th, td { border: 1px solid #9db2c9; padding: 4px 10px; text-align: center; font-size: 10.5pt;}
+th { background: #dce6f1; }
+td.num { direction:ltr; font-family:'DejaVu Sans'; font-size: 10pt;}
+ul { margin: 4px 0; padding-right: 20px;}
+li { margin-bottom: 3px;}
+.step { margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<h1>[שם הקורס ומספרו] — פתרון מלא, [מועד/תרגיל]</h1>
+<div class="subtitle">פתרון מפורט עם הסבר לכל מעבר + תיבות 💡 על הטריקים והרעיונות החשובים</div>
+
+<!-- optional: .warn box for data garbles / convention choices discovered in Phase 1 -->
+
+<h2>שאלה 1 ([X] נק׳) — [כותרת]</h2>
+<h3>א. [תת-סעיף] <!-- optionally: <span class="yes">כן</span> --></h3>
+<div class="stmt">[ניסוח מחדש קצר של מה שנשאל]</div>
+<p class="step"><b>שלב 1 — [שם השלב]:</b> [הסבר המעבר ולמה הוא מותר]</p>
+<div class="mblock">[נוסחה ב-Unicode, LTR]</div>
+<div class="final">[השורה התחתונה: הערך / ההחלטה / המסקנה במילים]</div>
+<div class="insight"><span class="t">[טריק נפוץ / חשוב ללמוד]:</span> [האם זה חוזר במבחנים? מה הדפוס הכללי? מאיזו טעות קלאסית זה מציל?] <!-- הנורה 💡 מתווספת אוטומטית ע"י CSS; אין להקליד את התו 💡 --></div>
+
+<!-- ... repeat per question ... -->
+
+<h2>טבלת סיכום מסקנות</h2>
+<table>
+<tr><th>סעיף</th><th>מבחן/כלי</th><th>סטטיסטי</th><th>p / קריטי</th><th>מסקנה</th></tr>
+<tr><td></td><td></td><td class="num"></td><td class="num"></td><td></td></tr>
+</table>
+
+<h2>סיכום — הטריקים שחוזרים</h2>
+<ul>
+<li><b>[טריק 1]:</b> [שורה אחת]</li>
+</ul>
+
+</body>
+</html>

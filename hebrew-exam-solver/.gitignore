@@ -1,0 +1,7 @@
+# setup.sh downloads these; not committed (see scripts/setup.sh)
+fonts/
+
+# render / QA artifacts
+qa/
+*.pyc
+__pycache__/

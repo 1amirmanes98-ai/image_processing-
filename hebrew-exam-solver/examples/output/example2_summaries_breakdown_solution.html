@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: 'David Libre'; src: url('fonts/DavidLibre-Regular.ttf'); font-weight: normal; }
+@font-face { font-family: 'David Libre'; src: url('fonts/DavidLibre-Bold.ttf'); font-weight: bold; }
+@page { size: A4; margin: 1.7cm 1.6cm; @bottom-center { content: counter(page); font-family: 'DejaVu Sans'; font-size: 9pt; color: #888; } }
+body { font-family: 'David Libre', serif; direction: rtl; font-size: 11pt; line-height: 1.55; color: #1a1a2e; margin: 0; }
+h1 { font-size: 18pt; color: #16324f; border-bottom: 3px solid #16324f; padding-bottom: 6px; margin-bottom: 2px;}
+.subtitle { color:#555; font-size: 10.5pt; margin-bottom: 14px;}
+h2 { font-size: 14.5pt; color: #ffffff; background: #16324f; padding: 5px 12px; border-radius: 6px; margin-top: 22px; page-break-after: avoid;}
+h3 { font-size: 12pt; color: #16324f; margin: 14px 0 4px 0; page-break-after: avoid;}
+.stmt { background: #eef2f7; border-right: 4px solid #94a9c4; padding: 7px 11px; border-radius: 4px; font-size: 10.5pt; color:#333; margin: 8px 0;}
+.yes { display:inline-block; background:#1e7d43; color:#fff; padding: 1px 12px; border-radius: 10px; font-weight: bold; font-size: 10.5pt;}
+.no { display:inline-block; background:#b02a30; color:#fff; padding: 1px 12px; border-radius: 10px; font-weight: bold; font-size: 10.5pt;}
+.math { direction: ltr; unicode-bidi: isolate; font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; }
+.mblock { direction: ltr; unicode-bidi: isolate; font-family: 'DejaVu Sans', sans-serif; font-size: 10.5pt; text-align: center; background:#f7f9fc; border:1px solid #dde5ef; border-radius: 6px; padding: 6px 10px; margin: 7px 24px; page-break-inside: avoid;}
+.insight { background: #fff8e1; border: 1.5px solid #e0b93c; border-radius: 8px; padding: 8px 12px; margin: 10px 0; page-break-inside: avoid; font-size: 10.5pt;}
+.insight .t { font-weight: bold; color: #8a6d00; }
+.insight .t::before { content:""; display:inline-block; width:1.05em; height:1.05em; vertical-align:-0.16em; margin-left:0.34em; background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2VhYTMwMCIgZD0iTTEyIDIuMkE2LjYgNi42IDAgMCAwIDcuOSAxNGMuODYuNzIgMS40MyAxLjYyIDEuNjMgMi42bC4xNC43aDQuNjZsLjE0LS43Yy4yLS45OC43Ny0xLjg4IDEuNjMtMi42QTYuNiA2LjYgMCAwIDAgMTIgMi4yeiIvPjxyZWN0IHg9IjkuMSIgeT0iMTguMSIgd2lkdGg9IjUuOCIgaGVpZ2h0PSIxLjUiIHJ4PSIwLjYiIGZpbGw9IiNhODc5MGEiLz48cmVjdCB4PSI5LjciIHk9IjIwLjIiIHdpZHRoPSI0LjYiIGhlaWdodD0iMS41IiByeD0iMC43IiBmaWxsPSIjYTg3OTBhIi8+PC9zdmc+"); background-size:contain; background-repeat:no-repeat; background-position:center; }
+.bulb { display:inline-block; width:1em; height:1em; vertical-align:-0.13em; background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2VhYTMwMCIgZD0iTTEyIDIuMkE2LjYgNi42IDAgMCAwIDcuOSAxNGMuODYuNzIgMS40MyAxLjYyIDEuNjMgMi42bC4xNC43aDQuNjZsLjE0LS43Yy4yLS45OC43Ny0xLjg4IDEuNjMtMi42QTYuNiA2LjYgMCAwIDAgMTIgMi4yeiIvPjxyZWN0IHg9IjkuMSIgeT0iMTguMSIgd2lkdGg9IjUuOCIgaGVpZ2h0PSIxLjUiIHJ4PSIwLjYiIGZpbGw9IiNhODc5MGEiLz48cmVjdCB4PSI5LjciIHk9IjIwLjIiIHdpZHRoPSI0LjYiIGhlaWdodD0iMS41IiByeD0iMC43IiBmaWxsPSIjYTg3OTBhIi8+PC9zdmc+"); background-size:contain; background-repeat:no-repeat; background-position:center; }
+.defs { background: #eef7f1; border: 1.5px solid #57a773; border-radius: 8px; padding: 8px 12px; margin: 10px 0; font-size: 10.5pt; page-break-inside: avoid;}
+.bp { background:#f3eefb; border:1.5px solid #8e6cc0; border-radius:6px; padding: 6px 11px; margin: 8px 0; page-break-inside: avoid;}
+.final { background:#e8f5ec; border:1.5px solid #57a773; border-radius:6px; padding: 6px 11px; margin: 8px 0; font-weight:bold; page-break-inside: avoid;}
+table { border-collapse: collapse; margin: 8px auto; }
+th, td { border: 1px solid #9db2c9; padding: 4px 12px; text-align: center; font-size: 10.5pt;}
+th { background: #dce6f1; }
+td.num { direction:ltr; font-family:'DejaVu Sans'; font-size: 10pt;}
+ul { margin: 4px 0; padding-right: 20px;}
+li { margin-bottom: 3px;}
+.step { margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<h1>תמציות מרכז ופיזור, נקודות שבירה, ציוני תקן וקו הרגרסיה — פתרון מלא</h1>
+<div class="subtitle">פתרון מפורט עם הסבר לכל מעבר + תיבות <span class="bulb"></span> על הטריקים והרעיונות החשובים</div>
+
+<div class="defs">
+<b>ההגדרות שנעבוד איתן (אלו ההגדרות הסטנדרטיות בקורס):</b><br>
+<b>תמצית למרכז:</b> ‏<span class="math">T: ℝⁿ → ℝ</span> כך שלכל <span class="math">a &gt; 0, b ∈ ℝ</span> מתקיימת שקילות למיקום ולסקלה: <span class="math">T(aX + b·1) = a·T(X) + b</span>.<br>
+<b>תמצית לפיזור:</b> ‏<span class="math">T(X) ≥ 0</span>, אדישה להזזה וכופלת ב-<span class="math">|a|</span>: לכל <span class="math">a, b</span>: ‏<span class="math">T(aX + b·1) = |a|·T(X)</span>.<br>
+<b>נקודת שבירה:</b> ‏<span class="math">ε*ₙ = m*/n</span>, כאשר <span class="math">m*</span> הוא המספר הקטן ביותר של תצפיות שיריב יכול להחליף בערכים שרירותיים כך שהתמצית "תתפוצץ" (תשאף ל-<span class="math">±∞</span>). <b>נקודת שבירה אסימפטוטית:</b> הגבול כאשר <span class="math">n → ∞</span>. תזכורת לגבי שברונים: לפי ההגדרה <span class="math">x_p = inf{x : F̂(x) ≥ p}</span>, השברון האמפירי הוא סטטיסטי הסדר <span class="math">x_p = X₍ₖ₎</span> עם <span class="math">k = ⌈np⌉</span>.
+</div>
+
+<h2>שאלה 2 — האם התמציות הבאות חוקיות? ומהן נקודות השבירה?</h2>
+
+<h3>2.1 המקסימום <span class="math">T(X) = X₍ₙ₎</span> — תמצית למרכז? <span class="yes">כן</span></h3>
+<p class="step"><b>בדיקת ההגדרה:</b> עבור <span class="math">a &gt; 0</span> הפונקציה <span class="math">x ↦ ax+b</span> עולה ממש, ולכן היא <b>שומרת על הסדר</b> בין התצפיות — האיבר הגדול ביותר נשאר הגדול ביותר:</p>
+<div class="mblock">T(aX+b) = max_i (aXᵢ + b) = a·max_i(Xᵢ) + b = a·T(X) + b ✓</div>
+<p class="step">כלומר המקסימום מקיים את ההגדרה הפורמלית — הוא תמצית למרכז חוקית (וגם מקיים <span class="math">X₍₁₎ ≤ T ≤ X₍ₙ₎</span> באופן טריוויאלי). זה לא אומר שהוא תמצית <i>טובה</i>.</p>
+<div class="bp"><b>נקודת שבירה:</b> מספיק לקלקל תצפית <b>אחת</b> — מזיזים אותה ל-<span class="math">+∞</span> והמקסימום שואף ל-<span class="math">∞</span>. לכן <span class="math">ε*ₙ = 1/n</span>, ואסימפטוטית: <span class="math">1/n → <b>0</b></span>.</div>
+<div class="insight"><span class="t">הטריק/הלקח (וזו כל הפואנטה של התרגיל):</span> ההגדרה של תמצית למרכז תופסת רק <b>שקילות לטרנספורמציה לינארית עולה</b> — היא לא תופסת "אמצעיות". לכן דברים מוזרים כמו המקסימום עוברים אותה. ההבחנה בין תמציות מגיעה מנקודת השבירה: מקסימום חוקי אבל שביר לחלוטין (0), לעומת חציון עם נקודת שבירה ½ — הרובסטית ביותר האפשרית. המעבר המרכזי בהוכחות מהסוג הזה: <b>פונקציה עולה שומרת על סטטיסטי הסדר</b>, כלומר <span class="math">(aX+b)₍ᵢ₎ = aX₍ᵢ₎+b</span> עבור a&gt;0.</div>
+
+<h3>2.2 ממוצע משוקלל <span class="math">T(X) = Σwᵢ Xᵢ / Σwᵢ</span>, ‏<span class="math">wᵢ ≥ 0</span> — תמצית למרכז? <span class="yes">כן</span></h3>
+<p class="step"><b>בדיקת ההגדרה</b> (בהנחה <span class="math">Σwᵢ &gt; 0</span>, אחרת לא מוגדר) — לינאריות פשוטה של הסכום:</p>
+<div class="mblock">T(aX+b) = Σwᵢ(aXᵢ+b)/Σwᵢ = (a·ΣwᵢXᵢ + b·Σwᵢ)/Σwᵢ = a·T(X) + b ✓</div>
+<p class="step">בנוסף, זהו צירוף קמור של התצפיות (מקדמים אי-שליליים שסכומם 1), ולכן תמיד <span class="math">X₍₁₎ ≤ T(X) ≤ X₍ₙ₎</span> — עוד חיזוק לכך שזו תמצית מרכז סבירה. הממוצע הרגיל הוא המקרה הפרטי <span class="math">wᵢ = 1</span>.</p>
+<div class="bp"><b>נקודת שבירה:</b> קיים לפחות i אחד עם <span class="math">wᵢ &gt; 0</span>. היריב מחליף דווקא את התצפית הזו ב-<span class="math">M → ∞</span>, והתמצית מכילה את האיבר <span class="math">wᵢM/Σwⱼ → ∞</span>. לכן <span class="math">ε*ₙ = 1/n → <b>0</b></span> — בדיוק כמו הממוצע הרגיל.</div>
+<div class="insight"><span class="t">חשוב ללמוד:</span> שקלול <b>לא</b> קונה רובסטיות: כל עוד למישהו יש משקל חיובי, קלקול שלו מפוצץ את התמצית. נקודת השבירה מוגדרת לפי <b>המקרה הגרוע ביותר</b> (היריב בוחר את מי לקלקל) — טעות נפוצה היא לחשוב שאם יש תצפיות עם משקל 0 אז התמצית מוגנת.</div>
+
+<h3>2.3 הטווח <span class="math">T(X) = X₍ₙ₎ − X₍₁₎</span> — תמצית לפיזור? <span class="yes">כן</span></h3>
+<p class="step"><b>אי-שליליות:</b> תמיד <span class="math">X₍ₙ₎ ≥ X₍₁₎</span>, ולכן <span class="math">T ≥ 0</span> ✓.</p>
+<p class="step"><b>שקילות לסקלה:</b> נבדוק את שני המקרים. עבור <span class="math">a &gt; 0</span> הסדר נשמר:</p>
+<div class="mblock">T(aX+b) = (aX₍ₙ₎+b) − (aX₍₁₎+b) = a(X₍ₙ₎−X₍₁₎) = |a|·T(X) ✓</div>
+<p class="step">עבור <span class="math">a &lt; 0</span> הסדר <b>מתהפך</b>: המקסימום החדש מגיע מהמינימום הישן ולהפך — <span class="math">max(aX+b) = aX₍₁₎+b</span> ו-<span class="math">min(aX+b) = aX₍ₙ₎+b</span>:</p>
+<div class="mblock">T(aX+b) = (aX₍₁₎+b) − (aX₍ₙ₎+b) = a(X₍₁₎−X₍ₙ₎) = (−a)(X₍ₙ₎−X₍₁₎) = |a|·T(X) ✓</div>
+<div class="bp"><b>נקודת שבירה:</b> קלקול תצפית אחת ל-<span class="math">+∞</span> שולח את המקסימום, ולכן את הטווח, ל-<span class="math">∞</span>: ‏<span class="math">ε*ₙ = 1/n → <b>0</b></span>.</div>
+<div class="insight"><span class="t">טריק נפוץ בהוכחות פיזור:</span> תמיד לפצל ל-<span class="math">a&gt;0</span> ו-<span class="math">a&lt;0</span>, ולזכור שכפל במספר שלילי <b>הופך את הסדר</b>: ‏<span class="math">(aX)₍ᵢ₎ = aX₍ₙ₊₁₋ᵢ₎</span>. שכחת המקרה a&lt;0 היא הורדת הנקודות הקלאסית בשאלות האלה. וגם: ההזזה b תמיד מתבטלת בהפרש — לכן תמציות פיזור בנויות מהפרשים.</div>
+
+<h3>2.4 העשירון התחתון <span class="math">T(X) = X₀.₁</span> — תמצית למרכז? <span class="yes">כן</span></h3>
+<p class="step"><b>בדיקת ההגדרה:</b> ‏<span class="math">X₀.₁ = X₍ₖ₎</span> עם <span class="math">k = ⌈0.1n⌉</span> — סטטיסטי סדר. עבור <span class="math">a &gt; 0</span> הסדר נשמר, ולכן:</p>
+<div class="mblock">T(aX+b) = (aX+b)₍ₖ₎ = aX₍ₖ₎ + b = a·T(X) + b ✓</div>
+<p class="step">וגם <span class="math">X₍₁₎ ≤ X₍ₖ₎ ≤ X₍ₙ₎</span>. כלומר, שוב — לפי ההגדרה הפורמלית זו תמצית למרכז חוקית, למרות שאינטואיטיבית העשירון התחתון בכלל לא "באמצע".</p>
+<div class="bp"><b>נקודת שבירה:</b> כדי לשלוח את <span class="math">X₍ₖ₎</span> ל-<span class="math">−∞</span> צריך שלפחות k תצפיות יהיו ב-<span class="math">−∞</span>, ומספיק לקלקל בדיוק k. (הכיוון השני, ל-<span class="math">+∞</span>, יקר יותר: דרושות <span class="math">n−k+1 ≈ 0.9n</span> תצפיות.) לכן:
+<div class="mblock">ε*ₙ = ⌈0.1n⌉/n &nbsp;&nbsp;⟶&nbsp;&nbsp; <b>0.1</b> אסימפטוטית</div></div>
+<div class="insight"><span class="t">חשוב ללמוד (הכלל הכללי):</span> לשברון ה-p יש נקודת שבירה אסימפטוטית <span class="math">min(p, 1−p)</span> — הצד הזול לקלקול קובע. מציבים p=0.5 ומקבלים את התוצאה המפורסמת: החציון עם נקודת שבירה ½, המקסימלית האפשרית. p=0.1 נותן 0.1. נוסחה ששווה לשנן — היא עונה על משפחה שלמה של שאלות.</div>
+
+<h3>2.5 <span class="math">T(X) = X₀.₉ − X₀.₁</span> (הטווח הבין-עשירוני) — תמצית לפיזור? <span class="yes">כן</span></h3>
+<p class="step"><b>אי-שליליות:</b> ‏<span class="math">X₀.₉ = X₍⌈0.9n⌉₎ ≥ X₍⌈0.1n⌉₎ = X₀.₁</span> כי <span class="math">⌈0.9n⌉ ≥ ⌈0.1n⌉</span>, ולכן <span class="math">T ≥ 0</span> ✓.</p>
+<p class="step"><b>הזזה:</b> שני השברונים זזים ב-b וההפרש מבטל אותה ✓. <b>סקלה:</b> עבור <span class="math">a&gt;0</span> שני השברונים נכפלים ב-a ⟸ ‏<span class="math">T(aX)=aT(X)</span>. עבור <span class="math">a&lt;0</span> הסדר מתהפך והשברונים <b>מתחלפים בתפקידים</b> — העשירון העליון של הנתונים החדשים מגיע מהעשירון התחתון של הישנים:</p>
+<div class="mblock">(aX)₀.₉ = a·X₀.₁ , &nbsp; (aX)₀.₁ = a·X₀.₉ &nbsp;⟹&nbsp; T(aX) = a·X₀.₁ − a·X₀.₉ = (−a)(X₀.₉−X₀.₁) = |a|·T(X) ✓</div>
+<p class="step">(עד כדי דקויות של ההגדרה עם inf בקצוות — ברמת הקורס זו התשובה.)</p>
+<div class="bp"><b>נקודת שבירה:</b> הדרך הזולה ביותר לפוצץ: לשלוח את <span class="math">X₀.₁</span> ל-<span class="math">−∞</span> (עולה <span class="math">⌈0.1n⌉</span> קלקולים) או את <span class="math">X₀.₉</span> ל-<span class="math">+∞</span> (עולה <span class="math">n−⌈0.9n⌉+1 ≈ 0.1n</span>). בשני המקרים כ-10% מהתצפיות:
+<div class="mblock">ε*ₙ ≈ 0.1 + O(1/n) &nbsp;&nbsp;⟶&nbsp;&nbsp; <b>0.1</b> אסימפטוטית</div></div>
+<div class="insight"><span class="t">השוואה ששווה לזכור:</span> הטווח הרגיל (2.3) והטווח הבין-עשירוני מודדים "אותו דבר", אבל הראשון נשבר עם תצפית אחת (0) והשני דורש 10% מהנתונים (0.1). קיצוץ הזנבות הוא בדיוק המנגנון שקונה רובסטיות — אותו רעיון כמו IQR (עם 0.25) וממוצע קטום. שאלת השוואה כזו היא חומר קלאסי למבחן.</div>
+
+<h3>2.6 מרכז הטווח פחות החציון — תמצית לפיזור? <span class="no">לא</span></h3>
+<div class="stmt"><span class="math">T(X) = (X₍₁₎+X₍ₙ₎)/2 − median(X)</span></div>
+<p class="step">התמצית אמנם אדישה להזזה (שני האיברים שקולים למיקום וההפרש מבטל את b), אבל היא נכשלת בשתי דרישות:</p>
+<p class="step"><b>1) אי-שליליות נכשלת — מספיקה דוגמה נגדית אחת:</b> ניקח <span class="math">X = (0, 9, 10)</span>. אז מרכז הטווח <span class="math">= (0+10)/2 = 5</span>, החציון <span class="math">= 9</span>, ולכן:</p>
+<div class="mblock">T(X) = 5 − 9 = −4 &lt; 0 ✗</div>
+<p class="step"><b>2) גם שקילות הסקלה נכשלת:</b> עבור <span class="math">a &lt; 0</span> שני הרכיבים שקולים למיקום, ולכן <span class="math">T(aX) = a·T(X)</span>. כאשר <span class="math">T(X) ≠ 0</span> זה שווה <span class="math">−|a|T(X) ≠ |a|T(X)</span> ✗.</p>
+<div class="bp"><b>נקודת שבירה (לשם שלמות):</b> גם אילו הייתה חוקית — קלקול תצפית אחת מפוצץ את מרכז הטווח, כלומר <span class="math">1/n → 0</span>.</div>
+<div class="insight"><span class="t">מה ללמוד מכאן:</span> הפרש בין <b>שתי תמציות מרכז</b> הוא לא תמצית פיזור — הוא מודד <b>א-סימטריה</b> (צידוד): חיובי כשהזנב הימני ארוך, שלילי כשהשמאלי ארוך. והטריק הטכני החשוב: כדי להפריך, לא מוכיחים — <b>בונים דוגמה נגדית מספרית קטנה</b> (3 תצפיות מספיקות). לחפש דוגמה נגדית לפני שמנסים להוכיח זה הרגל ששווה זהב במבחני נכון/לא נכון.</div>
+
+<h2>שאלה 1 — לציוני תקן ממוצע 0 וסטיית תקן 1</h2>
+<div class="stmt">ציון התקן: <span class="math">zᵢ = (xᵢ − x̄)/s</span>, כאשר s סטיית התקן המדגמית (ומניחים <span class="math">s &gt; 0</span>).</div>
+<p class="step"><b>ממוצע:</b> מלינאריות הסכום — הקבועים יוצאים החוצה, וסכום הסטיות מהממוצע הוא אפס:</p>
+<div class="mblock">z̄ = (1/n)·Σᵢ (xᵢ−x̄)/s = (1/s)·[(1/n)Σxᵢ − x̄] = (1/s)·(x̄ − x̄) = 0</div>
+<p class="step"><b>סטיית תקן:</b> מציבים <span class="math">z̄ = 0</span> בהגדרת השונות המדגמית, ומזהים בפנים בדיוק את השונות של x:</p>
+<div class="mblock">s²_z = (1/(n−1))·Σᵢ(zᵢ − z̄)² = (1/(n−1))·Σᵢ zᵢ² = (1/s²)·(1/(n−1))·Σᵢ(xᵢ−x̄)² = s²/s² = 1</div>
+<p class="step">ולכן <span class="math">s_z = 1</span>. ∎ (דרך שקולה: ‏<span class="math">z = (1/s)·x − x̄/s</span> היא טרנספורמציה לינארית, ולפי הזהויות מהדף: הממוצע עובר לינארית והשונות נכפלת ב-<span class="math">(1/s)² </span>.)</p>
+<div class="insight"><span class="t">חשוב ללמוד:</span> תקנון הוא בדיוק "להשתמש בכך שממוצע הוא תמצית למרכז וסטיית תקן תמצית לפיזור": מחסרים את המרכז ומחלקים בפיזור ⟸ מקבלים גודל <b>חסר יחידות</b> עם מרכז 0 ופיזור 1. שני המעברים שחוזרים בכל הוכחה כזו: ‏<span class="math">Σ(xᵢ−x̄) = 0</span> ולינאריות. זה גם הבסיס לסעיף הבא ולמשפט הגבול המרכזי.</div>
+
+<h2>שאלה 2 — קו הרגרסיה על ציוני תקן הוא <span class="math">z_Y = r·z_X</span></h2>
+<p class="step">מריצים רגרסיה פשוטה של <span class="math">z_Y</span> על <span class="math">z_X</span> ומשתמשים בנוסחאות הריבועים הפחותים שפותחו בדף (עבור נתונים כלשהם: שיפוע <span class="math">b = s_{XY}/s²_X</span> וחותך <span class="math">a = Ȳ − bX̄</span>), כשמציבים את נתוני ה-z:</p>
+<p class="step"><b>שלב 1 — השיפוע.</b> המונה הוא השונות המשותפת של ציוני התקן. מכיוון ש-<span class="math">z̄_X = z̄_Y = 0</span> (שאלה 1), היא בדיוק ההגדרה של מקדם המתאם של פירסון (כפי שמופיע בדף — r הוא "הממוצע המתוקן של מכפלות ציוני התקן"):</p>
+<div class="mblock">s_{z_X z_Y} = (1/(n−1))·Σᵢ(z_{Xᵢ}−z̄_X)(z_{Yᵢ}−z̄_Y) = (1/(n−1))·Σᵢ ((Xᵢ−X̄)/s_X)·((Yᵢ−Ȳ)/s_Y) = r</div>
+<p class="step">המכנה הוא שונות ציוני התקן של X, ששווה 1 (שאלה 1). לכן:</p>
+<div class="mblock">b = s_{z_X z_Y} / s²_{z_X} = r / 1 = r</div>
+<p class="step"><b>שלב 2 — החותך.</b> קו הריבועים הפחותים עובר תמיד דרך נקודת הממוצעים <span class="math">(z̄_X, z̄_Y) = (0,0)</span>:</p>
+<div class="mblock">a = z̄_Y − b·z̄_X = 0 − r·0 = 0</div>
+<div class="final">ולכן קו הרגרסיה: &nbsp;<span class="math">ẑ_Y = r·z_X</span> &nbsp;∎</div>
+<div class="insight"><span class="t">למה זו תוצאה חשובה (ולא רק תרגיל):</span> (1) היא נותנת את <b>הפירוש האמיתי של r</b>: סטייה של סטיית תקן אחת ב-X מנבאת סטייה של r סטיות תקן ב-Y. (2) מכיוון ש-<span class="math">|r| ≤ 1</span>, הניבוי תמיד <b>קרוב יותר לממוצע</b> מהתצפית — זו בדיוק "הנסיגה אל הממוצע" (regression to the mean), ומכאן השם רגרסיה! (3) חוזרים ליחידות המקוריות ומקבלים מיד את השיפוע הכללי: ‏<span class="math">b = r·s_Y/s_X</span>. שלישיית עובדות שחוזרת במבחנים שוב ושוב.</div>
+
+<h2>טבלת סיכום</h2>
+<table>
+<tr><th>תמצית</th><th>חוקית?</th><th>נק׳ שבירה ε*ₙ</th><th>אסימפטוטית</th></tr>
+<tr><td>מקסימום X₍ₙ₎ (מרכז)</td><td>כן</td><td class="num">1/n</td><td class="num">0</td></tr>
+<tr><td>ממוצע משוקלל (מרכז)</td><td>כן</td><td class="num">1/n</td><td class="num">0</td></tr>
+<tr><td>טווח X₍ₙ₎−X₍₁₎ (פיזור)</td><td>כן</td><td class="num">1/n</td><td class="num">0</td></tr>
+<tr><td>עשירון תחתון X₀.₁ (מרכז)</td><td>כן</td><td class="num">⌈0.1n⌉/n</td><td class="num">0.1</td></tr>
+<tr><td>X₀.₉ − X₀.₁ (פיזור)</td><td>כן</td><td class="num">≈ 0.1</td><td class="num">0.1</td></tr>
+<tr><td>מרכז הטווח − חציון (פיזור)</td><td><b>לא</b> (עלול להיות שלילי)</td><td class="num">—</td><td class="num">—</td></tr>
+</table>
+
+<h2>סיכום — הטריקים שחוזרים</h2>
+<ul>
+<li><b>a&gt;0 שומר סדר, a&lt;0 הופך סדר:</b> ‏<span class="math">(aX+b)₍ᵢ₎ = aX₍ᵢ₎+b</span> או <span class="math">aX₍ₙ₊₁₋ᵢ₎+b</span> בהתאמה — המעבר המרכזי בכל הוכחות השקילות.</li>
+<li><b>ההגדרות פורמליות, לא אינטואיטיביות:</b> מקסימום ועשירון עוברים את הגדרת ה"מרכז". מה שמבדיל תמצית טובה מרעה זו נקודת השבירה.</li>
+<li><b>נקודת שבירה של שברון p:</b> ‏<span class="math">min(p, 1−p)</span>; חציון = ½ (המקסימום האפשרי); ממוצע/מקסימום/טווח = 0.</li>
+<li><b>הפרכה = דוגמה נגדית קטנה,</b> לא הוכחה. 3 תצפיות בדרך כלל מספיקות.</li>
+<li><b>ציוני תקן:</b> ‏<span class="math">Σ(xᵢ−x̄)=0</span> + לינאריות ⟸ ממוצע 0, ס״ת 1; ומהם <span class="math">ẑ_Y = r·z_X</span> ⟸ הנסיגה אל הממוצע והשיפוע <span class="math">r·s_Y/s_X</span>.</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: 'David Libre'; src: url('fonts/DavidLibre-Regular.ttf'); font-weight: normal; }
+@font-face { font-family: 'David Libre'; src: url('fonts/DavidLibre-Bold.ttf'); font-weight: bold; }
+@page { size: A4; margin: 1.7cm 1.6cm; @bottom-center { content: counter(page); font-family: 'DejaVu Sans'; font-size: 9pt; color: #888; } }
+body { font-family: 'David Libre', serif; direction: rtl; font-size: 11pt; line-height: 1.55; color: #1a1a2e; margin: 0; }
+h1 { font-size: 19pt; color: #16324f; border-bottom: 3px solid #16324f; padding-bottom: 6px; margin-bottom: 2px;}
+.subtitle { color:#555; font-size: 10.5pt; margin-bottom: 14px;}
+h2 { font-size: 14.5pt; color: #ffffff; background: #16324f; padding: 5px 12px; border-radius: 6px; margin-top: 22px; page-break-after: avoid;}
+h3 { font-size: 12pt; color: #16324f; margin: 14px 0 4px 0; page-break-after: avoid;}
+.stmt { background: #eef2f7; border-right: 4px solid #94a9c4; padding: 7px 11px; border-radius: 4px; font-size: 10.5pt; color:#333; margin: 8px 0;}
+.tf-true { display:inline-block; background:#1e7d43; color:#fff; padding: 1px 12px; border-radius: 10px; font-weight: bold; font-size: 10.5pt;}
+.tf-false { display:inline-block; background:#b02a30; color:#fff; padding: 1px 12px; border-radius: 10px; font-weight: bold; font-size: 10.5pt;}
+.math { direction: ltr; unicode-bidi: isolate; font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; }
+.mblock { direction: ltr; unicode-bidi: isolate; font-family: 'DejaVu Sans', sans-serif; font-size: 10.5pt; text-align: center; background:#f7f9fc; border:1px solid #dde5ef; border-radius: 6px; padding: 6px 10px; margin: 7px 24px; page-break-inside: avoid;}
+.insight { background: #fff8e1; border: 1.5px solid #e0b93c; border-radius: 8px; padding: 8px 12px; margin: 10px 0; page-break-inside: avoid; font-size: 10.5pt;}
+.insight .t { font-weight: bold; color: #8a6d00; }
+.insight .t::before { content:""; display:inline-block; width:1.05em; height:1.05em; vertical-align:-0.16em; margin-left:0.34em; background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2VhYTMwMCIgZD0iTTEyIDIuMkE2LjYgNi42IDAgMCAwIDcuOSAxNGMuODYuNzIgMS40MyAxLjYyIDEuNjMgMi42bC4xNC43aDQuNjZsLjE0LS43Yy4yLS45OC43Ny0xLjg4IDEuNjMtMi42QTYuNiA2LjYgMCAwIDAgMTIgMi4yeiIvPjxyZWN0IHg9IjkuMSIgeT0iMTguMSIgd2lkdGg9IjUuOCIgaGVpZ2h0PSIxLjUiIHJ4PSIwLjYiIGZpbGw9IiNhODc5MGEiLz48cmVjdCB4PSI5LjciIHk9IjIwLjIiIHdpZHRoPSI0LjYiIGhlaWdodD0iMS41IiByeD0iMC43IiBmaWxsPSIjYTg3OTBhIi8+PC9zdmc+"); background-size:contain; background-repeat:no-repeat; background-position:center; }
+.bulb { display:inline-block; width:1em; height:1em; vertical-align:-0.13em; background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2VhYTMwMCIgZD0iTTEyIDIuMkE2LjYgNi42IDAgMCAwIDcuOSAxNGMuODYuNzIgMS40MyAxLjYyIDEuNjMgMi42bC4xNC43aDQuNjZsLjE0LS43Yy4yLS45OC43Ny0xLjg4IDEuNjMtMi42QTYuNiA2LjYgMCAwIDAgMTIgMi4yeiIvPjxyZWN0IHg9IjkuMSIgeT0iMTguMSIgd2lkdGg9IjUuOCIgaGVpZ2h0PSIxLjUiIHJ4PSIwLjYiIGZpbGw9IiNhODc5MGEiLz48cmVjdCB4PSI5LjciIHk9IjIwLjIiIHdpZHRoPSI0LjYiIGhlaWdodD0iMS41IiByeD0iMC43IiBmaWxsPSIjYTg3OTBhIi8+PC9zdmc+"); background-size:contain; background-repeat:no-repeat; background-position:center; }
+.warn { background: #fdecea; border: 1.5px solid #d9838a; border-radius: 8px; padding: 8px 12px; margin: 10px 0; font-size: 10.5pt; page-break-inside: avoid;}
+table { border-collapse: collapse; margin: 8px auto; }
+th, td { border: 1px solid #9db2c9; padding: 4px 12px; text-align: center; font-size: 10.5pt;}
+th { background: #dce6f1; }
+td.num { direction:ltr; font-family:'DejaVu Sans'; font-size: 10pt;}
+ul { margin: 4px 0; padding-right: 20px;}
+li { margin-bottom: 3px;}
+.step { margin: 4px 0; }
+.final { background:#e8f5ec; border:1.5px solid #57a773; border-radius:6px; padding: 6px 11px; margin: 8px 0; font-weight:bold; page-break-inside: avoid;}
+</style>
+</head>
+<body>
+
+<h1>מבוא לסטטיסטיקה 0365.1813 — פתרון מלא, מועד א׳ תשפ״ד (12.09.2024)</h1>
+<div class="subtitle">מרצה: פרופ׳ רות הלר · פתרון מפורט עם הסבר לכל מעבר + תיבות <span class="bulb"></span> על הטריקים והרעיונות החשובים</div>
+
+<h2>שאלה 1 (24 נק׳) — נכון / לא נכון</h2>
+
+<h3>א. החלפת בסיס הלוג ברגרסיה — <span class="tf-true">נכון</span></h3>
+<div class="stmt">רגרסיה של Y על <span class="math">log₂(X)</span>: התחזית זהה אם עוברים לבסיס 10.</div>
+<p class="step">המעבר המרכזי: החלפת בסיס לוגריתם היא <b>כפל בקבוע</b>:</p>
+<div class="mblock">log₂(x) = log₁₀(x) / log₁₀(2) = c·log₁₀(x),&nbsp;&nbsp; c = 1/log₁₀(2) ≈ 3.3219</div>
+<p class="step">כלומר המשתנה המסביר עבר טרנספורמציה לינארית (כפל בקבוע חיובי). רגרסיה לינארית מתאימה את המקדמים לסקלה של המשתנה: אם בבסיס 2 קיבלנו שיפוע <span class="math">β̂₁</span>, אז בבסיס 10 נקבל שיפוע <span class="math">c·β̂₁</span> ואותו חותך, כך שלכל x:</p>
+<div class="mblock">β̂₀ + β̂₁·log₂(x) = β̂₀ + (c·β̂₁)·log₁₀(x)</div>
+<p class="step">הישרים המותאמים מתלכדים ⟸ התחזיות זהות לכל X.</p>
+<div class="insight"><span class="t">טריק נפוץ מאוד:</span> רגרסיה לינארית אינווריאנטית לטרנספורמציה לינארית של המשתנה המסביר (וגם של Y, עד כדי אותה טרנספורמציה על התחזיות). מה שכן משתנה: ערך המקדמים והפירוש שלהם. מה שלא משתנה: תחזיות, R², שאריות. שווה לזכור כעיקרון כללי, זה חוזר הרבה.</div>
+
+<h3>ב. הפרדוקס של סימפסון — <span class="tf-true">נכון</span></h3>
+<div class="stmt">הפרדוקס מראה מדוע חשוב להסתכל על תתי-קבוצות בניתוח קשר בין שני משתנים.</div>
+<p class="step">בפרדוקס של סימפסון, כיוון הקשר בין שני משתנים בכלל האוכלוסייה יכול <b>להתהפך</b> (או להיעלם) כאשר מפלחים לפי משתנה שלישי (משתנה ערפלן / confounder). דוגמה קלאסית: קבלה ללימודים בברקלי — בסך הכול נראתה אפליה נגד נשים, אבל בתוך כל חוג בנפרד המגמה הייתה הפוכה, כי נשים נרשמו יותר לחוגים תחרותיים. לכן ניתוח בלי פילוח לתתי-קבוצות עלול להוביל למסקנה שגויה.</p>
+<div class="insight"><span class="t">חשוב ללמוד:</span> קשר שולי (marginal) וקשר מותנה (conditional) יכולים להיות בכיוונים הפוכים. זו הסיבה שבניסויים עושים רנדומיזציה — היא "משתיקה" ערפלנים. שאלת תיאוריה שחוזרת כמעט בכל מועד.</div>
+
+<h3>הרקע לסעיפים ג–ו</h3>
+<div class="stmt">בודקים <span class="math">H₀: μ ≤ 0</span> מול <span class="math">H₁: μ &gt; 0</span> עם מדגם אחד (n=100). דוחים אם הסטטיסטי גדול מסף. קבוצה א׳: רמת מובהקות 0.05 (סף נמוך יותר). קבוצה ב׳: רמת מובהקות 0.025 (סף גבוה יותר). <b>שתי הקבוצות משתמשות באותם נתונים ובאותו סטטיסטי — רק הסף שונה.</b></div>
+
+<h3>ג. "מובהקות התוצאה של א׳ גדולה משל ב׳" — <span class="tf-false">לא נכון</span></h3>
+<p class="step"><b>מובהקות התוצאה</b> = ה-p-value. ה-p-value תלוי אך ורק בנתונים ובסטטיסטי המבחן — לא בסף ולא ברמת המובהקות שנבחרה. מכיוון ששתי הקבוצות חישבו את אותו סטטיסטי מאותו מדגם, מובהקות התוצאה <b>זהה</b> אצל שתיהן. מה ששונה הוא רק כלל ההחלטה (α).</p>
+<div class="insight"><span class="t">הטריק המרכזי בשאלה (ונפוץ מאוד):</span> להבחין בין <b>רמת מובהקות α</b> (נקבעת מראש, תכונה של המבחן) לבין <b>מובהקות התוצאה p-value</b> (מחושבת מהנתונים, תכונה של התוצאה). בלבול ביניהן הוא מלכודת קלאסית של מבחני נכון/לא נכון.</div>
+
+<h3>ד. אם התוחלת שלילית, הסיכוי של ב׳ לדחות קטן ממש מ-0.05 — <span class="tf-true">נכון</span></h3>
+<p class="step">פונקציית העוצמה <span class="math">π(μ) = P_μ(דחייה)</span> היא מונוטונית עולה ב-μ (ככל שהתוחלת גדולה יותר, הסטטיסטי נוטה להיות גדול יותר). הסף של ב׳ כויל כך שבנקודת הגבול <span class="math">μ = 0</span> מתקיים <span class="math">π(0) = 0.025</span>. לכן לכל <span class="math">μ &lt; 0</span>:</p>
+<div class="mblock">P_μ(דחייה) &lt; π(0) = 0.025 &lt; 0.05</div>
+<div class="insight"><span class="t">חשוב ללמוד:</span> רמת המובהקות מוגדרת כמקסימום הסתברות הדחייה על פני כל H₀ (כאן: מושג בגבול μ=0). בפנים ההשערה ההסתברות לטעות מסוג I קטנה יותר. מונוטוניות פונקציית העוצמה היא כלי נימוק סטנדרטי.</div>
+
+<h3>ה. ב׳ עשתה טעות מסוג II ⟸ גם א׳ בהכרח — <span class="tf-false">לא נכון</span></h3>
+<p class="step">טעות מסוג II = אי-דחייה כאשר H₁ נכונה. ב׳ לא דחתה ⟸ הסטטיסטי ≤ סף ב׳. אבל סף א׳ <b>נמוך</b> מסף ב׳, ולכן ייתכן שהסטטיסטי נמצא <b>בין שני הספים</b>: א׳ דוחה (ואינה עושה טעות מסוג II) בעוד ב׳ אינה דוחה. דוגמה מספרית: סף א׳ = 1.645, סף ב׳ = 1.96, והסטטיסטי יצא 1.8.</p>
+
+<h3>ו. ב׳ עשתה טעות מסוג I ⟸ גם א׳ בהכרח — <span class="tf-true">נכון</span></h3>
+<p class="step">טעות מסוג I = דחייה כאשר H₀ נכונה. אם ב׳ דחתה, אז הסטטיסטי &gt; סף ב׳ &gt; סף א׳, ולכן <b>גם א׳ דחתה</b>. מכיוון ש-H₀ נכונה (אותה מציאות לשתי הקבוצות — אותם נתונים), גם א׳ עשתה טעות מסוג I.</p>
+<div class="insight"><span class="t">הרעיון המאחד לסעיפים ה+ו:</span> אזורי הדחייה <b>מקוננים</b> (nested): אזור הדחייה של α=0.025 מוכל בזה של α=0.05. לכן: דחייה ברמה מחמירה ⟸ דחייה ברמה מקלה (ו׳ נכון), אבל אי-דחייה ברמה מחמירה ⟸̸ אי-דחייה ברמה מקלה (ה׳ לא נכון). זה בדיוק גם הקשר p-value ≤ α: דוחים בכל רמה שגדולה מה-p-value. תבנית שחוזרת שוב ושוב.</div>
+
+<h2>שאלה 2 (12 נק׳) — נקודות בתרשים QQ-plot</h2>
+<div class="stmt">מדגם: 0.995, 0.213, 0.500, 0.900. בודקים התאמה לצפיפות <span class="math">f(x)=2x, 0≤x≤1</span>.</div>
+<p class="step"><b>שלב 1 — פונקציית ההתפלגות המצטברת:</b></p>
+<div class="mblock">F(x) = ∫₀ˣ 2t dt = x², &nbsp; 0 ≤ x ≤ 1</div>
+<p class="step"><b>שלב 2 — פונקציית האחוזון (ההופכית):</b> פותרים <span class="math">u = x²</span> ומקבלים <span class="math">F⁻¹(u) = √u</span>.</p>
+<p class="step"><b>שלב 3 — מיקומי השרטוט:</b> לתצפית הסדורה ה-i (מתוך n=4) מציבים את האחוזון התיאורטי בנקודה <span class="math">i/(n+1) = i/5</span>. על ציר ה-X: האחוזונים התיאורטיים <span class="math">√(i/5)</span>; על ציר ה-Y: התצפיות <b>הממוינות</b> (סטטיסטי הסדר).</p>
+<table>
+<tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th></tr>
+<tr><td><b>ציר X (תיאורטי)</b></td><td class="num">√0.2 ≈ 0.447</td><td class="num">√0.4 ≈ 0.632</td><td class="num">√0.6 ≈ 0.775</td><td class="num">√0.8 ≈ 0.894</td></tr>
+<tr><td><b>ציר Y (אמפירי)</b></td><td class="num">0.213</td><td class="num">0.500</td><td class="num">0.900</td><td class="num">0.995</td></tr>
+</table>
+<div class="warn"><b>הערת מוסכמה:</b> יש קורסים שמשתמשים במיקומי שרטוט <span class="math">(i−0.5)/n</span> במקום <span class="math">i/(n+1)</span> (אז מתקבל על ציר X: ‏0.354, 0.612, 0.791, 0.935). היצמדו למוסכמה שהוגדרה בהרצאה — בקורס הזה: <span class="math">i/(n+1)</span>. סדר הצירים (מי תיאורטי ומי אמפירי) גם הוא עניין של מוסכמת הקורס; העיקרון לא משתנה.</div>
+<div class="insight"><span class="t">המתכון הקבוע ל-QQ-plot (חשוב לשנן):</span> (1) למיין את המדגם; (2) למצוא F ולהפוך אותה ל-<span class="math">F⁻¹</span>; (3) להציב את מיקומי השרטוט <span class="math">i/(n+1)</span> ב-<span class="math">F⁻¹</span>. הטריק היחיד כאן הוא לזכור שצריך <b>למיין</b> את התצפיות ולא להשאיר אותן בסדר הנתון — טעות נפוצה שעולה נקודות. אם הנקודות קרובות לישר y=x — יש התאמה להתפלגות.</div>
+
+<h2>שאלה 3 (32 נק׳) — ניסוי היושר עם הקובייה</h2>
+<div class="stmt">משתתף מטיל קובייה הוגנת בפרטיות ומדווח תוצאה; גמול = 10₪ × התוצאה עבור 1–5, ו-0 עבור 6. ‏p = שיעור הישרים, q = שיעור השקרנים המלאים (מדווחים תמיד 5). הנחות: (1) כל מי שדיווח 6 הוא ישר; (2) כל מי שיצא לו 5 מדווח 5.</p></div>
+
+<h3>א. הוכחת ההסתברויות</h3>
+<p class="step"><b>a. ‏<span class="math">P(Xᵢ = 6) = p/6</span>:</b> לפי הנחה (1), רק אנשים ישרים מדווחים 6, והם מדווחים 6 אם ורק אם יצא להם 6 בהטלה. סוג האדם והטלת הקובייה בלתי תלויים, והקובייה הוגנת:</p>
+<div class="mblock">P(Xᵢ=6) = P(ישר) · P(יצא 6 | ישר) = p · (1/6)</div>
+<p class="step"><b>b. ‏<span class="math">P(Xᵢ = 5) = 1/6 + 5q/6</span>:</b> מפרקים לשני מאורעות זרים לפי תוצאת ההטלה האמיתית:</p>
+<ul>
+<li><b>יצא 5 בהטלה</b> (הסתברות 1/6): לפי הנחה (2), <b>כולם</b> מדווחים 5 — תרומה של <span class="math">1/6</span>.</li>
+<li><b>לא יצא 5</b> (הסתברות 5/6): רק שקרן מלא ידווח 5 (ישר מדווח את האמת; שקרן חלקי אינו מדווח 5 לפי ההגדרה שרק שקרנים מלאים ממקסמים) — תרומה של <span class="math">q · 5/6</span>.</li>
+</ul>
+<div class="mblock">P(Xᵢ=5) = 1/6 + (5/6)·q</div>
+<div class="insight"><span class="t">חשוב ללמוד:</span> זו נוסחת ההסתברות השלמה, עם התניה על התוצאה האמיתית של הקובייה. הרעיון הרחב — "מודל מדידה עם רעש/שקר" שממנו משחזרים פרמטר סמוי — הוא בדיוק הרעיון מאחורי randomized response בסקרים על שאלות רגישות. תבנית מודלים ששווה להכיר.</div>
+
+<h3>ב. אמידה מהנתונים (n = 389)</h3>
+<div class="stmt">גמול 0₪ ⟵ דווח 6; גמול 50₪ ⟵ דווח 5. שכיחויות: ‏6.4% דיווחו 6, ‏35.0% דיווחו 5.</div>
+<p class="step"><b>a. אומד חסר הטיה ל-p:</b> נסמן את שיעור המדווחים 6 במדגם <span class="math">P̂₆ = (1/389)·Σᵢ 1{Xᵢ=6}</span>. מכיוון ש-<span class="math">E[P̂₆] = P(X=6) = p/6</span> (תוחלת של ממוצע אינדיקטורים), נהפוך את הקשר:</p>
+<div class="mblock">p̂ = 6·P̂₆ = (6/389)·Σᵢ₌₁³⁸⁹ 1{Xᵢ = 6}, &nbsp;&nbsp; E[p̂] = 6·(p/6) = p ✓</div>
+<p class="step"><b>b. האומדן:</b> <span class="math">p̂ = 6 × 0.064 = <b>0.384</b></span> — כ-38.4% ישרים.</p>
+<p class="step"><b>c. אומד חסר הטיה ל-q:</b> נסמן <span class="math">P̂₅ = (1/389)·Σᵢ 1{Xᵢ=5}</span>. מהקשר <span class="math">P(X=5) = 1/6 + 5q/6</span> מבודדים את q:</p>
+<div class="mblock">q̂ = (6·P̂₅ − 1)/5, &nbsp;&nbsp; E[q̂] = (6·(1/6 + 5q/6) − 1)/5 = (1 + 5q − 1)/5 = q ✓</div>
+<p class="step"><b>d. האומדן:</b> <span class="math">q̂ = (6×0.35 − 1)/5 = (2.1 − 1)/5 = <b>0.22</b></span> — כ-22% שקרנים מלאים.</p>
+<div class="insight"><span class="t">טריק נפוץ (שיטת המומנטים + הפיכת קשר לינארי):</span> כשמראים ש-<span class="math">E[סטטיסטי] = g(פרמטר)</span> עם g לינארית, מקבלים אומד חסר הטיה על ידי הפעלת <span class="math">g⁻¹</span> — כי תוחלת עוברת דרך פונקציות לינאריות (זה נכשל עבור g לא לינארית!). בנוסף: ממוצע אינדיקטורים = פרופורציה, ותוחלתו היא ההסתברות. שני כלים בסיסיים שחוזרים כמעט בכל שאלת אמידה.</div>
+
+<h3>ג. בדיקה שההתנהגות אינה מושפעת מגובה הגמול (778 = 389+389 משתתפים)</h3>
+<p class="step"><b>a. למה לקבוע סטטיסטי וכלל החלטה מראש?</b> אם בוחרים את המבחן <b>אחרי</b> שמסתכלים בנתונים, בוחרים (גם בלי כוונה) את הסטטיסטי שמבליט את ההבדל שנראה במדגם. כך הסתברות הדחייה תחת H₀ גדולה מ-α המוצהר — רמת המובהקות מנופחת וה-p-value מאבד את משמעותו (data snooping / "ציד מובהקות"). קביעה מראש (pre-registration) מבטיחה שהמבחן שומר על רמת המובהקות המוצהרת.</p>
+<p class="step"><b>b. סטטיסטי מבחן שמנצל את כל 778 התצפיות:</b> מבחן χ² להומוגניות בטבלת שכיחויות 2×6 (קבוצה × קטגוריית גמול). תחת H₀ ההתפלגות זהה, ולכן האומד הטוב ביותר לכל קטגוריה הוא הפרופורציה <b>המאוחדת</b>; כאן שתי הקבוצות באותו גודל (389), כך שהפרופורציה המאוחדת היא ממוצע שתי הפרופורציות. תצפיות (במונחי מספרים, ‏389 × אחוז):</p>
+<table>
+<tr><th>קטגוריה</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+<tr><td>עשרות ₪ (O)</td><td class="num">24.9</td><td class="num">28.0</td><td class="num">45.1</td><td class="num">49.0</td><td class="num">105.8</td><td class="num">136.2</td></tr>
+<tr><td>אלפי ₪ (O)</td><td class="num">24.9</td><td class="num">28.0</td><td class="num">45.1</td><td class="num">49.0</td><td class="num">133.0</td><td class="num">108.9</td></tr>
+<tr><td>צפוי לכל קבוצה (E)</td><td class="num">24.9</td><td class="num">28.0</td><td class="num">45.1</td><td class="num">49.0</td><td class="num">119.4</td><td class="num">122.5</td></tr>
+</table>
+<p class="step">בארבע הקטגוריות הראשונות האחוזים זהים בשתי הקבוצות ⟸ ‏O = E והתרומה 0. נותרו קטגוריות 4 ו-5. סטייה בקטגוריה 4: ‏<span class="math">389·(0.272−0.307) = −13.6</span>, ובקטגוריה 5: ‏<span class="math">389·(0.35−0.315) = +13.6</span> (ובסימן הפוך בקבוצה השנייה):</p>
+<div class="mblock">χ² = Σ (O−E)²/E = 2·(13.6²/119.4) + 2·(13.6²/122.5) ≈ 3.10 + 3.03 ≈ <b>6.13</b></div>
+<p class="step">מספר דרגות החופש: <span class="math">(2−1)(6−1) = 5</span>. (לשם השוואה: הערך הקריטי ברמת 0.05 הוא ‏11.07, כך שלא היינו דוחים — אך השאלה ביקשה רק את ערך הסטטיסטי.)</p>
+<p class="step"><b>c. מבחן פרמוטציות:</b> תחת H₀ ("ההתנהגות אינה תלויה בגובה הגמול") תוויות הקבוצה ניתנות להחלפה (exchangeable). לכן:</p>
+<ul>
+<li>מאחדים את כל 778 המשתתפים עם קטגוריית הדיווח שלהם למאגר אחד.</li>
+<li><b>הפרמוטציות:</b> מגרילים מחדש את תוויות הקבוצה — בוחרים באקראי 389 משתתפים לקבוצת "עשרות ₪" והשאר ל"אלפי ₪" (עוברים על כל <span class="math">C(778, 389)</span> החלוקות, או מדגם אקראי גדול מהן).</li>
+<li><b>מה מחשבים מכל פרמוטציה:</b> בונים מחדש את טבלת ה-2×6 ומחשבים את אותו סטטיסטי χ² בדיוק.</li>
+<li>אוסף ערכי ה-χ² מהפרמוטציות הוא <b>התפלגות האפס</b>; ה-p-value הוא שיעור הפרמוטציות שבהן הסטטיסטי ≥ 6.13 (הערך שנצפה).</li>
+</ul>
+<div class="insight"><span class="t">חשוב מאוד ללמוד (חוזר גם בשאלה 4ד):</span> המתכון הקבוע של מבחן פרמוטציות: (1) לזהות מה ניתן להחלפה תחת H₀ (כאן — תוויות קבוצה); (2) לערבב את זה שוב ושוב; (3) לחשב את אותו סטטיסטי בכל ערבוב; (4) ‏p-value = מיקום הערך שנצפה בהתפלגות הפרמוטציות. היתרון: לא צריך הנחות התפלגותיות או קירובים אסימפטוטיים. אצל פרופ׳ הלר זה נושא דגל — כמעט מובטח שיופיע במבחן.</div>
+
+<h2>שאלה 4 (32 נק׳ + בונוסים) — שיפור בריצת 100 מ׳, מדגם מזווג (n = 40)</h2>
+<div class="warn"><b>הערה על נתוני הטבלה:</b> בטבלת המבחן שורת ההפרש מופיעה כ"0.046, 0.017". שימו לב שממוצע ההפרשים <b>חייב</b> להיות שווה להפרש הממוצעים: <span class="math">10.146 − 10.129 = 0.017</span> (לינאריות הממוצע). לכן: ממוצע ההפרשים <span class="math">D̄ = 0.017</span>, סטיית תקן ההפרשים <span class="math">s_D = 0.046</span> — וכך נפתור. עצם הבדיקה הזו היא טריק שימושי לזיהוי מלכודות/טעויות דפוס במבחן.</div>
+
+<h3>א. מבחן t מזווג: ‏H₀: μ_D ≤ 0.01 מול H₁: μ_D &gt; 0.01</h3>
+<p class="step">המדגם מזווג (אותם 40 משתתפים לפני ואחרי), ולכן עובדים עם משתנה אחד — ההפרשים <span class="math">Dᵢ = לפני − אחרי</span>. סטטיסטי המבחן:</p>
+<div class="mblock">t = (D̄ − 0.01) / (s_D/√n) = (0.017 − 0.01) / (0.046/√40) = 0.007 / 0.00727 ≈ 0.96, &nbsp; df = n−1 = 39</div>
+<p class="step"><b>a. מובהקות התוצאה:</b> ‏<span class="math">p = P(t₃₉ ≥ 0.96)</span>. מהרשימה: ‏<span class="math">qt(0.80, 39) = 0.851</span> ו-<span class="math">qt(0.85, 39) = 1.050</span>. הסטטיסטי 0.96 נמצא ביניהם, ולכן:</p>
+<div class="final">0.15 &lt; p-value &lt; 0.20 — זו התשובה המדויקת ביותר האפשרית מהאחוזונים הנתונים.</div>
+<p class="step"><b>b. מסקנה ברמת 0.05 (בשפה פשוטה):</b> מכיוון ש-p &gt; 0.05, איננו דוחים את H₀. במילים לחוקרים: הנתונים אינם מספקים ראיות משכנעות לכך שהשיפור הממוצע בזמן הריצה עולה על 0.01 שניות. ייתכן בהחלט שהשיפור האמיתי הוא 0.01 שניות או פחות, וההפרש שנצפה (0.017) מוסבר היטב על ידי אקראיות הדגימה. שימו לב: אין זו הוכחה שהשיפור קטן — רק היעדר ראיות שהוא גדול.</p>
+<p class="step"><b>c. הנחות לתוקף המבחן:</b> (1) ההפרשים <span class="math">D₁,…,D₄₀</span> הם מדגם מקרי — בלתי תלויים ושווי התפלגות; (2) ההפרשים מתפלגים נורמלית (או לחלופין n גדול מספיק כך שמשפט הגבול המרכזי נותן קירוב טוב — עם n=40 הקירוב סביר אם אין זנבות כבדים/חריגים קיצוניים). שימו לב שההנחה נדרשת על <b>ההפרשים</b>, לא על המדידות המקוריות.</p>
+<div class="insight"><span class="t">שני טריקים נפוצים:</span> (1) <b>מדגם מזווג ⟸ עוברים להפרשים</b> ומריצים מבחן t של מדגם יחיד; שימוש במבחן לשני מדגמים בלתי תלויים כאן הוא הטעות הקלאסית (ומאבד את היתרון של המתאם הגבוה בין לפני/אחרי). (2) כשה-H₀ היא "≤ 0.01" ולא "≤ 0", מחסרים את הערך מה-H₀ במונה — לא אפס.</div>
+
+<h3>ב. מבחן הסימן (12 מתוך 40 הואטו)</h3>
+<p class="step">משתמשים רק בסימני ההפרשים. תחת <span class="math">H₀</span>: "התוכנית לא משנה את זמן הריצה", לכל משתתף <span class="math">P(אחרי &gt; לפני) = 1/2</span> (בהנחה שאין הפרשים אפס). לכן מספר המשתתפים שהואטו:</p>
+<div class="mblock">S ~ Bin(40, ½), &nbsp; E[S] = 20, &nbsp; SD(S) = √(40·¼) = √10 ≈ 3.162, &nbsp; נצפה: S = 12</div>
+<p class="step"><b>a. מובהקות התוצאה:</b> האלטרנטיבה דו-צדדית ("משנה"). בקירוב נורמלי:</p>
+<div class="mblock">Z = (12 − 20)/√10 ≈ −2.53, &nbsp;&nbsp; p = 2·P(Z ≥ 2.53)</div>
+<p class="step">מהרשימה: ‏<span class="math">qnorm(0.99) = 2.326</span> ו-<span class="math">qnorm(0.995) = 2.576</span>, ולכן <span class="math">0.005 &lt; P(Z ≥ 2.53) &lt; 0.01</span>:</p>
+<div class="final">0.01 &lt; p-value &lt; 0.02</div>
+<p class="step"><b>b. מסקנה ברמת 0.05:</b> ‏p &lt; 0.05 ⟸ דוחים את H₀. במילים לחוקרים: אם לתוכנית לא הייתה שום השפעה, היינו מצפים שכמחצית מהמשתתפים (בערך 20) יהיו איטיים יותר אחריה. העובדה שרק 12 מתוך 40 הואטו היא תוצאה נדירה מדי כדי לייחס אותה למקריות (הסיכוי לתוצאה קיצונית כזו קטן מ-2%), ולכן יש ראיות שהתוכנית משנה את זמני הריצה — בכיוון של שיפור.</p>
+<p class="step"><b>c. הנחות לתוקף:</b> (1) המשתתפים בלתי תלויים (מדגם מקרי); (2) אין הפרשים אפס (או שמסירים אותם); (3) תחת H₀ כל הפרש חיובי בהסתברות ½. <b>לא נדרשת נורמליות</b> ולא שום הנחה על צורת ההתפלגות — זה מבחן א-פרמטרי. (הקירוב הנורמלי לבינום דורש n גדול, וכאן n=40 מספיק; אפשר גם חישוב בינומי מדויק.)</p>
+<div class="insight"><span class="t">חשוב ללמוד:</span> מבחן הסימן הוא האלטרנטיבה הא-פרמטרית הפשוטה ביותר למבחן t מזווג. השוו: מבחן ה-t (סעיף א) לא דחה, ומבחן הסימן דחה! אין סתירה — הם בודקים השערות שונות (א׳ בדק שיפור &gt; 0.01; ב׳ בדק "שינוי כלשהו"), ומשתמשים במידע שונה. לקח כללי: הבחירה בסטטיסטי ובניסוח H₀ משנה את המסקנה, ולכן קובעים אותם מראש (בדיוק הנקודה משאלה 3ג!).</div>
+
+<h3>ג. מקדם המתאם של פירסון בין לפני לאחרי</h3>
+<p class="step">הטריק: לא נתונות התצפיות עצמן, אבל נתונה סטיית התקן של ההפרש, ומתקיימת הזהות:</p>
+<div class="mblock">s²_D = s²_B + s²_A − 2·r·s_B·s_A &nbsp;&nbsp;⟹&nbsp;&nbsp; r = (s²_B + s²_A − s²_D) / (2·s_B·s_A)</div>
+<p class="step">מציבים <span class="math">s_B = 0.092, s_A = 0.099, s_D = 0.046</span>:</p>
+<div class="mblock">r = (0.092² + 0.099² − 0.046²) / (2·0.092·0.099) = (0.008464 + 0.009801 − 0.002116) / 0.018216 = 0.016149 / 0.018216 ≈ 0.886</div>
+<div class="final">r ≈ 0.89</div>
+<div class="insight"><span class="t">טריק נפוץ ושווה שינון:</span> ‏<span class="math">Var(X−Y) = Var(X) + Var(Y) − 2Cov(X,Y)</span>, ומכאן משחזרים מתאם מסטיות תקן בלבד. זה גם מסביר <b>למה מדגם מזווג חזק</b>: ככל ש-r גדול, שונות ההפרש קטנה (כאן ‏0.046 לעומת ‏√(0.092²+0.099²)≈0.135 אילו היו בלתי תלויים) — והמבחן רגיש יותר. שאלה כזו מופיעה בהמון מועדים בווריאציות.</div>
+
+<h3>ד. (בונוס, 7 נק׳) מבחן פרמוטציות לאי-תלות בין לפני לאחרי</h3>
+<p class="step"><b>סטטיסטי הגיוני:</b> מקדם המתאם של פירסון r בין 40 זוגות (לפני, אחרי) — נצפה: ‏0.89. תחת H₀ (אי-תלות) הזיווג בין הווקטורים שרירותי, ולכן:</p>
+<ul>
+<li><b>הפרמוטציות:</b> מקבעים את וקטור זמני ה"לפני" ומערבבים באקראי את וקטור זמני ה"אחרי" בין המשתתפים — כלומר מפרקים את הזיווג המקורי ויוצרים זיווג אקראי (כל <span class="math">40!</span> התמורות, או מדגם אקראי גדול מהן).</li>
+<li><b>מה מחשבים מכל פרמוטציה:</b> את מקדם המתאם r של הזיווג המעורבב.</li>
+<li>אוסף ערכי ה-r הוא התפלגות האפס; ה-p-value (דו-צדדי) = שיעור הפרמוטציות עם <span class="math">|r| ≥ 0.89</span>.</li>
+</ul>
+<div class="insight"><span class="t">אותו מתכון משאלה 3ג, בגרסה שנייה:</span> שם ערבבנו <b>תוויות קבוצה</b> (בעיית שני מדגמים), כאן מערבבים <b>את הזיווג</b> (בעיית אי-תלות). לזהות "מה ניתן להחלפה תחת H₀" — זו כל התורה של מבחני פרמוטציות, וזה בדיוק מה שהמבחן בודק שהבנתם.</div>
+
+<h3>ה. (בונוס לקבוצת ה-28, 10 נק׳) רווח סמך 90% לתוחלת השיפור</h3>
+<p class="step"><b>a. האחוזון הנדרש:</b> רווח דו-צדדי ברמת סמך 90% משאיר 5% בכל זנב, עם df = 39, כלומר צריך את <span class="math">qt(0.95, 39)</span>.</p>
+<p class="step"><b>b. חישוב:</b> מהרשימה <span class="math">qt(0.95, 39) = 1.684875</span> (נמצא ברשימה בדיוק):</p>
+<div class="mblock">D̄ ± t₀.₉₅,₃₉ · s_D/√n = 0.017 ± 1.6849 · 0.046/√40 = 0.017 ± 0.0123</div>
+<div class="final">רווח הסמך: ‏(0.0047, 0.0293) שניות — בדיוק של 3 ספרות: ‏[0.005, 0.029]</div>
+<p class="step"><b>c. הנחות:</b> כמו במבחן ה-t: ההפרשים בלתי תלויים ושווי התפלגות (מדגם מקרי), ומתפלגים נורמלית (או n גדול מספיק לקירוב CLT).</p>
+<div class="insight"><span class="t">קשר יפה לסעיף א:</span> רווח הסמך אינו מכיל את 0, אבל כן מכיל את 0.01 — עקבי לחלוטין עם התוצאות: יש ראיות שהשיפור חיובי, אבל אין ראיות שהוא עולה על 0.01 (המבחן החד-צדדי מסעיף א׳ לא דחה). הדואליות רווח-סמך ⟷ מבחן השערות היא רעיון מרכזי בקורס וכלי בדיקה עצמית מצוין במבחן.</div>
+
+<h2>סיכום — הטריקים שחוזרים במבחנים של הקורס</h2>
+<ul>
+<li><b>α מול p-value:</b> רמת מובהקות נקבעת מראש; מובהקות התוצאה מחושבת מהנתונים (ש׳ 1ג).</li>
+<li><b>אזורי דחייה מקוננים:</b> דחייה ב-α קטן ⟸ דחייה ב-α גדול, אך לא להפך (ש׳ 1ה–ו).</li>
+<li><b>מתכון QQ-plot:</b> מיון, ‏F⁻¹, מיקומי שרטוט i/(n+1) (ש׳ 2).</li>
+<li><b>אומדים חסרי הטיה דרך היפוך קשר לינארי</b> של תוחלת פרופורציה (ש׳ 3ב).</li>
+<li><b>מבחני פרמוטציות:</b> לזהות מה ניתן להחלפה תחת H₀ — תוויות קבוצה (הומוגניות) או הזיווג (אי-תלות) (ש׳ 3ג, 4ד).</li>
+<li><b>מדגם מזווג ⟸ הפרשים,</b> ‏<span class="math">Var(X−Y)</span> לשחזור מתאם, ומבחן הסימן כחלופה א-פרמטרית (ש׳ 4).</li>
+<li><b>עקביות פנימית של נתונים:</b> ממוצע ההפרשים = הפרש הממוצעים — בדיקת שפיות ששווה להריץ תמיד.</li>
+</ul>
+
+</body>
+</html>

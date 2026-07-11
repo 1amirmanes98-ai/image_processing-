@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face { font-family: 'David Libre'; src: url('fonts/DavidLibre-Regular.ttf'); font-weight: normal; }
+@font-face { font-family: 'David Libre'; src: url('fonts/DavidLibre-Bold.ttf'); font-weight: bold; }
+@page { size: A4; margin: 1.7cm 1.6cm; @bottom-center { content: counter(page); font-family: 'DejaVu Sans'; font-size: 9pt; color: #888; } }
+body { font-family: 'David Libre', serif; direction: rtl; font-size: 11pt; line-height: 1.55; color: #1a1a2e; margin: 0; }
+h1 { font-size: 18pt; color: #16324f; border-bottom: 3px solid #16324f; padding-bottom: 6px; margin-bottom: 2px;}
+.subtitle { color:#555; font-size: 10.5pt; margin-bottom: 14px;}
+h2 { font-size: 14.5pt; color: #ffffff; background: #16324f; padding: 5px 12px; border-radius: 6px; margin-top: 22px; page-break-after: avoid;}
+h3 { font-size: 12pt; color: #16324f; margin: 14px 0 4px 0; page-break-after: avoid;}
+.stmt { background: #eef2f7; border-right: 4px solid #94a9c4; padding: 7px 11px; border-radius: 4px; font-size: 10.5pt; color:#333; margin: 8px 0;}
+.math { direction: ltr; unicode-bidi: isolate; font-family: 'DejaVu Sans', sans-serif; font-size: 10pt; }
+.mblock { direction: ltr; unicode-bidi: isolate; font-family: 'DejaVu Sans', sans-serif; font-size: 10.5pt; text-align: center; background:#f7f9fc; border:1px solid #dde5ef; border-radius: 6px; padding: 6px 10px; margin: 7px 24px; page-break-inside: avoid;}
+.insight { background: #fff8e1; border: 1.5px solid #e0b93c; border-radius: 8px; padding: 8px 12px; margin: 10px 0; page-break-inside: avoid; font-size: 10.5pt;}
+.insight .t { font-weight: bold; color: #8a6d00; }
+.insight .t::before { content:""; display:inline-block; width:1.05em; height:1.05em; vertical-align:-0.16em; margin-left:0.34em; background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2VhYTMwMCIgZD0iTTEyIDIuMkE2LjYgNi42IDAgMCAwIDcuOSAxNGMuODYuNzIgMS40MyAxLjYyIDEuNjMgMi42bC4xNC43aDQuNjZsLjE0LS43Yy4yLS45OC43Ny0xLjg4IDEuNjMtMi42QTYuNiA2LjYgMCAwIDAgMTIgMi4yeiIvPjxyZWN0IHg9IjkuMSIgeT0iMTguMSIgd2lkdGg9IjUuOCIgaGVpZ2h0PSIxLjUiIHJ4PSIwLjYiIGZpbGw9IiNhODc5MGEiLz48cmVjdCB4PSI5LjciIHk9IjIwLjIiIHdpZHRoPSI0LjYiIGhlaWdodD0iMS41IiByeD0iMC43IiBmaWxsPSIjYTg3OTBhIi8+PC9zdmc+"); background-size:contain; background-repeat:no-repeat; background-position:center; }
+.bulb { display:inline-block; width:1em; height:1em; vertical-align:-0.13em; background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2VhYTMwMCIgZD0iTTEyIDIuMkE2LjYgNi42IDAgMCAwIDcuOSAxNGMuODYuNzIgMS40MyAxLjYyIDEuNjMgMi42bC4xNC43aDQuNjZsLjE0LS43Yy4yLS45OC43Ny0xLjg4IDEuNjMtMi42QTYuNiA2LjYgMCAwIDAgMTIgMi4yeiIvPjxyZWN0IHg9IjkuMSIgeT0iMTguMSIgd2lkdGg9IjUuOCIgaGVpZ2h0PSIxLjUiIHJ4PSIwLjYiIGZpbGw9IiNhODc5MGEiLz48cmVjdCB4PSI5LjciIHk9IjIwLjIiIHdpZHRoPSI0LjYiIGhlaWdodD0iMS41IiByeD0iMC43IiBmaWxsPSIjYTg3OTBhIi8+PC9zdmc+"); background-size:contain; background-repeat:no-repeat; background-position:center; }
+.warn { background: #fdecea; border: 1.5px solid #d9838a; border-radius: 8px; padding: 8px 12px; margin: 10px 0; font-size: 10.5pt; page-break-inside: avoid;}
+.final { background:#e8f5ec; border:1.5px solid #57a773; border-radius:6px; padding: 6px 11px; margin: 8px 0; font-weight:bold; page-break-inside: avoid;}
+table { border-collapse: collapse; margin: 8px auto; }
+th, td { border: 1px solid #9db2c9; padding: 4px 10px; text-align: center; font-size: 10.5pt;}
+th { background: #dce6f1; }
+td.num { direction:ltr; font-family:'DejaVu Sans'; font-size: 10pt;}
+ul { margin: 4px 0; padding-right: 20px;}
+li { margin-bottom: 3px;}
+.step { margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<h1>תרגיל בית 11 — מבוא לסטטיסטיקה — פתרון מלא</h1>
+<div class="subtitle">מבחן הסימן · וילקוקסון מזווג · מבחן t מזווג · מודל הזזה · מקנמר — עם הסבר לכל מעבר ותיבות <span class="bulb"></span></div>
+
+<h2>שאלה 1 — דחיקת חזה (n = 11 מתאמנים)</h2>
+<div class="stmt">השיפורים (ק״ג): ‏3.5, 0.5, 4, 2, 0, 0.25, 2.5, 5.5, ‎−4.5, 0, ‎−1. נתון: ממוצע 1.16, ס״ת 2.75. בדיקת עקביות: הפרש הממוצעים <span class="math">64.3 − 63.14 = 1.16</span> = ממוצע השיפורים ✓ (הטריק המוכר: ממוצע ההפרשים = הפרש הממוצעים).</div>
+
+<h3>א. מבחן הסימן, ‏α = 10%, ‏H₁: יש שיפור</h3>
+<p class="step"><b>שלב 1 — זורקים אפסים:</b> לנועם ותומר שיפור 0 — הם אינם נושאים מידע על הכיוון, ומסירים אותם. נשארים <span class="math">n = 9</span> הפרשים שונים מאפס.</p>
+<p class="step"><b>שלב 2 — סופרים סימנים:</b> חיוביים: ‏3.5, 0.5, 4, 2, 0.25, 2.5, 5.5 ⟸ ‏<span class="math">S = 7</span>; שליליים: ‏−4.5, −1 ⟸ ‏2.</p>
+<p class="step"><b>שלב 3 — התפלגות האפס ו-p-value:</b> תחת H₀ (אין שיפור) כל הפרש חיובי בהסתברות ½, ולכן <span class="math">S ~ Bin(9, ½)</span>. המבחן חד-צדדי (דוחים כאשר S גדול):</p>
+<div class="mblock">p = P(S ≥ 7) = [C(9,7)+C(9,8)+C(9,9)] / 2⁹ = (36+9+1)/512 = 46/512 ≈ 0.090</div>
+<div class="final">‏p ≈ 0.090 &lt; 0.10 ⟸ דוחים את H₀: יש ראיות (גבוליות) לשיפור.</div>
+
+<h3>ב. מבחן וילקוקסון למדגמים מזווגים, ‏α = 10%</h3>
+<p class="step"><b>שלב 1:</b> שוב מסירים את שני האפסים, <span class="math">n = 9</span>. מדרגים את <b>הערכים המוחלטים</b>:</p>
+<table>
+<tr><th>|הפרש|</th><td class="num">0.25</td><td class="num">0.5</td><td class="num">1</td><td class="num">2</td><td class="num">2.5</td><td class="num">3.5</td><td class="num">4</td><td class="num">4.5</td><td class="num">5.5</td></tr>
+<tr><th>דרגה</th><td class="num">1</td><td class="num">2</td><td class="num">3</td><td class="num">4</td><td class="num">5</td><td class="num">6</td><td class="num">7</td><td class="num">8</td><td class="num">9</td></tr>
+<tr><th>סימן</th><td>+</td><td>+</td><td><b>−</b></td><td>+</td><td>+</td><td>+</td><td>+</td><td><b>−</b></td><td>+</td></tr>
+</table>
+<p class="step"><b>שלב 2 — סטטיסטי המבחן:</b> סכום דרגות ההפרשים השליליים (−1 בדרגה 3, ‏−4.5 בדרגה 8):</p>
+<div class="mblock">W⁻ = 3 + 8 = 11 , &nbsp;&nbsp; W⁺ = n(n+1)/2 − W⁻ = 45 − 11 = 34</div>
+<p class="step"><b>שלב 3 — כלל החלטה מדויק:</b> עם n=9 קטן משתמשים בהתפלגות המדויקת (טבלה/מנייה): דוחים לטובת שיפור אם <span class="math">W⁻</span> קטן מספיק. הערך הקריטי ברמת 10% חד-צדדי הוא 10, שכן <span class="math">P(W⁻ ≤ 10) = 42/512 ≈ 0.082 ≤ 0.10</span> בעוד <span class="math">P(W⁻ ≤ 11) = 52/512 ≈ 0.102 &gt; 0.10</span>. כלומר ה-p-value המדויק:</p>
+<div class="mblock">p = P(W⁻ ≤ 11) = 52/512 ≈ 0.102 &gt; 0.10</div>
+<div class="final">‏W⁻ = 11 &gt; 10 (או: ‏p ≈ 0.102 &gt; 0.10) ⟸ <b>לא דוחים</b> את H₀: אין מספיק ראיות לשיפור.</div>
+<p class="step">(בקירוב נורמלי: ‏<span class="math">E[W⁺]=n(n+1)/4=22.5, Var=n(n+1)(2n+1)/24=71.25</span>, ‏<span class="math">Z=(34−22.5)/8.44≈1.36</span>, ‏p≈0.087 — קרוב מאוד לסף. המקרה גבולי במכוון; עם n=9 החישוב המדויק הוא הקובע, והוא אינו דוחה.)</p>
+
+<h3>ג. הסבר ההבדל בין המסקנות</h3>
+<p class="step">מבחן הסימן דחה, וילקוקסון לא — וההבדל נובע בדיוק מהמידע שכל מבחן מנצל:</p>
+<ul>
+<li><b>מבחן הסימן</b> רואה רק את <b>הסימנים</b>: ‏7 מתוך 9 חיוביים — עדות חזקה לכיוון של שיפור. הגדלים נזרקים.</li>
+<li><b>וילקוקסון</b> משקלל גם את <b>גודל</b> ההפרשים (דרך הדרגות). כאן שני ההפרשים השליליים גדולים במיוחד: ‏−4.5 הוא השני בגודלו המוחלט (דרגה 8 מתוך 9!) ו-−1 בדרגה 3. הם "סוחבים" משקל רב אל W⁻ ומחלישים את העדות.</li>
+</ul>
+<p class="step">כלומר: הכיוונים תומכים בשיפור, אבל הגדלים מספרים סיפור פחות חד-משמעי — מי שהתדרדר, התדרדר בענק. כל מבחן מסכם את הנתונים אחרת, ובמקרה גבולי זה מוביל למסקנות הפוכות.</p>
+<div class="insight"><span class="t">חשוב מאוד ללמוד (היררכיית מידע):</span> סימנים ⊂ דרגות ⊂ ערכים מלאים. מבחן הסימן משתמש הכי מעט במידע (ולכן הכי רובסטי והכי פחות עוצמתי בדרך כלל), וילקוקסון באמצע (דורש סימטריה של ההפרשים תחת H₀), ומבחן t משתמש בהכל (ודורש נורמליות). שאלת "הסבירו את ההבדל" על ציר המידע-הנחות-עוצמה היא שאלת מבחן קלאסית.</div>
+
+<h3>ד. גודל מדגם אקראי n ~ UD[9,15] — הסתברות למסקנת "יש שיפור" תחת H₀</h3>
+<p class="step">נתון שבפועל אין שינוי (H₀ נכונה). המאורע "המסקנה תהיה שקיים שיפור" הוא בדיוק <b>טעות מסוג I</b>. המבחן מכויל כך שלכל גודל מדגם n, הסתברות הדחייה תחת H₀ היא רמת המובהקות:</p>
+<div class="mblock">P(דחייה | n = k, H₀) = α = 0.10 &nbsp;&nbsp; לכל k</div>
+<p class="step">ולכן, מנוסחת ההסתברות השלמה על פני שבעת הערכים של n:</p>
+<div class="mblock">P(דחייה) = Σₖ₌₉¹⁵ P(n=k)·P(דחייה | n=k) = Σₖ₌₉¹⁵ (1/7)·0.10 = <b>0.10</b></div>
+<div class="final">ההסתברות היא 0.10 — רמת המובהקות עצמה, ללא תלות בהתפלגות של n.</div>
+<div class="insight"><span class="t">הפואנטה של הסעיף:</span> רמת מובהקות היא הסתברות טעות מסוג I <b>לכל גודל מדגם</b> — לכן ההסתברות הכוללת לא תלויה ב-n, וההתפלגות UD[9,15] היא "פיתיון". (דיוק טכני: בסטטיסטי בדיד הרמה המושגת בפועל היא ≤ 0.10 — למשל 0.082 עבור n=9 — אבל הרעיון והתשובה המכוונת: α = 10%.)</div>
+
+<h3>ה. מבחן t מזווג, ‏α = 10%</h3>
+<p class="step">עובדים עם ההפרשים; ‏<span class="math">H₀: μ_D ≤ 0</span> מול <span class="math">H₁: μ_D &gt; 0</span>:</p>
+<div class="mblock">t = D̄ / (s_D/√n) = 1.16 / (2.75/√11) = 1.16 / 0.829 ≈ 1.40 , &nbsp; df = 10</div>
+<p class="step">הערך הקריטי: ‏<span class="math">t₀.₉₀,₁₀ = 1.372</span>. מתקיים <span class="math">1.40 &gt; 1.372</span>:</p>
+<div class="final">דוחים את H₀ ברמת 10%: יש ראיות לשיפור. (ה-p-value ≈ 0.096, מעט מתחת ל-0.10.)</div>
+<p class="step"><b>ההנחה הנדרשת:</b> ההפרשים <span class="math">D₁,…,D₁₁</span> הם מדגם מקרי מהתפלגות <b>נורמלית</b> (עם n=11 קטן אין להסתמך על קירוב CLT — הנורמליות נדרשת ממש).</p>
+
+<h3>ו. עבור אילו רמות מובהקות לא היינו דוחים?</h3>
+<p class="step">לא דוחים בדיוק כאשר <span class="math">α &lt; p-value</span>. ‏p-value = ‏<span class="math">P(t₁₀ ≥ 1.40)</span>: מכיוון ש-<span class="math">t₀.₉₀,₁₀ = 1.372 &lt; 1.40 &lt; 1.812 = t₀.₉₅,₁₀</span>, ה-p-value בין 0.05 ל-0.10, ובחישוב מדויק ≈ 0.096.</p>
+<div class="final">לכל רמת מובהקות ‏α &lt; ‏p ≈ 0.096 לא נדחה את H₀ — בפרט ברמות המקובלות 5% ו-1%.</div>
+<div class="insight"><span class="t">שני לקחים:</span> (1) הדואליות: ה-p-value הוא בדיוק קו פרשת המים — דוחים לכל α ≥ p ולא דוחים לכל α &lt; p. (2) דיוק לשוני שחשוב במבחן: אי-דחייה אינה "מסיקים כי לא חל שיפור" אלא "אין מספיק ראיות לשיפור" — היעדר ראיות אינו ראיה להיעדר.</div>
+
+<h3>ז. רווח סמך 90% לתוחלת ההפרש (אחרי − לפני)</h3>
+<p class="step">רווח דו-צדדי משאיר 5% בכל זנב, ‏df = 10, ‏<span class="math">t₀.₉₅,₁₀ = 1.812</span>:</p>
+<div class="mblock">D̄ ± t₀.₉₅,₁₀ · s_D/√n = 1.16 ± 1.812·(2.75/√11) = 1.16 ± 1.50</div>
+<div class="final">רווח הסמך: ‏(−0.34, 2.66) ק״ג. ההנחה: ההפרשים מדגם מקרי מהתפלגות נורמלית.</div>
+<p class="step">שימו לב: הרווח מכיל את 0 — עקבי עם כך שה-p-value הדו-צדדי הוא ‏≈ 0.19 &gt; 0.10, למרות שהמבחן החד-צדדי בסעיף ה׳ דחה.</p>
+
+<h3>ח. הוספת יאיר, נפתלי וגדי (סכום שיפורים 6, סכום ריבועים 14)</h3>
+<p class="step"><b>הטריק: לשחזר סכומים מהתמציות ולאחד.</b> מהמדגם המקורי:</p>
+<div class="mblock">ΣD = n·D̄ = 11·1.16 = 12.76 , &nbsp;&nbsp; ΣD² = (n−1)s² + n·D̄² = 10·2.75² + 11·1.16² ≈ 75.63 + 14.80 = 90.43</div>
+<p class="step">מוסיפים את השלושה: ‏<span class="math">ΣD = 12.76+6 = 18.76</span>, ‏<span class="math">ΣD² = 90.43+14 = 104.43</span>, ‏<span class="math">n = 14</span>. ומחשבים מחדש:</p>
+<div class="mblock">D̄ = 18.76/14 ≈ 1.34 , &nbsp;&nbsp; s² = [ΣD² − n·D̄²]/(n−1) = [104.43 − 14·1.34²]/13 = 79.29/13 ≈ 6.10 , &nbsp; s ≈ 2.47</div>
+<p class="step">רווח סמך 90% עם <span class="math">df = 13</span>, ‏<span class="math">t₀.₉₅,₁₃ = 1.771</span>:</p>
+<div class="mblock">1.34 ± 1.771·(2.47/√14) = 1.34 ± 1.771·0.660 = 1.34 ± 1.17</div>
+<div class="final">רווח הסמך החדש: ‏(0.17, 2.51) ק״ג — כעת אינו מכיל את 0.</div>
+<div class="insight"><span class="t">טריק נפוץ מאוד (איחוד מדגמים):</span> ממוצע וס״ת אינם מתחברים ישירות — אבל <b>סכומים כן</b>: תמיד עוברים ל-ΣD ו-ΣD² דרך <span class="math">ΣD² = (n−1)s² + nD̄²</span>, מחברים, ומחשבים בחזרה. שימו לב מה קרה תוכנית: השלושה החדשים השתפרו בעקביות (ממוצע 2, פיזור פנימי קטן: ‏14 − 6²/3 = 2), ולכן הממוצע עלה, ‏s ירד, ו-n גדל — שלושה כוחות שכיווצו את הרווח והוציאו ממנו את האפס.</div>
+
+<h2>שאלה 2 — חוג הבית (54 משתתפים, ציון תמיכה 1–10 לפני/אחרי)</h2>
+<div class="stmt"><b>קריאת הטבלה:</b> לכל ציון-לפני k, ההתפלגות של הציון-אחרי היא: ‏k−1, k, k+1 — משתתף אחד כל אחד; ‏k+2 — שלושה משתתפים; ‏k+3 — משתתף אחד (עם קיטום בקצוות הסולם: בשורה k=1 אין תא k−1, ובשורה k=8 אין תא k+3). בדיקה: ‏6 + 6×7 + 6 = 54 ✓. מכאן התפלגות ההפרשים D = אחרי − לפני:</div>
+<table>
+<tr><th>D</th><td class="num">−1</td><td class="num">0</td><td class="num">1</td><td class="num">2</td><td class="num">3</td></tr>
+<tr><th>מס׳ משתתפים</th><td class="num">7</td><td class="num">8</td><td class="num">8</td><td class="num">24</td><td class="num">7</td></tr>
+</table>
+
+<h3>א. האם חוג הבית גורם לשינוי כלשהו? (α = 5%, דו-צדדי) — מבחן הסימן</h3>
+<p class="step">מסירים את 8 האפסים ⟸ ‏<span class="math">n = 46</span>. חיוביים: ‏<span class="math">8+24+7 = 39</span>, שליליים: 7. תחת H₀ (אין שינוי): ‏<span class="math">S ~ Bin(46, ½)</span>, ובקירוב נורמלי:</p>
+<div class="mblock">Z = (39 − 23)/√(46·¼) = 16/√11.5 ≈ 16/3.39 ≈ 4.72</div>
+<p class="step">מבחן דו-צדדי ("שינוי כלשהו"): הערך הקריטי ‏±1.96, ו-‏<span class="math">|Z| = 4.72 ≫ 1.96</span>; ה-p-value ‏≈ ‏<span class="math">2·P(Z&gt;4.72) ≈ 2.4×10⁻⁶</span>.</p>
+<div class="final">דוחים חד-משמעית: חוג הבית משנה את מידת התמיכה (39 עליות מול 7 ירידות).</div>
+
+<h3>ב. מודל הזזה</h3>
+<p class="step"><b>המשתנים:</b> ‏<span class="math">Xᵢ</span> = מידת התמיכה של משתתף i לפני חוג הבית; ‏<span class="math">Yᵢ</span> = אחריו; ‏<span class="math">Dᵢ = Yᵢ − Xᵢ</span>.</p>
+<p class="step"><b>המודל:</b></p>
+<div class="mblock">Dᵢ = Δ + εᵢ , &nbsp;&nbsp; εᵢ i.i.d. סימטריים סביב 0</div>
+<p class="step"><b>הפרמטר:</b> ‏Δ הוא פרמטר ההזזה — מרכז הסימטריה (ולכן גם החציון והתוחלת, אם קיימת) של התפלגות השיפור. שקול לכתוב: התפלגות ה"אחרי" היא התפלגות ה"לפני" מוזזת ב-Δ.</p>
+<p class="step"><b>משמעות ההנחה בסיפור:</b> לחוג הבית השפעה <b>אחידה</b> — הוא מוסיף לכל משתתף אותה תוספת תמיכה Δ, וההבדלים בין אנשים הם רעש אינדיבידואלי סימטרי: הסיכוי שאדם יסטה כלפי מעלה מהאפקט הטיפוסי שווה לסיכוי שיסטה כלפי מטה באותו גודל. אין תת-קבוצה שהחוג "מזיז" אחרת. (הערה הוגנת: על סולם חסום 1–10 זהו קירוב — בקצוות אין לאן לזוז.)</p>
+
+<h3>ג. בדיקת H₀: Δ ≤ 1 מול H₁: Δ &gt; 1 (α = 5%) — וילקוקסון על D − 1</h3>
+<p class="step"><b>הטריק:</b> תחת מודל ההזזה, ‏<span class="math">D − Δ</span> סימטרי סביב 0. לכן תחת ‏<span class="math">H₀: Δ = 1</span> המשתנים <span class="math">D′ᵢ = Dᵢ − 1</span> סימטריים סביב 0 — בדיוק התנאי למבחן וילקוקסון. מזיזים את הנתונים:</p>
+<table>
+<tr><th>D′ = D−1</th><td class="num">−2</td><td class="num">−1</td><td class="num">0</td><td class="num">1</td><td class="num">2</td></tr>
+<tr><th>מס׳</th><td class="num">7</td><td class="num">8</td><td class="num">8 (מוסרים)</td><td class="num">24</td><td class="num">7</td></tr>
+</table>
+<p class="step">נשארים <span class="math">n = 46</span>. דירוג עם שוויונים (דרגות ממוצעות): ‏<span class="math">|D′| = 1</span> — ‏32 תצפיות בדרגות 1–32 ⟸ דרגה ממוצעת 16.5; ‏<span class="math">|D′| = 2</span> — ‏14 תצפיות בדרגות 33–46 ⟸ דרגה ממוצעת 39.5. סכום דרגות החיוביים:</p>
+<div class="mblock">W⁺ = 24·16.5 + 7·39.5 = 396 + 276.5 = 672.5</div>
+<div class="mblock">E[W⁺] = n(n+1)/4 = 540.5 , &nbsp; Var = n(n+1)(2n+1)/24 = 8377.75 , &nbsp; Z = (672.5−540.5)/91.5 ≈ 1.44</div>
+<p class="step">מבחן חד-צדדי: הערך הקריטי 1.645, ומתקיים <span class="math">1.44 &lt; 1.645</span> (‏p ≈ 0.075). גם עם תיקון שוויונים לשונות מקבלים <span class="math">Z ≈ 1.51</span>, ‏p ≈ 0.066 — אותה מסקנה.</p>
+<div class="final">לא דוחים ברמת 5%: אין מספיק ראיות שחציון השיפור גדול מנקודה אחת (אף שהוא ודאי חיובי, מסעיף א׳).</div>
+<div class="insight"><span class="t">טריק חשוב מאוד:</span> לבדוק "חציון = m" עושים וילקוקסון על <b>הנתונים המוזזים D − m</b> — מודל ההזזה הוא מה שמצדיק זאת (הסימטריה נשמרת תחת הזזה). זה גם מראה את ההיגיון: השיפור הטיפוסי הוא 2, אבל יש מסה לא מבוטלת ב-−1 ו-0, והיא מספיקה כדי שהעדות ל"יותר מ-1" לא תחצה את סף ה-5%.</div>
+
+<h3>ד. האם חוג הבית מגדיל את ההסתברות להיות "תומך" (ציון ≥ 6)? — מבחן מקנמר</h3>
+<p class="step">מסווגים כל משתתף לפני/אחרי כתומך (ציון ≥ 6) או לא. <b>הרעיון של מקנמר:</b> משתתפים שלא שינו סטטוס אינם נושאים מידע על כיוון ההשפעה — כל המידע נמצא ב<b>זוגות הלא-תואמים</b> (מי שחצה את הסף). נספור אותם מהטבלה:</p>
+<ul>
+<li><b>עלו מ"לא תומך" ל"תומך"</b> (לפני ≤ 5, אחרי ≥ 6): משורה 3: אחד (אחרי=6); משורה 4: ‏3+1=4 (אחרי=6,7); משורה 5: ‏1+3+1=5 (אחרי=6,7,8) ⟸ ‏<span class="math">n₀₁ = 10</span>.</li>
+<li><b>ירדו מ"תומך" ל"לא תומך"</b> (לפני ≥ 6, אחרי ≤ 5): רק משורה 6: אחד (אחרי=5) ⟸ ‏<span class="math">n₁₀ = 1</span>.</li>
+</ul>
+<p class="step">תחת H₀ (החוג אינו מגדיל את הסיכוי להיות תומך), בהינתן 11 החוצים, כל חצייה היא כלפי מעלה בהסתברות ½ — כלומר מבחן סימן על החוצים בלבד: ‏<span class="math">n₀₁ ~ Bin(11, ½)</span>, חד-צדדי:</p>
+<div class="mblock">p = P(Bin(11,½) ≥ 10) = [C(11,10)+C(11,11)]/2¹¹ = 12/2048 ≈ 0.006</div>
+<div class="final">‏p ≈ 0.006 &lt; 0.05 ⟸ דוחים: חוג הבית מגדיל את ההסתברות שאדם יוגדר כתומך במפלגה.</div>
+<p class="step">(שקול בקירוב נורמלי: ‏<span class="math">Z = (10−1)/√11 ≈ 2.71</span>, ‏p ≈ 0.003.)</p>
+<div class="insight"><span class="t">מה ללמוד מכאן:</span> מקנמר = מבחן הסימן על נתונים בינאריים מזווגים: 43 המשתתפים שנשארו באותו סטטוס פשוט "נזרקים", כי הם לא מבדילים בין ההשערות. וטריק חשיבה כללי: אותם נתונים בדיוק ענו בשאלה זו על שלוש שאלות שונות (שינוי כלשהו / חציון &gt; 1 / חציית סף) עם שלושה מבחנים שונים — ההשערה קובעת את המבחן, לא הנתונים.</div>
+
+<h2>טבלת סיכום מסקנות</h2>
+<table>
+<tr><th>סעיף</th><th>מבחן</th><th>סטטיסטי</th><th>p / קריטי</th><th>מסקנה</th></tr>
+<tr><td>1א</td><td>סימן (חד-צדדי, 10%)</td><td class="num">S = 7/9</td><td class="num">p ≈ 0.090</td><td>דוחים — יש שיפור</td></tr>
+<tr><td>1ב</td><td>וילקוקסון (10%)</td><td class="num">W⁻ = 11</td><td class="num">p ≈ 0.102</td><td>לא דוחים</td></tr>
+<tr><td>1ד</td><td>—</td><td class="num">—</td><td class="num">—</td><td>P(דחייה | H₀) = 0.10</td></tr>
+<tr><td>1ה</td><td>t מזווג (10%)</td><td class="num">t = 1.40, df=10</td><td class="num">p ≈ 0.096</td><td>דוחים — יש שיפור</td></tr>
+<tr><td>1ז</td><td>רווח סמך 90%</td><td class="num">1.16 ± 1.50</td><td class="num">(−0.34, 2.66)</td><td>מכיל 0</td></tr>
+<tr><td>1ח</td><td>רווח סמך 90%, n=14</td><td class="num">1.34 ± 1.17</td><td class="num">(0.17, 2.51)</td><td>לא מכיל 0</td></tr>
+<tr><td>2א</td><td>סימן דו-צדדי (5%)</td><td class="num">Z ≈ 4.72</td><td class="num">p ≈ 0</td><td>דוחים — יש שינוי</td></tr>
+<tr><td>2ג</td><td>וילקוקסון על D−1 (5%)</td><td class="num">Z ≈ 1.44</td><td class="num">p ≈ 0.075</td><td>לא דוחים</td></tr>
+<tr><td>2ד</td><td>מקנמר (5%)</td><td class="num">10 מול 1</td><td class="num">p ≈ 0.006</td><td>דוחים — מגדיל תמיכה</td></tr>
+</table>
+
+</body>
+</html>
