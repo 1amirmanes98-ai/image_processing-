@@ -59,6 +59,10 @@ python3 notes-formatter/scripts/build_pdf.py \
     --qa
 
 # 4) read every outputs/my-notes/qa/page-*.png and iterate content.html until clean
+#    (first build: all pages; later iterations: only affected pages + last page)
+
+# 5) append a run line to notes-formatter/RUNLOG.md (date, slug, pages, iters,
+#    wall time, lesson) — this is how the tool gets faster across sessions
 ```
 
 ### `build_pdf.py`
@@ -136,6 +140,7 @@ content):
 ```
 notes-formatter/
 ├── README.md            # this file (human docs)
+├── RUNLOG.md            # per-run history + process lessons (the tool's cross-session memory)
 ├── DESIGN.md            # the authoring contract (model-facing: every class + rules)
 ├── template/
 │   ├── page.html.j2     # RTL jinja2 shell; renderMathInElement → __RENDER_DONE__
