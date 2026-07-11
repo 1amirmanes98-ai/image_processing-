@@ -21,6 +21,21 @@ pip install numpy scipy matplotlib
 python3 div_grad_pde_fd.py
 ```
 
+## Notes formatter (`/format-notes`)
+
+A Claude Code skill that turns scans of handwritten Hebrew lecture notes into a
+styled typed **PDF + self-contained HTML** — RTL, David Libre, KaTeX math,
+colour-coded callout boxes, a topic map, guided exercises, and a formula sheet.
+
+Pipeline: **scan → rasterize → Claude transcribes → HTML → Chromium print-to-PDF.**
+
+Lives in `.claude/skills/format-notes/` (the skill) and `notes-formatter/`
+(templates, scripts, vendored KaTeX + fonts). Generated summaries go to
+`outputs/`, which is gitignored — they are personal course content, delivered in
+chat and never committed. See [`notes-formatter/README.md`](notes-formatter/README.md)
+for setup and usage, and [`notes-formatter/DESIGN.md`](notes-formatter/DESIGN.md)
+for the authoring contract.
+
 ---
 
 _The exam-prep tutors that previously lived here (Foundations of Deep Learning,
